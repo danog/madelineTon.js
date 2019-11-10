@@ -1,7 +1,6 @@
 import {
     posMod
 } from "../tools"
-
 /**
  * Stream of int32.
  * Using int*Array instead of DataView due to greater performance on older chrome browsers (might eventually also do a DataView wrapper)
@@ -67,7 +66,7 @@ class Stream {
         const bPos = this.pos * 4
         let length = this.bBuf[bPos++]
         if (length === 254) {
-            length = this.uBuf[this.pos] >> 8
+            length = this.readUnsignedInt() >> 8
             bPos += 3
         }
         const value = this.bBuf.slice(bPos, bPos + length)
@@ -79,6 +78,7 @@ class Stream {
 
     /**
      * Read UTF8 string
+     * @returns string
      */
     readString() {
         var s = this.readBytes().map(String.fromCharCode).join('')
@@ -91,15 +91,18 @@ class Stream {
 
     /**
      * Write signed 32-bit integer
-     * @param {int} value Integer value
+     * @param {number} value Integer value
+     * @returns Stream
      */
     writeSignedInt(value) {
         this.iBuf[this.pos++] = value
+        return this
     }
 
     /**
      * Write signed 64-bit integer value
-     * @param {Array|int} value 64-bit integer value (or one 32-bit integer value)
+     * @param {Array|number} value 64-bit integer value (or one 32-bit integer value)
+     * @returns Stream
      */
     writeSignedLong(value) {
         if (value.constructor === Array) { // Blackbox value
@@ -109,59 +112,93 @@ class Stream {
             this.uBuf[this.pos++] = 0
             this.uBuf[this.pos++] = value
         }
+        return this
     }
 
     /**
      * Write multiple 32-bit integer values
      * @param {Array} value Multiple 32-bit integer values
+     * @returns Stream
      */
     writeUnsignedInts(value) {
         this.uBuf.set(value, this.pos)
         this.pos += value.length
+        return this
     }
 
     /**
      * Encode double
      * @param {double} value Value to encode
+     * @returns Stream
      */
     writeDouble(value) {
         const buf = new Uint32Array(new Float64Array([value]).buffer)
         this.uBuf[this.pos++] = buf[0]
         this.uBuf[this.pos++] = buf[1]
+        return this
     }
 
     /**
-     * 
+     * Write bytes
      * @param {Uint8Array} bytes Bytes array to encode
+     * @returns Stream
      */
     writeBytes(bytes) {
         const length = bytes.length
         let bPos = this.pos * 4
         if (length <= 253) {
             this.bBuf[bPos++] = length
+            length++
         } else {
-            length = (length << 8) & 0xFE
-            this.uBuf[this.pos] = length
+            this.writeUnsignedInt((length << 8) | 0xFE)
             bPos += 4
+            length += 4
         }
-        this.bBuf.set(bytes, bPos)
-        bPos += length
-        const pad = posMod(-(bPos - (this.pos * 4)), 4)
-        this.bBuf.fill(0, bPos, pad)
-        bPos += pad
-        this.pos = bPos / 4
+        length += posMod(-length, 4)
+        length /= 4                    // Length in int32
+        this.prepareLength(length - 1) // One int32 is already allocated by the parser
+        this.bBuf.set(bytes, bPos)     // No need to fill the padding (prolly)
+
+        this.pos += length
+        return this
     }
 
+    /**
+     * Encode UTF8 string
+     * @param {string} string String to encode
+     * @returns Stream
+     */
     writeString(string) {
+        string = unescape(encodeURIComponent(bytes))
+
         const ln = string.length
-        const result = Array(ln)
-        for (let i = 0; i < ln; ++i)
+        const result = Uint8Array(ln)
+        for (let i = 0; i < ln; ++i) {
             result[i] = str.charCodeAt(i)
-        
-        string = stringToChars(
-            unescape(
-                encodeURIComponent(
-                    bytes)))
+        }
+
+        this.writeBytes(result)
+        return this
+    }
+    /**
+     * Prepare buffer for serialization adding N more ints of free space
+     * @param {number} more 32-bit ints to add
+     * @returns Stream
+     */
+    prepareLength(more) {
+        if (!more) return this
+        this.aBuf = this.aBuf.transfer(this.aBuf, this.aBuf.length + more * 4)
+        this.iBuf = new int32Array(this.aBuf)
+        this.uBuf = new Uint32Array(this.aBuf)
+        this.bBuf = new Uint8Array(this.aBuf)
+        return this
+    }
+    /**
+     * Get current int32 stream size
+     * @returns number
+     */
+    getSize() {
+        return this.iBuf.length
     }
     /**
      * Get current int32 stream position
@@ -182,12 +219,26 @@ if (bigEndian) { // Big-endian hacks
     Stream.prototype.writeSignedInt = function (value) {
         this.iBuf[this.pos++] = switcheroo(value)
     }
-    // unsigned ints are just used for flags, checked using js-side binary arithmetic so no endianness problems here
-    /*
     Stream.prototype.readUnsignedInt = function () {
         return switcheroo(this.uBuf[this.pos++])
     }
-    */
+    Stream.prototype.writeUnsignedInt = function (value) {
+        this.uBuf[this.pos++] = switcheroo(value)
+    }
 }
+// Polyfill
+if (!ArrayBuffer.transfer) {
+    ArrayBuffer.transfer = function (source, length) {
+        if (!(source instanceof ArrayBuffer))
+            throw new TypeError('Source must be an instance of ArrayBuffer');
+        if (length <= source.byteLength)
+            return source.slice(0, length);
+        var sourceView = new Uint8Array(source),
+            destView = new Uint8Array(new ArrayBuffer(length));
+        destView.set(sourceView);
+        return destView.buffer;
+    };
+}
+
 
 export default Stream;

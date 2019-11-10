@@ -1,7 +1,22 @@
-class TLObjects {
+/**
+ * Custom TL parser based on an unreleased project of mine (madeline.py).
+ * Could've based it on my MadelineProto, but madeline.py's parser is way cleaner.
+ */
+class Objects {
     byId = {}
     byPredicateAndLayer = {}
     layers = []
+
+    basicSizes = {
+        'string': 1,
+        'bytes': 1,
+        'int': 1,
+        '#': 1,
+        'long': 2,
+        'int128': 4,
+        'int256': 8,
+        'double': 2,
+    }
 
     /**
      * Init TLObjects
@@ -27,19 +42,10 @@ class TLObjects {
                 data.push(method);
             }
         }
-        const basicSizes = {
-            'string': 1,
-            'bytes': 1,
-            'int': 1,
-            '#': 1,
-            'long': 2,
-            'int128': 4,
-            'int256': 8,
-            'double': 2,
-        }
         for (let constructor in data) {
-            let minSize = 0
+            let minSize = data['type'] === 'Vector t' ? 1 : 0
 
+            const newParams = {}
             for (let [key, param] of constructor['params']) {
                 param['layer'] = constructor['layer'];
 
@@ -75,12 +81,14 @@ class TLObjects {
                     }
                 }
 
-                if (basicSizes[param['type']] && !param['pow']) {
-                    minSize += basicSizes[param['type']]
+                if (this.basicSizes[param['type']] && !param['pow']) {
+                    minSize += this.basicSizes[param['type']]
                 }
 
-                constructor['params'][key] = param
+                newParams[param['name']] = param
+                delete newParams[param['name']]['name']
             }
+            constructor['params'] = newParams
             constructor['minSize'] = minSize
 
             this.byId[constructor['id']] = constructor
@@ -122,3 +130,4 @@ class TLObjects {
         throw TLError('Could not find object by type ' + type)
     }
 }
+export default Objects

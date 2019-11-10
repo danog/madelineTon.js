@@ -1,31 +1,8 @@
 <head>
-    <script src="typedarray.js"></script>
 </head>
 
 <body>
     <div id="view"></div>
-    <script>// ArrayBuffer -> Blob
-            var uint8Array  = new Uint8Array([1, 2, 3]);
-            var arrayBuffer = uint8Array.buffer;
-            var blob        = new Blob([arrayBuffer]);
-            
-            // Blob -> ArrayBuffer
-            var uint8ArrayNew  = null;
-            var arrayBufferNew = null;
-            var fileReader     = new FileReader();
-            fileReader.onload  = function(event) {
-                arrayBufferNew = event.target.result;
-                uint8ArrayNew  = new Uint8Array(arrayBufferNew);
-            
-                // warn if read values are not the same as the original values
-                // arrayEqual from: http://stackoverflow.com/questions/3115982/how-to-check-javascript-array-equals
-                function arrayEqual(a, b) { return !(a<b || b<a); };
-                if (arrayBufferNew.byteLength !== arrayBuffer.byteLength) // should be 3
-                    console.warn("ArrayBuffer byteLength does not match");
-                if (arrayEqual(uint8ArrayNew, uint8Array) !== true) // should be [1,2,3]
-                    console.warn("Uint8Array does not match");
-            };
-            fileReader.readAsArrayBuffer(blob);
-            fileReader.result; // also accessible this way once the blob has been read</script>
+    <script>console.log(window.crypto)</script>
 <!--        <script src="bin.js"></script>-->
 </body>
