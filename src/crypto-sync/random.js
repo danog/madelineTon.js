@@ -21,7 +21,7 @@ const fastRandom = buffer => {
  */
 let secureRandom;
 if (useWebCryptoRandom) {
-    secureRandom = window.crypto.getRandomValues
+    secureRandom = window.crypto.getRandomValues.bind(window.crypto)
 } else {
     if (window && !useWorkers) {
         window.onclick = rng_seed_time

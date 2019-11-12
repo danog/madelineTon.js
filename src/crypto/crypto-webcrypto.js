@@ -21,14 +21,14 @@ import { incCounter, pad } from "../crypto-sync/crypto"
  * Implementation of native AES CTR continuous buffering
  */
 class CtrProcessor {
-    name = "AES-CTR"
-    by = 0
     /**
      * 
      * @param {Uint32Array} iv 
      * @param {Uint32Array} key 
      */
     constructor(key, iv) {
+        this.name = "AES-CTR"
+        this.by = 0
         this.counter = iv
         this.length = 16
         this.key = key

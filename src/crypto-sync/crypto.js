@@ -156,7 +156,6 @@ export {
     sha1,
     igeEncrypt,
     igeDecrypt,
-    ctr,
     CtrProcessor,
     pad
 }

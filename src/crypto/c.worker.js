@@ -8,7 +8,6 @@ import {
     sha1,
     igeEncrypt,
     igeDecrypt,
-    ctr,
     CtrProcessor
 } from '../crypto-sync/crypto'
 
@@ -41,7 +40,7 @@ onmessage = message => {
             result = ctrWorkers.length
             ctrWorkers.push(new CtrProcessor(message['key'], message['iv']))
             break
-        case 'ctrFinalize':
+        case 'ctrClose':
             if (typeof ctrWorkers[message['id']] !== 'undefined') {
                 ctrWorkers[message['id']].close()
                 delete ctrWorkers[message['id']]

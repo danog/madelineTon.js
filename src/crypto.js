@@ -1,3 +1,4 @@
+import './jsbn_combined.js'
 if (window.msCrypto) {
     useWebCryptoSha1 = false
 }

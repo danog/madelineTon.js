@@ -4,9 +4,9 @@ import {
 import CWorker from './c.worker'
 
 class CryptoWorker {
-    taskId = 0
-    tasks = []
     constructor(timeout) {
+        this.taskId = 0
+        this.tasks = []
         this.timeout = timeout || 5 * 60 // Change later
 
         this.worker = new CWorker()
@@ -85,16 +85,24 @@ class CryptoWorker {
             key,
             iv
         }).then(id => {
-            process: this.asyncCtrTask.bind({
-                wrapper: this,
-                id
-            })
+            return {
+                process: this.asyncCtrTask.bind({
+                    task: 'ctr',
+                    wrapper: this,
+                    id
+                }),
+                close: this.asyncCtrTask.bind({
+                    task: 'ctrClose',
+                    wrapper: this,
+                    id
+                }),
+            }
         })
     }
 
     asyncCtrTask(data) {
         return this.wrapper.asyncTask({
-            task: 'ctr',
+            task: this.task,
             id: this.id,
             data
         })
