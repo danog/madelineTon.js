@@ -155,9 +155,9 @@ class Stream {
             length += 4
         }
         length += posMod(-length, 4)
-        length /= 4                    // Length in int32
+        length /= 4 // Length in int32
         this.prepareLength(length - 1) // One int32 is already allocated by the parser
-        this.bBuf.set(bytes, bPos)     // No need to fill the padding (prolly)
+        this.bBuf.set(bytes, bPos) // No need to fill the padding (prolly)
 
         this.pos += length
         return this
@@ -207,23 +207,36 @@ class Stream {
     getPos() {
         return this.pos
     }
+    /**
+     * Gets buffer
+     * @returns ArrayBuffer
+     */
+    getBuffer() {
+        return this.aBuf
+    }
+    /**
+     * Switch endianness of integer
+     * @param {number} n Number
+     */
+    switcheroo(n) {
+        return ((n >> 24) & 0xff) | ((n << 8) & 0xff0000) | ((n >> 8) & 0xff00) | ((n << 24) & 0xff000000);
+    }
 }
 
 Stream.bigEndian = new Int8Array(new Uint16Array([0x1234]).buffer)[1] === 0x34
 
 if (bigEndian) { // Big-endian hacks
-    const switcheroo = n => ((n >> 24) & 0xff) | ((n << 8) & 0xff0000) | ((n >> 8) & 0xff00) | ((n << 24) & 0xff000000);
     Stream.prototype.readSignedInt = function () {
-        return switcheroo(this.iBuf[this.pos++])
+        return this.switcheroo(this.iBuf[this.pos++])
     }
     Stream.prototype.writeSignedInt = function (value) {
-        this.iBuf[this.pos++] = switcheroo(value)
+        this.iBuf[this.pos++] = this.switcheroo(value)
     }
     Stream.prototype.readUnsignedInt = function () {
-        return switcheroo(this.uBuf[this.pos++])
+        return this.switcheroo(this.uBuf[this.pos++])
     }
     Stream.prototype.writeUnsignedInt = function (value) {
-        this.uBuf[this.pos++] = switcheroo(value)
+        this.uBuf[this.pos++] = this.switcheroo(value)
     }
 }
 // Polyfill

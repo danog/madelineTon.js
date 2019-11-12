@@ -3,6 +3,30 @@
 
 <body>
     <div id="view"></div>
-    <script>console.log(window.crypto)</script>
-<!--        <script src="bin.js"></script>-->
+    <script>
+        console.l = console.log
+        console.log = function (text) {
+            console.l(text);
+            document.getElementById("view").innerHTML += text + "<br>"
+        }
+        var arr = {}
+        console.time = function (label) {
+            arr[label] = Date.now()
+        }
+        console.timeEnd = function (label) {
+            var end = Date.now()
+            console.log(label + " took " + (end - arr[label]))
+        }
+    </script>
+    <script src="jsbn_combined.js"></script>
+    <script src="long.js"></script>
+    <script src="bigint.js"></script>
+    <script src="prime.js"></script>
+    <script src="utils.js"></script>
+    <script>
+        setTimeout(function () {
+            console.log("AAAAAAAAAAAAAAA")
+        }, 1000)
+        pqPrimeFactorization("1724114033281923457")
+    </script>
 </body>

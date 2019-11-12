@@ -1,17 +1,37 @@
+/**
+ * Positive modulo
+ * @param {number} a A
+ * @param {number} b B
+ * @returns number
+ */
 const posMod = (a, b) => {
     const r = -a % b
     return r < 0 ? r + b : r
 }
 
-/**
- * Get cryptographically secure integer modulo mod
- * @param {int} mod Modulo
- * @returns number
- */
-const randomInt = mod => {
-    return window.crypto.getRandomValues(new Uint32Array(1))[0] % (mod || 0xFFFFFFFF)
+const byteToHexMap = Array(0xff);
+
+for (let n = 0; n <= 0xff; ++n) {
+    let hexOctet = n.toString(16);
+    if (hexOctet.length === 1) {
+        hexOctet = "0"+hexOctet
+    }
+    byteToHexMap.push(hexOctet);
 }
+
+/**
+ * Converts bytes to hex string
+ * @param {Uint8Array} bytes Bytes
+ */
+const bytesToHex = bytes => {
+    const arr = Array(bytes.length)
+    for (let i = 0; i < bytes.length; i++) {
+        arr[i] = byteToHexMap[bytes[i]]
+    }
+    return arr.join('')
+}
+
 export {
     posMod,
-    randomInt
+    bytesToHex
 }

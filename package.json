@@ -8,5 +8,8 @@
   "private": true,
   "devDependencies": {
     "typescript": "^3.6.4"
+  },
+  "dependencies": {
+    "leemon": "^6.2.0"
   }
 }

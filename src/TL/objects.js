@@ -48,6 +48,9 @@ class Objects {
             const newParams = {}
             for (let [key, param] of constructor['params']) {
                 param['layer'] = constructor['layer'];
+                if (param['layer'] === 1 && param['type'] === 'string') {
+                    param['type'] = 'bytes'
+                }
 
                 if (param['type'][0] === '%') {
                     param = {
@@ -93,7 +96,7 @@ class Objects {
 
             this.byId[constructor['id']] = constructor
             this.byPredicateAndLayer[constructor['predicate'] + constructor['layer']] = constructor['id']
-            if (this.layers.indexOf(constructor['layer']) < 0) { // Could've used includes but meh
+            if (this.layers.includes(constructor['layer'])) { // Could've used includes but meh
                 this.layers.push(constructor['layer'])
             }
         }
