@@ -1,7 +1,9 @@
 import Stream from "../TL/stream"
 import Rusha from 'rusha'
 import CryptoJS from '../lib/cryptoJS/crypto'
-import { posMod } from "madelineNode/src/tools"
+import {
+    posMod
+} from "madelineNode/src/tools"
 
 /**
  * Increment AES CTR counter (big endian machines)
@@ -126,7 +128,7 @@ class CtrProcessor {
      * @param {Uint32Array} iv 
      * @param {Uint32Array} key 
      */
-    constructor(iv, key) {
+    constructor(key, iv) {
         this.processor = CryptoJS.mode.CTR.createEncryptor(bytesToWords(key), {
             iv: bytesToWords(iv),
             padding: CryptoJS.pad.NoPadding,
@@ -144,6 +146,7 @@ class CtrProcessor {
         }
         return data
     }
+    close() {}
 }
 
 export {

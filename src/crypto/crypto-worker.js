@@ -79,5 +79,25 @@ class CryptoWorker {
             iv
         })
     }
+    getCtr(key, iv) {
+        return this.asyncTask({
+            task: 'initCtr',
+            key,
+            iv
+        }).then(id => {
+            process: this.asyncCtrTask.bind({
+                wrapper: this,
+                id
+            })
+        })
+    }
+
+    asyncCtrTask(data) {
+        return this.wrapper.asyncTask({
+            task: 'ctr',
+            id: this.id,
+            data
+        })
+    }
 }
 export default CryptoWorker

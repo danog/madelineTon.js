@@ -53,8 +53,8 @@ class CryptoSync {
      * @param {BufferSource} key 
      * @returns CtrProcessor
      */
-    getCtr(iv, key) {
-        return new SyncPromiseProcessor(iv, key)
+    getCtr(key, iv) {
+        return Promise.resolve(new SyncPromiseProcessor(key, iv))
     }
 }
 export default CryptoSync

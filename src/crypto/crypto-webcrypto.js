@@ -28,7 +28,7 @@ class CtrProcessor {
      * @param {Uint32Array} iv 
      * @param {Uint32Array} key 
      */
-    constructor(iv, key) {
+    constructor(key, iv) {
         this.counter = iv
         this.length = 16
         this.key = key
@@ -43,6 +43,7 @@ class CtrProcessor {
         this.by = data.byteLength / 16
         return window.crypto.subtle.encrypt(this, this.key, data)
     }
+    close() {}
 }
 /**
  * Webcrypto implementation
@@ -70,8 +71,8 @@ class CryptoWebCrypto {
      * @param {Uint32Array} key 
      * @returns CtrProcessor
      */
-    getCtrProcessor(iv, key) {
-        return new CtrProcessor(iv, key)
+    getCtrProcessor(key, iv) {
+        return Promise.resolve(new CtrProcessor(key, iv))
     }
 }
 
