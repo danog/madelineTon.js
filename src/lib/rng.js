@@ -4,6 +4,7 @@
 // <body onClick='rng_seed_time();' onKeyPress='rng_seed_time();'>
 // in your main HTML document.
 
+import { prng_newstate } from './prng4'
 // Pool size must be a multiple of 4 and greater than 32.
 // An array of bytes the size of the pool will be passed to init()
 var rng_psize = 256;
@@ -18,7 +19,7 @@ function rng_seed_int(x) {
   rng_pool[rng_pptr++] ^= (x >> 8) & 255;
   rng_pool[rng_pptr++] ^= (x >> 16) & 255;
   rng_pool[rng_pptr++] ^= (x >> 24) & 255;
-  if(rng_pptr >= rng_psize) rng_pptr -= rng_psize;
+  if (rng_pptr >= rng_psize) rng_pptr -= rng_psize;
 }
 
 // Mix in the current time (w/milliseconds) into the pool
@@ -27,24 +28,24 @@ function rng_seed_time() {
 }
 
 // Initialize the pool with junk if needed.
-if(rng_pool == null) {
+if (rng_pool == null) {
   rng_pool = new Array();
   rng_pptr = 0;
   var t;
-  if(window.crypto && window.crypto.getRandomValues) {
+  if (window.crypto && window.crypto.getRandomValues) {
     // Use webcrypto if available
     var ua = new Uint8Array(32);
     window.crypto.getRandomValues(ua);
-    for(t = 0; t < 32; ++t)
+    for (t = 0; t < 32; ++t)
       rng_pool[rng_pptr++] = ua[t];
   }
-  if(navigator.appName == "Netscape" && navigator.appVersion < "5" && window.crypto) {
+  if (navigator.appName == "Netscape" && navigator.appVersion < "5" && window.crypto) {
     // Extract entropy (256 bits) from NS4 RNG if available
     var z = window.crypto.random(32);
-    for(t = 0; t < z.length; ++t)
+    for (t = 0; t < z.length; ++t)
       rng_pool[rng_pptr++] = z.charCodeAt(t) & 255;
-  }  
-  while(rng_pptr < rng_psize) {  // extract some randomness from Math.random()
+  }
+  while (rng_pptr < rng_psize) { // extract some randomness from Math.random()
     t = Math.floor(65536 * Math.random());
     rng_pool[rng_pptr++] = t >>> 8;
     rng_pool[rng_pptr++] = t & 255;
@@ -56,11 +57,11 @@ if(rng_pool == null) {
 }
 
 function rng_get_byte() {
-  if(rng_state == null) {
+  if (rng_state == null) {
     rng_seed_time();
     rng_state = prng_newstate();
     rng_state.init(rng_pool);
-    for(rng_pptr = 0; rng_pptr < rng_pool.length; ++rng_pptr)
+    for (rng_pptr = 0; rng_pptr < rng_pool.length; ++rng_pptr)
       rng_pool[rng_pptr] = 0;
     rng_pptr = 0;
     //rng_pool = null;
@@ -71,5 +72,15 @@ function rng_get_byte() {
 
 function rng_get_bytes(ba) {
   var i;
-  for(i = 0; i < ba.length; ++i) ba[i] = rng_get_byte();
+  for (i = 0; i < ba.length; ++i) ba[i] = rng_get_byte();
+}
+
+
+export {
+  rng_get_byte,
+  rng_get_bytes,
+  rng_pool,
+  rng_seed_int,
+  rng_seed_time,
+  rng_state
 }

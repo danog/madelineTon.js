@@ -1,5 +1,4 @@
-import '../lib/prng4'
-import '../lib/rng'
+import { rng_seed_time, rng_get_bytes } from '../lib/rng'
 import { useWebCryptoRandom, useWorkers } from './poly'
 
 /**

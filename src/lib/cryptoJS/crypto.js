@@ -2058,3 +2058,5 @@ code.google.com/p/crypto-js/wiki/License
      */
     C.HmacSHA256 = Hasher._createHmacHelper(SHA256);
 }(Math));
+
+export default CryptoJS
