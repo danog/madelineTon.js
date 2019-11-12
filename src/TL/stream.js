@@ -218,7 +218,7 @@ class Stream {
      * Switch endianness of integer
      * @param {number} n Number
      */
-    switcheroo(n) {
+    static switcheroo(n) {
         return ((n >> 24) & 0xff) | ((n << 8) & 0xff0000) | ((n >> 8) & 0xff00) | ((n << 24) & 0xff000000);
     }
 }

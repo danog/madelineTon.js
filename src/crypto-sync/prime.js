@@ -182,40 +182,23 @@ const leemon = what => {
     return toBuffers(bigInt2str(P, 10), bigInt2str(Q, 10))
 }
 
-let factorize
-
-if (typeof Worker === 'undefined') { // Old machine
-    factorize = what => {
-        try {
-            return leemon(what)
-        } catch (e) {
-            console.log("Error while factorizing with leemon: " + e)
-        }
-        try {
-            return long(what)
-        } catch (e) {
-            console.log("Error while factorizing with long: " + e)
-        }
-    }
-} else {
-    factorize = what => {
-        try {
-            return long(what)
-        } catch (e) {
-            console.log("Error while factorizing with long: " + e)
-        }
-        try {
-            return leemon(what)
-        } catch (e) {
-            console.log("Error while factorizing with leemon: " + e)
-        }
-    }
-}
-
 /**
  * Universal factorization
  * 
  * @param {Uint8Array} Array of bytes with PQ
  * @returns Uint8Array[] Factors
  */
+const factorize = what => {
+    try {
+        return long(what)
+    } catch (e) {
+        console.log("Error while factorizing with long: " + e)
+    }
+    try {
+        return leemon(what)
+    } catch (e) {
+        console.log("Error while factorizing with leemon: " + e)
+    }
+}
+
 export default factorize

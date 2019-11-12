@@ -1,19 +1,19 @@
 import {
     useWebCryptoRandom
 } from "../crypto-sync/poly";
-import CWorker from './crypto.worker'
+import CWorker from './c.worker'
 
 class CryptoWorker {
     taskId = 0
     tasks = []
     constructor(timeout) {
-        this.timeout = timeout || 2000
+        this.timeout = timeout || 5 * 60 // Change later
 
         this.worker = new CWorker()
         if (!useWebCryptoRandom && window) {
-            window.onkeydown = window.onclick = this.worker.postMessage({
+            window.onkeydown = window.onclick = () => this.worker.postMessage({
                 task: 'seed'
-            }).bind(this.worker)
+            })
         }
         this.worker.onmessage = this.onMessage.bind(this)
     }
@@ -49,6 +49,34 @@ class CryptoWorker {
         return this.asyncTask({
             task: 'secureRandom',
             mod
+        })
+    }
+    sha1(buffer) {
+        return this.asyncTask({
+            task: 'sha1',
+            buffer
+        })
+    }
+    sha256(buffer) {
+        return this.asyncTask({
+            task: 'sha256',
+            buffer
+        })
+    }
+    igeEncrypt(data, key, iv) {
+        return this.asyncTask({
+            task: 'igeEncrypt',
+            data,
+            key,
+            iv
+        })
+    }
+    igeDecrypt(data, key, iv) {
+        return this.asyncTask({
+            task: 'igeDecrypt',
+            data,
+            key,
+            iv
         })
     }
 }

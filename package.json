@@ -10,6 +10,7 @@
     "typescript": "^3.6.4"
   },
   "dependencies": {
-    "leemon": "^6.2.0"
+    "leemon": "^6.2.0",
+    "rusha": "^0.8.13"
   }
 }

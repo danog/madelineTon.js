@@ -7,6 +7,11 @@ leemon@^6.2.0:
   resolved "https://registry.yarnpkg.com/leemon/-/leemon-6.2.0.tgz#85ff020d9dc5959d0837ed816f01fd2c3849ceb2"
   integrity sha512-a5ieuGSGEb5ezCL6UNds5//cVFaKpeexVK0VDCE8/eOF0r0/9Og94LQ33U2Px5dUcHVCDPWQY8gXLgDlDJnyyg==
 
+rusha@^0.8.13:
+  version "0.8.13"
+  resolved "https://registry.yarnpkg.com/rusha/-/rusha-0.8.13.tgz#9a084e7b860b17bff3015b92c67a6a336191513a"
+  integrity sha1-mghOe4YLF7/zAVuSxnpqM2GRUTo=
+
 typescript@^3.6.4:
   version "3.6.4"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.6.4.tgz#b18752bb3792bc1a0281335f7f6ebf1bbfc5b91d"

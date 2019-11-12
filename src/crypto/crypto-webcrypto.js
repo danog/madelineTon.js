@@ -38,40 +38,39 @@ class Ctr {
      * @param {BufferSource} data Data to encrypt
      */
     process(data) {
-        this.incCounter(this.by)
+        incCounter(this.counter, this.by)
         this.by = (data.BYTES_PER_ELEMENT * data.length) / 16
         return window.crypto.subtle.encrypt(this, this.key, data)
     }
 }
-Ctr.prototype.incCounter = incCounter
-
+/**
+ * Webcrypto implementation
+ */
 class CryptoWebCrypto {
+    /**
+     * SHA1
+     * @param {BufferSource} data Data to hash
+     * @returns Uint8Array
+     */
     sha1(data) {
         return window.crypto.subtle.digest('SHA-1', data)
     }
+    /**
+     * SHA256
+     * @param {BufferSource} data Data to hash
+     * @returns Uint8Array
+     */
     sha256(data) {
         return window.crypto.subtle.digest('SHA-256', data)
     }
+    /**
+     * Get continuous CTR processor
+     * @param {Uint32Array} iv 
+     * @param {BufferSource} key 
+     * @returns Ctr
+     */
     getCtr(iv, key) {
         return new Ctr(iv, key)
-    }
-    factorize(what) {
-        return this.asyncTask({
-            task: 'factorize',
-            what
-        })
-    }
-    secureRandom(buffer) {
-        return this.asyncTask({
-            task: 'secureRandom',
-            buffer
-        })
-    }
-    secureRandomInt(mod) {
-        return this.asyncTask({
-            task: 'secureRandom',
-            mod
-        })
     }
 }
 
