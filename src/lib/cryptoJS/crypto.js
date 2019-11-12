@@ -956,7 +956,7 @@ CryptoJS.lib.Cipher || (function (undefined) {
          *
          * @example
          *
-         *     var mode = CryptoJS.mode.CBC.createEncryptor(cipher, iv.words);
+         *     var mode = CryptoJS.mode.CTR.createEncryptor(cipher, iv.words);
          */
         createEncryptor: function (cipher, iv) {
             return this.Encryptor.create(cipher, iv);
@@ -972,7 +972,7 @@ CryptoJS.lib.Cipher || (function (undefined) {
          *
          * @example
          *
-         *     var mode = CryptoJS.mode.CBC.createDecryptor(cipher, iv.words);
+         *     var mode = CryptoJS.mode.CTR.createDecryptor(cipher, iv.words);
          */
         createDecryptor: function (cipher, iv) {
             return this.Decryptor.create(cipher, iv);
@@ -986,105 +986,13 @@ CryptoJS.lib.Cipher || (function (undefined) {
          *
          * @example
          *
-         *     var mode = CryptoJS.mode.CBC.Encryptor.create(cipher, iv.words);
+         *     var mode = CryptoJS.mode.CTR.Encryptor.create(cipher, iv.words);
          */
         init: function (cipher, iv) {
             this._cipher = cipher;
             this._iv = iv;
         }
     });
-
-    /**
-     * Cipher Block Chaining mode.
-     */
-    var CBC = C_mode.CBC = (function () {
-        /**
-         * Abstract base CBC mode.
-         */
-        var CBC = BlockCipherMode.extend();
-
-        /**
-         * CBC encryptor.
-         */
-        CBC.Encryptor = CBC.extend({
-            /**
-             * Processes the data block at offset.
-             *
-             * @param {Array} words The data words to operate on.
-             * @param {number} offset The offset where the block starts.
-             *
-             * @example
-             *
-             *     mode.processBlock(data.words, offset);
-             */
-            processBlock: function (words, offset) {
-                // Shortcuts
-                var cipher = this._cipher;
-                var blockSize = cipher.blockSize;
-
-                // XOR and encrypt
-                xorBlock.call(this, words, offset, blockSize);
-                cipher.encryptBlock(words, offset);
-
-                // Remember this block to use with next block
-                this._prevBlock = words.slice(offset, offset + blockSize);
-            }
-        });
-
-        /**
-         * CBC decryptor.
-         */
-        CBC.Decryptor = CBC.extend({
-            /**
-             * Processes the data block at offset.
-             *
-             * @param {Array} words The data words to operate on.
-             * @param {number} offset The offset where the block starts.
-             *
-             * @example
-             *
-             *     mode.processBlock(data.words, offset);
-             */
-            processBlock: function (words, offset) {
-                // Shortcuts
-                var cipher = this._cipher;
-                var blockSize = cipher.blockSize;
-
-                // Remember this block to use with next block
-                var thisBlock = words.slice(offset, offset + blockSize);
-
-                // Decrypt and XOR
-                cipher.decryptBlock(words, offset);
-                xorBlock.call(this, words, offset, blockSize);
-
-                // This block becomes the previous block
-                this._prevBlock = thisBlock;
-            }
-        });
-
-        function xorBlock(words, offset, blockSize) {
-            // Shortcut
-            var iv = this._iv;
-
-            // Choose mixing block
-            if (iv) {
-                var block = iv;
-
-                // Remove IV for subsequent blocks
-                this._iv = undefined;
-            } else {
-                var block = this._prevBlock;
-            }
-
-            // XOR blocks
-            for (var i = 0; i < blockSize; i++) {
-                words[offset + i] ^= block[i];
-            }
-        }
-
-        return CBC;
-    }());
-
 
     /**
      * Infinite Garble Extension mode.
@@ -1309,11 +1217,11 @@ CryptoJS.lib.Cipher || (function (undefined) {
         /**
          * Configuration options.
          *
-         * @property {Mode} mode The block mode to use. Default: CBC
+         * @property {Mode} mode The block mode to use. Default: CTR
          * @property {Padding} padding The padding strategy to use. Default: Pkcs7
          */
         cfg: Cipher.cfg.extend({
-            mode: CBC,
+            mode: CTR,
             padding: Pkcs7
         }),
 
@@ -1394,7 +1302,7 @@ CryptoJS.lib.Cipher || (function (undefined) {
          *         iv: ivWordArray,
          *         salt: saltWordArray,
          *         algorithm: CryptoJS.algo.AES,
-         *         mode: CryptoJS.mode.CBC,
+         *         mode: CryptoJS.mode.CTR,
          *         padding: CryptoJS.pad.PKCS7,
          *         blockSize: 4,
          *         formatter: CryptoJS.format.OpenSSL
@@ -2149,3 +2057,5 @@ code.google.com/p/crypto-js/wiki/License
      */
     C.HmacSHA256 = Hasher._createHmacHelper(SHA256);
 }(Math));
+
+export default CryptoJS;

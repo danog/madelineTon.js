@@ -15,18 +15,18 @@
  * @license   https://opensource.org/licenses/AGPL-3.0 AGPLv3
  */
 
-import { incCounter } from "../crypto-sync/crypto"
+import { incCounter, pad } from "../crypto-sync/crypto"
 
 /**
  * Implementation of native AES CTR continuous buffering
  */
-class Ctr {
+class CtrProcessor {
     name = "AES-CTR"
     by = 0
     /**
      * 
      * @param {Uint32Array} iv 
-     * @param {BufferSource} key 
+     * @param {Uint32Array} key 
      */
     constructor(iv, key) {
         this.counter = iv
@@ -38,8 +38,9 @@ class Ctr {
      * @param {BufferSource} data Data to encrypt
      */
     process(data) {
+        data = pad(data, 16)
         incCounter(this.counter, this.by)
-        this.by = (data.BYTES_PER_ELEMENT * data.length) / 16
+        this.by = data.byteLength / 16
         return window.crypto.subtle.encrypt(this, this.key, data)
     }
 }
@@ -66,11 +67,11 @@ class CryptoWebCrypto {
     /**
      * Get continuous CTR processor
      * @param {Uint32Array} iv 
-     * @param {BufferSource} key 
-     * @returns Ctr
+     * @param {Uint32Array} key 
+     * @returns CtrProcessor
      */
-    getCtr(iv, key) {
-        return new Ctr(iv, key)
+    getCtrProcessor(iv, key) {
+        return new CtrProcessor(iv, key)
     }
 }
 

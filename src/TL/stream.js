@@ -6,12 +6,12 @@ import {
  * Using int*Array instead of DataView due to greater performance on older chrome browsers (might eventually also do a DataView wrapper)
  */
 class Stream {
-    pos = 0
     /**
      * 
      * @param {ArrayBuffer} aBuf Buffer
      */
     constructor(aBuf) {
+        this.pos = 0
         this.aBuf = aBuf
         this.iBuf = new int32Array(this.aBuf)
         this.uBuf = new Uint32Array(this.aBuf)
@@ -225,7 +225,7 @@ class Stream {
 
 Stream.bigEndian = new Int8Array(new Uint16Array([0x1234]).buffer)[1] === 0x34
 
-if (bigEndian) { // Big-endian hacks
+if (Stream.bigEndian) { // Big-endian hacks
     Stream.prototype.readSignedInt = function () {
         return this.switcheroo(this.iBuf[this.pos++])
     }
