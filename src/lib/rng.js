@@ -5,6 +5,7 @@
 // in your main HTML document.
 
 import { prng_newstate } from './prng4'
+import { windowObject } from '../crypto-sync/poly';
 // Pool size must be a multiple of 4 and greater than 32.
 // An array of bytes the size of the pool will be passed to init()
 var rng_psize = 256;
@@ -32,16 +33,16 @@ if (rng_pool == null) {
   rng_pool = new Array();
   rng_pptr = 0;
   var t;
-  if (window.crypto && window.crypto.getRandomValues) {
+  if (windowObject.crypto && windowObject.crypto.getRandomValues) {
     // Use webcrypto if available
     var ua = new Uint8Array(32);
-    window.crypto.getRandomValues(ua);
+    windowObject.crypto.getRandomValues(ua);
     for (t = 0; t < 32; ++t)
       rng_pool[rng_pptr++] = ua[t];
   }
-  if (navigator.appName == "Netscape" && navigator.appVersion < "5" && window.crypto) {
+  if (navigator.appName == "Netscape" && navigator.appVersion < "5" && windowObject.crypto) {
     // Extract entropy (256 bits) from NS4 RNG if available
-    var z = window.crypto.random(32);
+    var z = windowObject.crypto.random(32);
     for (t = 0; t < z.length; ++t)
       rng_pool[rng_pptr++] = z.charCodeAt(t) & 255;
   }
@@ -52,8 +53,6 @@ if (rng_pool == null) {
   }
   rng_pptr = 0;
   rng_seed_time();
-  //rng_seed_int(window.screenX);
-  //rng_seed_int(window.screenY);
 }
 
 function rng_get_byte() {

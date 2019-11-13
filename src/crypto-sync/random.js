@@ -1,9 +1,9 @@
 import { rng_seed_time, rng_get_bytes } from '../lib/rng'
-import { useWebCryptoRandom, useWorkers } from './poly'
+import { useWebCryptoRandom, useWorkers, windowObject } from './poly'
 
 /**
  * Fill array with non-cryptographically secure random values
- * @param {%TypedArray%} buffer Buffer to fill
+ * @param {BufferSource} buffer Buffer to fill
  */
 const fastRandom = buffer => {
     let myBuf = buffer;
@@ -16,13 +16,13 @@ const fastRandom = buffer => {
 
 /**
  * Fill array with cryptographically secure random values
- * @param {TypedArray} buffer Buffer to fill
+ * @param {BufferSource} buffer Buffer to fill
  */
 let secureRandom;
 if (useWebCryptoRandom) {
-    secureRandom = window.crypto.getRandomValues.bind(window.crypto)
+    secureRandom = windowObject.crypto.getRandomValues.bind(windowObject.crypto)
 } else {
-    if (window && !useWorkers) {
+    if (typeof window !== 'undefined' && !useWorkers) {
         window.onclick = rng_seed_time
         window.onkeydown = rng_seed_time
     }

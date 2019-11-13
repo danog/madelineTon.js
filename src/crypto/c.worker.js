@@ -13,6 +13,7 @@ import {
 
 let ctrWorkers = []
 onmessage = message => {
+    message = message['data']
     let result
     switch (message['task']) {
         case 'factorize':
@@ -41,13 +42,13 @@ onmessage = message => {
             ctrWorkers.push(new CtrProcessor(message['key'], message['iv']))
             break
         case 'ctrClose':
-            if (typeof ctrWorkers[message['id']] !== 'undefined') {
-                ctrWorkers[message['id']].close()
-                delete ctrWorkers[message['id']]
+            if (typeof ctrWorkers[message['ctrId']] !== 'undefined') {
+                ctrWorkers[message['ctrId']].close()
+                delete ctrWorkers[message['ctrId']]
             }
             break
         case 'ctr':
-            result = ctrWorkers[message['id']].process(message['data'])
+            result = ctrWorkers[message['ctrId']].process(message['data'])
             break
         case 'seed':
             rng_seed_time()

@@ -1,9 +1,6 @@
 import Stream from "../TL/stream"
 import Rusha from 'rusha'
 import CryptoJS from '../lib/cryptoJS/crypto'
-import {
-    posMod
-} from "madelineNode/src/tools"
 
 /**
  * Increment AES CTR counter (big endian machines)
@@ -45,15 +42,24 @@ const incCounter = Stream.bigEndian ? incCounterBigEndian : incCounterLittleEndi
 
 /**
  * Pad buffer
- * @param {ArrayBuffer} buffer Buffer
- * @param {number}      size   Pad to a multiple of this
- * @returns ArrayBuffer
+ * @param {BufferSource} buffer Buffer
+ * @param {number}       size   Pad to a multiple of this (must be a multiple of 4)
+ * @returns {ArrayBuffer} Padded array
  */
-const pad = (buffer, size) => buffer.byteLength % size ? ArrayBuffer.transfer(buffer, buffer.byteLength + posMod(-buffer.byteLength, size)) : buffer
+const pad = (buffer, size) => {
+    if (!(buffer instanceof ArrayBuffer)) {
+        buffer = buffer.buffer
+    }
+    const mod = buffer.length % size
+    if (mod) {
+        return ArrayBuffer.transfer(buffer, buffer.length + (size - mod))
+    }
+    return buffer
+}
 /**
  * Convert Uint32Array to CryptoJS big-endian int32 buffer
  * @param {Uint32Array} buffer Buffer
- * @returns CryptoJS.lib.WordArray
+ * @returns {CryptoJS.lib.WordArray}
  */
 const bytesToWordsBigEndian = buffer => new CryptoJS.lib.WordArray.init(buffer)
 const bytesToWordsLittleEndian = buffer => new CryptoJS.lib.WordArray.init(buffer.map(Stream.switcheroo))
@@ -62,7 +68,7 @@ const bytesToWords = Stream.bigEndian ? bytesToWordsBigEndian : bytesToWordsLitt
 /**
  * Convert CryptoJS big-endian int32 buffer to Uint32Array
  * @param {CryptoJS.lib.WordArray} buffer Buffer
- * @returns Uint32Array
+ * @returns {Uint32Array}
  */
 const wordsToBytesBigEndian = buffer => Uint32Array.from(buffer.words)
 const wordsToBytesLittleEndian = buffer => Uint32Array.from(buffer.words, Stream.switcheroo)
@@ -70,21 +76,21 @@ const wordsToBytes = Stream.bigEndian ? wordsToBytesBigEndian : wordsToBytesLitt
 
 /**
  * SHA256 hash
- * @param {Uint8Array} data Data to hash
+ * @param {Uint32Array} data Data to hash
  */
 const sha256 = data => bytesFromWords(CryptoJS.SHA256(bytesToWords(data)))
 
 const rushaInstance = new Rusha(1024 * 1024)
 /**
  * SHA1 hash
- * @param {Uint8Array} data Data to hash
- * @returns int32Array
+ * @param {Uint32Array} data Data to hash
+ * @returns {Uint32Array}
  */
 const sha1 = rushaInstance.rawDigest.bind(rushaInstance)
 
 /**
  * Encrypt using AES IGE
- * @param {BufferSource} data 
+ * @param {Uint32Array} data 
  * @param {Uint32Array} key 
  * @param {Uint32Array} iv 
  * @returns {Uint32Array}
@@ -102,7 +108,7 @@ const igeEncrypt = (data, key, iv) => wordsToBytes(
 
 /**
  * Decrypt using AES IGE
- * @param {BufferSource} data 
+ * @param {Uint32Array} data 
  * @param {Uint32Array} key 
  * @param {Uint32Array} iv 
  * @returns {Uint32Array}
@@ -124,7 +130,7 @@ const igeDecrypt = (data, key, iv) => wordsToBytes(
  */
 class CtrProcessor {
     /**
-     * 
+     * Init processor
      * @param {Uint32Array} iv 
      * @param {Uint32Array} key 
      */
@@ -137,14 +143,15 @@ class CtrProcessor {
     /**
      * Encrypt data
      * @param {BufferSource} data Data to encrypt
+     * @returns {Uint32Array}
      */
     process(data) {
-        data = bytesToWords(pad(data, 16))
+        data = bytesToWords(new Uint32Array(pad(data, 16)))
         const len = data.length
         for (let x = 0; x < len; x += 4) {
             this.processor.processBlock(data, x)
         }
-        return data
+        return wordsToBytes(data)
     }
     close() {}
 }

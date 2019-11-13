@@ -15,14 +15,20 @@
  * @license   https://opensource.org/licenses/AGPL-3.0 AGPLv3
  */
 
-import { incCounter, pad } from "../crypto-sync/crypto"
+import {
+    incCounter,
+    pad
+} from "../crypto-sync/crypto"
+import {
+    windowObject
+} from "../crypto-sync/poly"
 
 /**
  * Implementation of native AES CTR continuous buffering
  */
 class CtrProcessor {
     /**
-     * 
+     * Init processor
      * @param {Uint32Array} iv 
      * @param {Uint32Array} key 
      */
@@ -31,17 +37,22 @@ class CtrProcessor {
         this.by = 0
         this.counter = iv
         this.length = 16
-        this.key = key
+        this.keyPromise = windowObject.crypto.subtle.importKey("raw", key.buffer, "AES-CTR", false, ["encrypt"])
+        this.keyPromise.then(key => this.key = key)
+    }
+    getInitPromise() {
+        return this.keyPromise.then(() => this)
     }
     /**
      * Encrypt data
      * @param {BufferSource} data Data to encrypt
+     * @returns {Uint32Array}
      */
     process(data) {
         data = pad(data, 16)
         incCounter(this.counter, this.by)
-        this.by = data.byteLength / 16
-        return window.crypto.subtle.encrypt(this, this.key, data)
+        this.by = data.length / 16
+        return windowObject.crypto.subtle.encrypt(this, this.key, data)
     }
     close() {}
 }
@@ -55,7 +66,7 @@ class CryptoWebCrypto {
      * @returns Uint8Array
      */
     sha1(data) {
-        return window.crypto.subtle.digest('SHA-1', data)
+        return windowObject.crypto.subtle.digest('SHA-1', data)
     }
     /**
      * SHA256
@@ -63,7 +74,7 @@ class CryptoWebCrypto {
      * @returns Uint8Array
      */
     sha256(data) {
-        return window.crypto.subtle.digest('SHA-256', data)
+        return windowObject.crypto.subtle.digest('SHA-256', data)
     }
     /**
      * Get continuous CTR processor
@@ -71,8 +82,8 @@ class CryptoWebCrypto {
      * @param {Uint32Array} key 
      * @returns CtrProcessor
      */
-    getCtrProcessor(key, iv) {
-        return Promise.resolve(new CtrProcessor(key, iv))
+    getCtr(key, iv) {
+        return new CtrProcessor(key, iv).getInitPromise()
     }
 }
 

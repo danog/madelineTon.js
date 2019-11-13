@@ -1,9 +1,7 @@
 import Stream from "./stream"
 import Objects from './objects'
 import TLException from "./exception"
-import {
-    randomInt
-} from "../tools"
+import { fastRandom, fastRandomInt, secureRandom } from "../crypto-sync/random"
 
 /**
  * Custom TL parser based on an unreleased project of mine (madeline.py).
@@ -168,16 +166,17 @@ class Parser {
                     continue
                 }
                 if (key === 'random_bytes') {
-                    stream.writeBytes(window.crypto.getRandomValues(new Uint8Array(15 + 4 * randomInt(3))))
+                    // This should run in a worker
+                    stream.writeBytes(secureRandom(new Uint8Array(15 + 4 * fastRandomInt(3))))
                     continue
                 }
                 if (key === 'random_id') {
                     switch (param['type']) {
                         case 'long':
-                            stream.writeUnsignedInts(window.crypto.getRandomValues(new Uint32Array(2)))
+                            stream.writeUnsignedInts(fastRandom(new Uint32Array(2)))
                             break
                         case 'int':
-                            stream.writeUnsignedInts(window.crypto.getRandomValues(new Uint32Array(1)))
+                            stream.writeUnsignedInts(fastRandom(new Uint32Array(1)))
                             break
                         case 'Vector t':
                             if (data['id']) {
@@ -185,7 +184,7 @@ class Parser {
                                 if (!param['predicate']) {
                                     stream.prepareLength(1).writeSignedInt(this.objects.findByPredicateAndLayer('vector', type['layer'])['id'])
                                 }
-                                stream.prepareLength(1 + len * 2).writeUnsignedInt(len).writeUnsignedInts(window.crypto.getRandomValues(new Uint32Array(len * 2)))
+                                stream.prepareLength(1 + len * 2).writeUnsignedInt(len).writeUnsignedInts(fastRandom(new Uint32Array(len * 2)))
                                 break
                             }
                             // Fall through
