@@ -958,7 +958,7 @@ CryptoJS.lib.Cipher || (function (undefined) {
          *
          * @example
          *
-         *     var mode = CryptoJS.mode.CTR.createEncryptor(cipher, iv.words);
+         *     var mode = CryptoJS.mode.IGE.createEncryptor(cipher, iv.words);
          */
         createEncryptor: function (cipher, iv) {
             return this.Encryptor.create(cipher, iv);
@@ -974,7 +974,7 @@ CryptoJS.lib.Cipher || (function (undefined) {
          *
          * @example
          *
-         *     var mode = CryptoJS.mode.CTR.createDecryptor(cipher, iv.words);
+         *     var mode = CryptoJS.mode.IGE.createDecryptor(cipher, iv.words);
          */
         createDecryptor: function (cipher, iv) {
             return this.Decryptor.create(cipher, iv);
@@ -988,7 +988,7 @@ CryptoJS.lib.Cipher || (function (undefined) {
          *
          * @example
          *
-         *     var mode = CryptoJS.mode.CTR.Encryptor.create(cipher, iv.words);
+         *     var mode = CryptoJS.mode.IGE.Encryptor.create(cipher, iv.words);
          */
         init: function (cipher, iv) {
             this._cipher = cipher;
@@ -1097,57 +1097,6 @@ CryptoJS.lib.Cipher || (function (undefined) {
 
         return IGE;
     }());
-    /*
-    CryptoJS v3.1.2
-    code.google.com/p/crypto-js
-    (c) 2009-2013 by Jeff Mott. All rights reserved.
-    code.google.com/p/crypto-js/wiki/License
-    */
-    /**
-     * Counter block mode.
-     */
-    var CTR = C_mode.CTR = (function () {
-        var CTR = BlockCipherMode.extend();
-
-        var Encryptor = CTR.Encryptor = CTR.extend({
-            processBlock: function (words, offset) {
-                // Shortcuts
-                var cipher = this._cipher
-                var blockSize = cipher.blockSize;
-                var iv = this._iv;
-                var counter = this._counter;
-
-                // Generate keystream
-                if (iv) {
-                    counter = this._counter = iv.slice(0);
-
-                    // Remove IV for subsequent blocks
-                    this._iv = undefined;
-                }
-
-                var keystream = counter.slice(0);
-                console.log(keystream)
-                cipher.encryptBlock(keystream, 0);
-                console.log(keystream)
-
-                // Increment counter
-                //this._counter = incCounterBigEndian(counter, by)
-
-                // Encrypt
-                for (var i = 0; i < blockSize; i++) {
-                    words[offset + i] ^= keystream[i];
-                }
-            },
-            increment: function () {
-                console.log("increment pls")
-                this._counter = incCounterBigEndian(this._counter, 1)
-            }
-        });
-
-        CTR.Decryptor = Encryptor;
-
-        return CTR;
-    }());
 
     /**
      * Padding namespace.
@@ -1227,11 +1176,11 @@ CryptoJS.lib.Cipher || (function (undefined) {
         /**
          * Configuration options.
          *
-         * @property {Mode} mode The block mode to use. Default: CTR
+         * @property {Mode} mode The block mode to use. Default: IGE
          * @property {Padding} padding The padding strategy to use. Default: Pkcs7
          */
         cfg: Cipher.cfg.extend({
-            mode: CTR,
+            mode: IGE,
             padding: Pkcs7
         }),
 
@@ -1312,7 +1261,7 @@ CryptoJS.lib.Cipher || (function (undefined) {
          *         iv: ivWordArray,
          *         salt: saltWordArray,
          *         algorithm: CryptoJS.algo.AES,
-         *         mode: CryptoJS.mode.CTR,
+         *         mode: CryptoJS.mode.IGE,
          *         padding: CryptoJS.pad.PKCS7,
          *         blockSize: 4,
          *         formatter: CryptoJS.format.OpenSSL

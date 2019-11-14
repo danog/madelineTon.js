@@ -13,7 +13,9 @@ import {
 
 const SyncPromiseProcessor = CtrProcessor
 SyncPromiseProcessor.prototype.processInternal = SyncPromiseProcessor.prototype.process
-SyncPromiseProcessor.prototype.process = data => Promise.resolve(this.processInternal(data))
+SyncPromiseProcessor.prototype.process = function(data) {
+    return Promise.resolve(this.processInternal(data))
+}
 
 class CryptoSync {
     /**

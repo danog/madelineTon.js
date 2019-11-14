@@ -1,7 +1,9 @@
 import Stream from "../TL/stream"
 import Rusha from 'rusha'
 import CryptoJS from '../lib/cryptoJS/crypto'
-import { posMod } from "../tools"
+import {
+    posMod
+} from "../tools"
 
 /**
  * Increment AES CTR counter (big endian machines)
@@ -75,6 +77,7 @@ const wordsToBytesLittleEndian = buffer => Uint32Array.from(buffer.words.map(Str
 const wordsToBytesBigEndian = buffer => Uint32Array.from(buffer.words).buffer
 const wordsToBytes = Stream.bigEndian ? wordsToBytesBigEndian : wordsToBytesLittleEndian
 
+const toBigEndian = Stream.bigEndian ? (buffer => buffer) : buffer => buffer.map(Stream.switcheroo)
 /**
  * SHA256 hash
  * @param {ArrayBuffer} data Data to hash
@@ -136,8 +139,16 @@ class CtrProcessor {
      * @param {Uint32Array} iv 
      */
     constructor(key, iv) {
-        this.processor = CryptoJS.mode.CTR.createEncryptor(CryptoJS.algo.AES.createEncryptor(bytesToWords(key.map)), iv)
+        this.counter = iv
         this.leftover = new Uint8Array(0)
+        this.processor = CryptoJS.algo.AES.createEncryptor(key)
+    }
+    encryptCounter(increment) {
+        this.aesCounter = this.counter.slice()
+        console.log(this.aesCounter)
+        this.processor.encryptBlock(this.aesCounter, 0)
+        console.log(this.aesCounter)
+        incCounter(this.counter, increment)
     }
     /**
      * Encrypt data
@@ -145,6 +156,7 @@ class CtrProcessor {
      * @returns {ArrayBuffer}
      */
     process(data) {
+        // Turn block cipher into stream cypher by padding + reusing the last partial block
         let lengthOrig = data.byteLength
         let lengthCombined = lengthOrig
         let offset = 0
@@ -157,21 +169,26 @@ class CtrProcessor {
         } else {
             data = pad(data, 16)
         }
-        
-        this.leftover = new Uint8Array(data.slice(Math.floor(lengthCombined / 16), lengthCombined))
 
-        data = new Uint32Array(data)
-        const len = data.length - 4
-        for (let x = 0; x < len; x += 4) {
-            this.processor.processBlock(data, x)
-            this.processor.increment()
+        const length = Math.floor(lengthCombined / 16) * 4
+        this.leftover = new Uint8Array(data.slice(length * 4, lengthCombined))
+
+        data = toBigEndian(new Uint32Array(data))
+        for (let x = 0; x < length; x++) {
+            let mod = length % 4
+            if (!mod) {
+                this.encryptCounter(1)
+            }
+            data[x] = data[x] ^ this.aesCounter[mod]
         }
-        this.processor.processBlock(data, len)
-        if (!this.leftover.byteLength) {
-            this.processor.increment()
+        if (this.leftover.byteLength) {
+            this.encryptCounter(0)
+            for (let x = length; x < length + 4; x++) {
+                data[x] = data[x] ^ this.aesCounter[length % 4]
+            }
         }
 
-        return data.buffer
+        return data.buffer.slice(offset, offset + lengthOrig)
     }
     close() {}
 }

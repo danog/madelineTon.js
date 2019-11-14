@@ -23,9 +23,7 @@ import {
     windowObject
 } from "../crypto-sync/poly"
 import {
-    posMod,
-    xor,
-    xorInPlace
+    posMod
 } from "../tools"
 
 /**
@@ -80,27 +78,33 @@ class CtrProcessor {
 
 /**
  * 
+ * @param {Uint32Array} key 
  * @param {Uint32Array} data 
  * @param {number} offset 
  * @param {Uint32Array} iv1 
  * @param {Uint32Array} iv2 
+ * @returns {ArrayBuffer}
  */
 const processIgeEncrypt = (key, data, offset, iv1, iv2) => {
+    // I could've also used CBC, but webcrypto's CBC implementation pads the output by default.
+    // This would be fine in itself if it weren't for the fact that webcrypto is forced to do one extra (& useless) AES round per block
+    // CTR doesn't pad the output, so it's perfect.
+    
     const next = offset + 4
     const block = data.slice(offset, next)
     return windowObject.crypto.subtle.encrypt({
-            name: 'AES-CBC',
-            iv: iv1
-        }, key, block)
+            name: 'AES-CTR',
+            counter: block.map((v, i) => v ^ iv1[i]),
+            length: 16
+        }, key, iv2)
         .then(newBlock => {
-            newBlock = new Uint32Array(newBlock).subarray(0, 4)
-            xorInPlace(newBlock, iv2)
+            newBlock = new Uint32Array(newBlock)
             data.set(newBlock, offset)
 
             if (next < data.length) {
                 return processIgeEncrypt(key, data, next, newBlock, block)
             }
-            return data
+            return data.buffer
         })
 }
 /**
@@ -137,11 +141,13 @@ class CryptoWebCrypto {
      * @param {Uint32Array} data Data
      * @param {Uint32Array} key  Key
      * @param {Uint32Array} iv   IV
+     * @returns {ArrayBuffer}
      */
     igeEncrypt(data, key, iv) {
-        // Implement AES IGE using AES CBC and some additional XOR-ing
+        // Implement AES IGE using AES CTR and some additional XOR-ing
         // Use native WebCrypto for greater AES performance
-        return windowObject.crypto.subtle.importKey("raw", key.buffer, "AES-CBC", false, ["encrypt"])
+        // Unfortunately, I can't implement native AES IGE decryption because webcrypto assumes PKCS padding for the cyphertext
+        return windowObject.crypto.subtle.importKey("raw", key.buffer, "AES-CTR", false, ["encrypt"])
             .then(key => processIgeEncrypt(key, data, 0, iv.subarray(0, 4), iv.subarray(4, 8)))
     }
 
