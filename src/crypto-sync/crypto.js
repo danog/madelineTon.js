@@ -1,6 +1,7 @@
 import Stream from "../TL/stream"
 import Rusha from 'rusha'
 import CryptoJS from '../lib/cryptoJS/crypto'
+import { posMod } from "../tools"
 
 /**
  * Increment AES CTR counter (big endian machines)
@@ -46,13 +47,13 @@ const incCounter = Stream.bigEndian ? incCounterBigEndian : incCounterLittleEndi
  * @param {number}       size   Pad to a multiple of this (must be a multiple of 4)
  * @returns {ArrayBuffer} Padded array
  */
-const pad = (buffer, size) => {
+const pad = (buffer, pad) => {
     if (!(buffer instanceof ArrayBuffer)) {
         buffer = buffer.buffer
     }
-    const mod = buffer.length % size
+    const mod = buffer.byteLength % pad
     if (mod) {
-        return ArrayBuffer.transfer(buffer, buffer.length + (size - mod))
+        return ArrayBuffer.transfer(buffer, buffer.byteLength + (pad - mod))
     }
     return buffer
 }
@@ -61,39 +62,39 @@ const pad = (buffer, size) => {
  * @param {Uint32Array} buffer Buffer
  * @returns {CryptoJS.lib.WordArray}
  */
-const bytesToWordsBigEndian = buffer => new CryptoJS.lib.WordArray.init(buffer)
 const bytesToWordsLittleEndian = buffer => new CryptoJS.lib.WordArray.init(buffer.map(Stream.switcheroo))
+const bytesToWordsBigEndian = buffer => new CryptoJS.lib.WordArray.init(buffer)
 const bytesToWords = Stream.bigEndian ? bytesToWordsBigEndian : bytesToWordsLittleEndian
 
 /**
  * Convert CryptoJS big-endian int32 buffer to Uint32Array
  * @param {CryptoJS.lib.WordArray} buffer Buffer
- * @returns {Uint32Array}
+ * @returns {ArrayBuffer}
  */
-const wordsToBytesBigEndian = buffer => Uint32Array.from(buffer.words)
-const wordsToBytesLittleEndian = buffer => Uint32Array.from(buffer.words, Stream.switcheroo)
+const wordsToBytesLittleEndian = buffer => Uint32Array.from(buffer.words.map(Stream.switcheroo)).buffer
+const wordsToBytesBigEndian = buffer => Uint32Array.from(buffer.words).buffer
 const wordsToBytes = Stream.bigEndian ? wordsToBytesBigEndian : wordsToBytesLittleEndian
 
 /**
  * SHA256 hash
- * @param {Uint32Array} data Data to hash
+ * @param {ArrayBuffer} data Data to hash
  */
-const sha256 = data => bytesFromWords(CryptoJS.SHA256(bytesToWords(data)))
+const sha256 = data => wordsToBytes(CryptoJS.SHA256(bytesToWords(data)))
 
 const rushaInstance = new Rusha(1024 * 1024)
 /**
  * SHA1 hash
  * @param {Uint32Array} data Data to hash
- * @returns {Uint32Array}
+ * @returns {ArrayBuffer}
  */
-const sha1 = rushaInstance.rawDigest.bind(rushaInstance)
+const sha1 = data => rushaInstance.rawDigest(data).buffer
 
 /**
  * Encrypt using AES IGE
  * @param {Uint32Array} data 
  * @param {Uint32Array} key 
  * @param {Uint32Array} iv 
- * @returns {Uint32Array}
+ * @returns {ArrayBuffer}
  */
 const igeEncrypt = (data, key, iv) => wordsToBytes(
     CryptoJS.AES.encrypt(
@@ -111,7 +112,7 @@ const igeEncrypt = (data, key, iv) => wordsToBytes(
  * @param {Uint32Array} data 
  * @param {Uint32Array} key 
  * @param {Uint32Array} iv 
- * @returns {Uint32Array}
+ * @returns {ArrayBuffer}
  */
 const igeDecrypt = (data, key, iv) => wordsToBytes(
     CryptoJS.AES.decrypt({
@@ -131,27 +132,46 @@ const igeDecrypt = (data, key, iv) => wordsToBytes(
 class CtrProcessor {
     /**
      * Init processor
-     * @param {Uint32Array} iv 
      * @param {Uint32Array} key 
+     * @param {Uint32Array} iv 
      */
     constructor(key, iv) {
-        this.processor = CryptoJS.mode.CTR.createEncryptor(bytesToWords(key), {
-            iv: bytesToWords(iv),
-            padding: CryptoJS.pad.NoPadding,
-        })
+        this.processor = CryptoJS.mode.CTR.createEncryptor(CryptoJS.algo.AES.createEncryptor(bytesToWords(key.map)), iv)
+        this.leftover = new Uint8Array(0)
     }
     /**
      * Encrypt data
-     * @param {BufferSource} data Data to encrypt
-     * @returns {Uint32Array}
+     * @param {ArrayBufferView} data Data to encrypt
+     * @returns {ArrayBuffer}
      */
     process(data) {
-        data = bytesToWords(new Uint32Array(pad(data, 16)))
-        const len = data.length
+        let lengthOrig = data.byteLength
+        let lengthCombined = lengthOrig
+        let offset = 0
+        if (offset = this.leftover.byteLength) {
+            lengthCombined += offset
+            let newData = new Uint8Array(lengthCombined + posMod(-lengthCombined, 16))
+            newData.set(this.leftover)
+            newData.set(new Uint8Array(data.buffer), offset)
+            data = newData.buffer
+        } else {
+            data = pad(data, 16)
+        }
+        
+        this.leftover = new Uint8Array(data.slice(Math.floor(lengthCombined / 16), lengthCombined))
+
+        data = new Uint32Array(data)
+        const len = data.length - 4
         for (let x = 0; x < len; x += 4) {
             this.processor.processBlock(data, x)
+            this.processor.increment()
         }
-        return wordsToBytes(data)
+        this.processor.processBlock(data, len)
+        if (!this.leftover.byteLength) {
+            this.processor.increment()
+        }
+
+        return data.buffer
     }
     close() {}
 }

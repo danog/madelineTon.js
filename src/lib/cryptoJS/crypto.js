@@ -1,4 +1,6 @@
-import { incCounterBigEndian } from "../../crypto-sync/crypto";
+import {
+    incCounterBigEndian
+} from "../../crypto-sync/crypto";
 
 /*
 CryptoJS v3.1.2
@@ -1122,16 +1124,23 @@ CryptoJS.lib.Cipher || (function (undefined) {
                     // Remove IV for subsequent blocks
                     this._iv = undefined;
                 }
+
                 var keystream = counter.slice(0);
+                console.log(keystream)
                 cipher.encryptBlock(keystream, 0);
+                console.log(keystream)
 
                 // Increment counter
-                this._counter = incCounterBigEndian(counter, 1)
+                //this._counter = incCounterBigEndian(counter, by)
 
                 // Encrypt
                 for (var i = 0; i < blockSize; i++) {
                     words[offset + i] ^= keystream[i];
                 }
+            },
+            increment: function () {
+                console.log("increment pls")
+                this._counter = incCounterBigEndian(this._counter, 1)
             }
         });
 

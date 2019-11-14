@@ -65,7 +65,7 @@ class CryptoWorker {
     /**
      * SHA1
      * @param {Uint32Array} data Data to hash
-     * @returns Uint32Array
+     * @returns {ArrayBuffer}
      */
     sha1(buffer) {
         return this.asyncTask({
@@ -76,7 +76,7 @@ class CryptoWorker {
     /**
      * SHA256
      * @param {Uint32Array} data Data to hash
-     * @returns Uint32Array
+     * @returns {ArrayBuffer}
      */
     sha256(buffer) {
         return this.asyncTask({
@@ -89,6 +89,7 @@ class CryptoWorker {
      * @param {Uint32Array} data Data
      * @param {Uint32Array} key  Key
      * @param {Uint32Array} iv   IV
+     * @returns {ArrayBuffer}
      */
     igeEncrypt(data, key, iv) {
         return this.asyncTask({
@@ -103,6 +104,7 @@ class CryptoWorker {
      * @param {Uint32Array} data Data
      * @param {Uint32Array} key  Key
      * @param {Uint32Array} iv   IV
+     * @returns {ArrayBuffer}
      */
     igeDecrypt(data, key, iv) {
         return this.asyncTask({
@@ -120,7 +122,7 @@ class CryptoWorker {
      */
     getCtr(key, iv) {
         return this.asyncTask({
-            task: 'initCtr',
+            task: 'ctrInit',
             key,
             iv
         }).then(id => {

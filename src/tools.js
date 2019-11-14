@@ -14,7 +14,7 @@ const byteToHexMap = Array(0xff);
 for (let n = 0; n <= 0xff; ++n) {
     let hexOctet = n.toString(16);
     if (hexOctet.length === 1) {
-        hexOctet = "0"+hexOctet
+        hexOctet = "0" + hexOctet
     }
     byteToHexMap.push(hexOctet);
 }
@@ -31,7 +31,18 @@ const bytesToHex = bytes => {
     return arr.join('')
 }
 
+/**
+ * XOR all elements in two BufferViews, a will be modified to contain the new values
+ * @param {ArrayBufferView} a 
+ * @param {ArrayBufferView} b 
+ */
+const xorInPlace = (a, b) => {
+    for (let x = 0; x < a.length; x++) {
+        a[x] = a[x] ^ b[x]
+    }
+}
 export {
     posMod,
-    bytesToHex
+    bytesToHex,
+    xorInPlace
 }

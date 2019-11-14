@@ -22,6 +22,11 @@ import {
 import {
     windowObject
 } from "../crypto-sync/poly"
+import {
+    posMod,
+    xor,
+    xorInPlace
+} from "../tools"
 
 /**
  * Implementation of native AES CTR continuous buffering
@@ -32,29 +37,71 @@ class CtrProcessor {
      * @param {Uint32Array} iv 
      * @param {Uint32Array} key 
      */
-    constructor(key, iv) {
+    init(key, iv) {
         this.name = "AES-CTR"
         this.by = 0
         this.counter = iv
         this.length = 16
-        this.keyPromise = windowObject.crypto.subtle.importKey("raw", key.buffer, "AES-CTR", false, ["encrypt"])
-        this.keyPromise.then(key => this.key = key)
-    }
-    getInitPromise() {
-        return this.keyPromise.then(() => this)
+        this.leftover = new Uint8Array(0)
+        return windowObject.crypto.subtle.importKey("raw", key.buffer, "AES-CTR", false, ["encrypt"])
+            .then(key => {
+                this.key = key;
+                return this
+            })
     }
     /**
      * Encrypt data
-     * @param {BufferSource} data Data to encrypt
-     * @returns {Uint32Array}
+     * @param {ArrayBufferView} data Data to encrypt
+     * @returns {ArrayBuffer}
      */
     process(data) {
-        data = pad(data, 16)
+        // Turn block cipher into stream cypher by padding + reusing the last partial block
+        let lengthOrig = data.byteLength
+        let lengthCombined = lengthOrig
+        let offset = 0
+        if (offset = this.leftover.byteLength) {
+            lengthCombined += offset
+            let newData = new Uint8Array(lengthCombined + posMod(-lengthCombined, 16))
+            newData.set(this.leftover)
+            newData.set(new Uint8Array(data.buffer), offset)
+            data = newData.buffer
+        } else {
+            data = pad(data, 16)
+        }
+
         incCounter(this.counter, this.by)
-        this.by = data.length / 16
-        return windowObject.crypto.subtle.encrypt(this, this.key, data)
+        this.by = Math.floor(lengthCombined / 16)
+        this.leftover = new Uint8Array(data.slice(this.by * 16, lengthCombined))
+
+        return windowObject.crypto.subtle.encrypt(this, this.key, data).then(res => res.slice(offset, offset + lengthOrig))
     }
     close() {}
+}
+
+/**
+ * 
+ * @param {Uint32Array} data 
+ * @param {number} offset 
+ * @param {Uint32Array} iv1 
+ * @param {Uint32Array} iv2 
+ */
+const processIgeEncrypt = (key, data, offset, iv1, iv2) => {
+    const next = offset + 4
+    const block = data.slice(offset, next)
+    return windowObject.crypto.subtle.encrypt({
+            name: 'AES-CBC',
+            iv: iv1
+        }, key, block)
+        .then(newBlock => {
+            newBlock = new Uint32Array(newBlock).subarray(0, 4)
+            xorInPlace(newBlock, iv2)
+            data.set(newBlock, offset)
+
+            if (next < data.length) {
+                return processIgeEncrypt(key, data, next, newBlock, block)
+            }
+            return data
+        })
 }
 /**
  * Webcrypto implementation
@@ -63,7 +110,7 @@ class CryptoWebCrypto {
     /**
      * SHA1
      * @param {BufferSource} data Data to hash
-     * @returns Uint8Array
+     * @returns {ArrayBuffer}
      */
     sha1(data) {
         return windowObject.crypto.subtle.digest('SHA-1', data)
@@ -71,7 +118,7 @@ class CryptoWebCrypto {
     /**
      * SHA256
      * @param {BufferSource} data Data to hash
-     * @returns Uint8Array
+     * @returns {ArrayBuffer}
      */
     sha256(data) {
         return windowObject.crypto.subtle.digest('SHA-256', data)
@@ -83,8 +130,21 @@ class CryptoWebCrypto {
      * @returns CtrProcessor
      */
     getCtr(key, iv) {
-        return new CtrProcessor(key, iv).getInitPromise()
+        return new CtrProcessor().init(key, iv)
     }
+    /**
+     * Encrypt data using AES IGE
+     * @param {Uint32Array} data Data
+     * @param {Uint32Array} key  Key
+     * @param {Uint32Array} iv   IV
+     */
+    igeEncrypt(data, key, iv) {
+        // Implement AES IGE using AES CBC and some additional XOR-ing
+        // Use native WebCrypto for greater AES performance
+        return windowObject.crypto.subtle.importKey("raw", key.buffer, "AES-CBC", false, ["encrypt"])
+            .then(key => processIgeEncrypt(key, data, 0, iv.subarray(0, 4), iv.subarray(4, 8)))
+    }
+
 }
 
 export default CryptoWebCrypto

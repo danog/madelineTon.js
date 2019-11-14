@@ -13,7 +13,8 @@ if (useWebCrypto) {
         CryptoAsync.prototype.sha1 = CryptoWebCrypto.prototype.sha1
     }
     CryptoAsync.prototype.sha256 = CryptoWebCrypto.prototype.sha256
-    CryptoAsync.prototype.getCtr = CryptoWebCrypto.prototype.getCtr
+    // CryptoAsync.prototype.igeEncrypt = CryptoWebCrypto.prototype.igeEncrypt
+    //CryptoAsync.prototype.getCtr = CryptoWebCrypto.prototype.getCtr
 }
 
 export default CryptoAsync
