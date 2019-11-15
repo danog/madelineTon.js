@@ -113,8 +113,8 @@ class Connection {
             buffer.fill(0, 0, 1)
 
             let messageId = message['msg_id'] || this.mIdHandler.generate()
-            buffer[2] = messageId.high_
-            buffer[3] = messageId.low_
+            buffer[2] = messageId.low_
+            buffer[3] = messageId.high_
             buffer[4] = message['serialized_body'].byteLength
             buffer.set(new Uint32Array(message['serialized_body']), 5)
 

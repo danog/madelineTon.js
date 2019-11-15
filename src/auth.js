@@ -15,9 +15,10 @@ class Auther {
     async createAuthKey(expires, dcId) {
         for (let x = 0; x < 5; x++) {
             //try {
-                const nonce = new Uint32Array(4)
-                await secureRandom(nonce)
-                await this.API.methodCall('req_pq', {
+                const nonce = new Uint32Array([455527095, 1272718840, 3816210617, 3299800878])
+                //await secureRandom(nonce)
+
+                await this.API.methodCall('req_pq_multi', {
                     nonce,
                 }, {
                     dcId,

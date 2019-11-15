@@ -2,7 +2,7 @@ import Stream from "../TL/stream"
 import Rusha from 'rusha'
 import CryptoJS from '../lib/cryptoJS/crypto'
 import {
-    posMod
+    posMod, transfer
 } from "../tools"
 
 /**
@@ -55,7 +55,7 @@ const pad = (buffer, pad) => {
     }
     const mod = buffer.byteLength % pad
     if (mod) {
-        return ArrayBuffer.transfer(buffer, buffer.byteLength + (pad - mod))
+        return transfer(buffer, buffer.byteLength + (pad - mod))
     }
     return buffer
 }

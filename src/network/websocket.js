@@ -18,19 +18,20 @@ class Websocket {
         do {
             fastRandom(random)
         } while (byteView[0] === 0xEF || obf2.includes(random[0]) || random[1] === 0)
-        random[15] = 0xefefefef
-        let reverse = new Uint32Array(byteView.reverse().buffer)
+        random[14] = 0xefefefef
 
-        let key = random.subarray(2, 6)
-        let keyRev = reverse.subarray(2, 6)
+        let reverse = new Uint32Array(byteView.slice().reverse())
 
-        let iv = random.subarray(10, 14)
-        let ivRev = random.subarray(10, 14)
+        let key = random.slice(2, 10)
+        let keyRev = reverse.slice(2, 10)
+
+        let iv = random.slice(10, 14)
+        let ivRev = random.slice(10, 14)
 
         this.encrypt = await this.crypto.getCtr(key, iv)
         this.decrypt = await this.crypto.getCtr(keyRev, ivRev)
 
-        random.set(await this.encrypt.process(random.subarray(14, 16)), 14)
+        random.set(new Uint32Array(await this.encrypt.process(random)).slice(14, 16), 14)
 
         await new Promise((resolve, reject) => {
             this.socket = new WebSocket(ctx.getUri('ws'), 'binary')
@@ -44,6 +45,7 @@ class Websocket {
             }
             this.socket.onopen = resolve
             this.socket.onerror = reject
+            this.socket.onclose = this.close.bind(this)
         })
 
         this.socket.onerror = e => {
@@ -56,16 +58,16 @@ class Websocket {
 
     async write(payload) {
         const length = payload.byteLength >> 2
-        console.log("OWO ",payload, length)
         if (length >= 0x7f) {
-            this.socket.send(await this.encrypt.process(new Uint32Array((length << 8) & 0x7F)))
+            this.socket.send(await this.encrypt.process(new Uint32Array([(length << 8) & 0x7F])))
         } else {
-            this.socket.send(await this.encrypt.process(new Uint8Array(length)))
+            this.socket.send(await this.encrypt.process(new Uint8Array([length])))
         }
         this.socket.send(await this.encrypt.process(payload))
     }
 
     close() {
+        console.log("Closing socket!")
         if (this.socket) {
             this.socket.close()
             this.socket = undefined

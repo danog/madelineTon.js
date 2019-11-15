@@ -1,3 +1,5 @@
+import Stream from "./stream"
+
 /**
  * Custom TL parser based on an unreleased project of mine (madeline.py).
  * Could've based it on my MadelineProto, but madeline.py's parser is way cleaner.
