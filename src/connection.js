@@ -24,11 +24,11 @@ class Connection {
      * Connect to datacenter
      * @param {Context} ctx 
      */
-    async connect(ctx) {
+    connect(ctx) {
         this.dc = ctx.getDcId()
         this.connection = new Socket
         this.connection.onMessage = this.onMessage.bind(this)
-        await this.connection.connect(ctx)
+        return this.connection.connect(ctx)
     }
     /**
      * 
