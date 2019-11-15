@@ -70,11 +70,11 @@ class Connection {
 
         this.pendingMessages.push(message)
         if (flush) {
-            this.flush()
+            return this.flush()
         }
     }
 
-    methodCall(method, args, aargs) {
+    async methodCall(method, args, aargs) {
         args['_'] = method
         const message = {
             _: method,
@@ -82,23 +82,23 @@ class Connection {
             unencrypted: !this.authInfo.hasAuthKey() && !method.includes('.')
         }
         const promise = new Promise((res, rej) => { message['resolve'] = res, message['reject'] = rej})
-        this.sendMessage(message, true)
+        await this.sendMessage(message, true)
         return promise
     }
     /**
      * Send pending outgoing messages
      */
-    flush() {
+    async flush() {
         if (!this.pendingMessages) {
             return
         }
         if (this.authInfo.hasAuthKey()) { // Encrypted write loop
-            this.flushEncrypted()
+            await this.flushEncrypted()
         } else { // Unencrypted
-            this.flushPlain()
+            await this.flushPlain()
         }
     }
-    flushPlain() {
+    async flushPlain() {
         for (const key in this.pendingMessages) {
             const message = this.pendingMessages[key]
             if (this.authInfo.hasAuthKey()) {
@@ -108,7 +108,7 @@ class Connection {
                 continue
             }
             const length = message['serialized_body'].byteLength
-            console.log(length)
+
             const buffer = new Uint32Array((length / 4) + 5)
             buffer.fill(0, 0, 1)
 
@@ -118,7 +118,7 @@ class Connection {
             buffer[4] = message['serialized_body'].byteLength
             buffer.set(new Uint32Array(message['serialized_body']), 5)
 
-            this.connection.write(buffer)
+            await this.connection.write(buffer)
             message['sent'] = Date.now() / 1000
             message['tries']  = 0
 
@@ -129,7 +129,7 @@ class Connection {
             console.log(`Sent ${message['_']} as unencrypted message to DC ${this.dc}!`)
         }
     }
-    flushEncrypted() {
+    async flushEncrypted() {
 
     }
     /**

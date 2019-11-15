@@ -33,7 +33,7 @@ class Websocket {
         random.set(await this.encrypt.process(random.subarray(14, 16)), 14)
 
         await new Promise((resolve, reject) => {
-            this.socket = new WebSocket(ctx.getUri('ws'))
+            this.socket = new WebSocket(ctx.getUri('ws'), 'binary')
             this.socket.binaryType = "arraybuffer"
             this.socket.onmessage = message => {
                 message = new Uint8Array(this.decrypt.process(message.data))
@@ -54,15 +54,15 @@ class Websocket {
         return this.socket.send(random)
     }
 
-    write(payload) {
+    async write(payload) {
         const length = payload.byteLength >> 2
         console.log("OWO ",payload, length)
         if (length >= 0x7f) {
-            this.socket.send(this.encrypt.process(new Uint32Array((length << 8) & 0x7F)))
+            this.socket.send(await this.encrypt.process(new Uint32Array((length << 8) & 0x7F)))
         } else {
-            this.socket.send(this.encrypt.process(new Uint8Array(length)))
+            this.socket.send(await this.encrypt.process(new Uint8Array(length)))
         }
-        this.socket.send(this.encrypt.process(payload))
+        this.socket.send(await this.encrypt.process(payload))
     }
 
     close() {
