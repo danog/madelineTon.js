@@ -8,13 +8,19 @@ class Context
     isSecure() {
         return this.secure
     }
+    setDcId(id) {
+        this.dc = id
+    }
+    getDcId() {
+        return this.dc
+    }
     setUri(host, port) {
         this.host = host
         this.port = port
         return this
     }
     getUri(prefix) {
-        return `${prefix}${this.secure ? 's' : ''}://${this.host}:${this.port}`
+        return `${prefix}${this.secure ? 's' : ''}://${this.host}:${this.port}/apiws`
     }
     setCrypto(crypto) {
         this.crypto = crypto

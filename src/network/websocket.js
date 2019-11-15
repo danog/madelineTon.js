@@ -18,7 +18,7 @@ class Websocket {
         do {
             fastRandom(random)
         } while (firstByte === 0xEF || obf2.includes(random[0]) || random[1] === 0)
-        random[15] = 0xdddddddd
+        random[15] = 0xefefefef
         let reverse = new Uint32Array(byteView.reverse().buffer)
 
         let key = random.subarray(2, 6)
@@ -32,25 +32,37 @@ class Websocket {
 
         random.set(await this.encrypt.process(random.subarray(14, 16)), 14)
 
-        this.socket = new WebSocket(ctx.getUri('ws'))
-        this.socket.binaryType = "arraybuffer"
-        this.socket.onmessage = this.onMessage.bind(this)
         await new Promise((resolve, reject) => {
+            this.socket = new WebSocket(ctx.getUri('ws'))
+            this.socket.binaryType = "arraybuffer"
+            this.socket.onmessage = message => {
+                message = new Uint8Array(this.decrypt.process(message.data))
+                let length = message[0]
+                length = (length >= 0x7f ? length : message[1] | message[2] << 8 | message[3] << 16) >> 2
+                this.onMessage(message.subarray(length >= 0x7f ? 4 : 1).buffer)
+                //this.onMessage()
+            }
             this.socket.onopen = resolve
             this.socket.onerror = reject
         })
-        this.socket.onerror = this.onError.bind(this)
+        this.socket.onerror = e => {
+            console.log("Websocket error: ", e)
+            this.close()
+        }
 
         return this.socket.send(random)
     }
-    onError(e) {
-        console.log("Websocket error: ", e)
-        this.close()
+
+    write(payload) {
+        const length = payload.byteLength << 2
+        if (length >= 0x7f) {
+            this.socket.send(new Uint32Array((length << 8) & 0x7F))
+        } else {
+            this.socket.send(new Uint8Array(length))
+        }
+        await this.socket.send(payload)
     }
 
-    onMessage(message) {
-        message = this.decrypt.process(message.data)
-    }
     close() {
         if (this.socket) {
             this.socket.close()
