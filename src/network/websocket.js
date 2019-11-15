@@ -60,7 +60,7 @@ class Websocket {
         } else {
             this.socket.send(new Uint8Array(length))
         }
-        await this.socket.send(payload)
+        this.socket.send(payload)
     }
 
     close() {
@@ -68,6 +68,10 @@ class Websocket {
             this.socket.close()
             this.socket = undefined
         }
+    }
+
+    isHttp() {
+        return false
     }
 }
 

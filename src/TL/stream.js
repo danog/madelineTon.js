@@ -12,7 +12,7 @@ class Stream {
      */
     constructor(aBuf) {
         this.pos = 0
-        this.aBuf = aBuf
+        this.aBuf = aBuf || new ArrayBuffer
         this.iBuf = new int32Array(this.aBuf)
         this.uBuf = new Uint32Array(this.aBuf)
         this.bBuf = new Uint8Array(this.aBuf)

@@ -925,5 +925,6 @@ const TWO_PWR_24_ = Long.fromBits(1 << 24, 0);
 
 Long.ZERO = ZERO_
 Long.ONE = ONE_
+Long.FOUR = new Long(0, 4)
 
 export default Long;
