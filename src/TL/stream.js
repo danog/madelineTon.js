@@ -1,5 +1,5 @@
 import {
-    posMod
+    posMod, transfer
 } from "../tools"
 /**
  * Stream of int32.
@@ -13,7 +13,7 @@ class Stream {
     constructor(aBuf) {
         this.pos = 0
         this.aBuf = aBuf || new ArrayBuffer
-        this.iBuf = new int32Array(this.aBuf)
+        this.iBuf = new Int32Array(this.aBuf)
         this.uBuf = new Uint32Array(this.aBuf)
         this.bBuf = new Uint8Array(this.aBuf)
     }
@@ -187,8 +187,8 @@ class Stream {
      */
     prepareLength(more) {
         if (!more) return this
-        this.aBuf = this.aBuf.transfer(this.aBuf, this.aBuf.length + more * 4)
-        this.iBuf = new int32Array(this.aBuf)
+        this.aBuf = transfer(this.aBuf, this.aBuf.byteLength + more * 4)
+        this.iBuf = new Int32Array(this.aBuf)
         this.uBuf = new Uint32Array(this.aBuf)
         this.bBuf = new Uint8Array(this.aBuf)
         return this
@@ -238,19 +238,6 @@ if (Stream.bigEndian) { // Big-endian hacks
     Stream.prototype.writeUnsignedInt = function (value) {
         this.uBuf[this.pos++] = this.switcheroo(value)
     }
-}
-// Polyfill
-if (!ArrayBuffer.transfer) {
-    ArrayBuffer.transfer = function (source, length) {
-        if (!(source instanceof ArrayBuffer))
-            throw new TypeError('Source must be an instance of ArrayBuffer');
-        if (length <= source.byteLength)
-            return source.slice(0, length);
-        var sourceView = new Uint8Array(source),
-            destView = new Uint8Array(new ArrayBuffer(length));
-        destView.set(sourceView);
-        return destView.buffer;
-    };
 }
 
 

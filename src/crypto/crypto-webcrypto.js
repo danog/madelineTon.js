@@ -41,7 +41,7 @@ class CtrProcessor {
         this.counter = iv
         this.length = 16
         this.leftover = new Uint8Array(0)
-        return windowObject.crypto.subtle.importKey("raw", key.buffer, "AES-CTR", false, ["encrypt"])
+        return windowObject.crypto.subtle.importKey("raw", key, "AES-CTR", false, ["encrypt"])
             .then(key => {
                 this.key = key;
                 return this

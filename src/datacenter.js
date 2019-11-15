@@ -1,27 +1,25 @@
 import AuthInfo from "./session/authInfo"
 import Context from "./network/context"
 import Connection from "./connection"
+import CryptoAsync from "./crypto"
 
 class DataCenter {
     authInfo = {}
     sockets = {}
     map = ['pluto', 'venus', 'aurora', 'vesta', 'flora']
-    connect(dcID) {
-        if (!map[dcID]) {
+    connect(dcID, API) {
+        if (!this.map[dcID - 1]) {
             throw new Error('Wrong DC ID provided: ' + dcID)
         }
         if (!this.authInfo[dcID]) {
             this.authInfo[dcID] = new AuthInfo
         }
 
-        const context = new Context
-        context.secure(1)
-        context.setUri(`${this.map[dcID - 1]}.web.telegram.org`, 443)
-        context.setCrypto(this.crypto)
+        const ctx = new Context()
+        ctx.secure(true).setDcId(dcID).setUri(`${this.map[dcID - 1]}.web.telegram.org`, 443).setCrypto(new CryptoAsync)
 
-        this.sockets[dcId] = new Connection
-        this.sockets[dcId].setExtra(this.authInfo)
-        return this.sockets.connect(context)
+        this.sockets[dcID] = new Connection(this.authInfo[dcID], API)
+        return this.sockets[dcID].connect(ctx)
     }
 }
 

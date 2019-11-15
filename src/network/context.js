@@ -1,15 +1,16 @@
 class Context
 {
-    secure = false
+    _secure = true
     secure(secure) {
-        this.secure = secure
+        this._secure = secure
         return this
     }
     isSecure() {
-        return this.secure
+        return this._secure
     }
     setDcId(id) {
         this.dc = id
+        return this
     }
     getDcId() {
         return this.dc
@@ -20,10 +21,11 @@ class Context
         return this
     }
     getUri(prefix) {
-        return `${prefix}${this.secure ? 's' : ''}://${this.host}:${this.port}/apiws`
+        return `${prefix}${this._secure ? 's' : ''}://${this.host}:${this.port}/apiws`
     }
     setCrypto(crypto) {
         this.crypto = crypto
+        return this
     }
     getCrypto() {
         return this.crypto

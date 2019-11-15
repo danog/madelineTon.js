@@ -41,8 +41,22 @@ const xorInPlace = (a, b) => {
         a[x] = a[x] ^ b[x]
     }
 }
+
+
+const transferPoly = function (source, length) {
+    if (length <= source.byteLength)
+        return source.slice(0, length);
+    var sourceView = new Uint8Array(source),
+        destView = new Uint8Array(new ArrayBuffer(length));
+    destView.set(sourceView);
+    return destView.buffer;
+};
+
+const transfer = ArrayBuffer.transfer || transferPoly
+
 export {
     posMod,
     bytesToHex,
-    xorInPlace
+    xorInPlace,
+    transfer
 }

@@ -14,7 +14,7 @@ class Connection {
      * @param {AuthInfo} shared 
      * @param {API} API 
      */
-    setExtra(authInfo, API) {
+    constructor(authInfo, API) {
         this.authInfo = authInfo
         this.API = API
         this.TL = API.getTL()
@@ -26,6 +26,7 @@ class Connection {
      */
     connect(ctx) {
         this.dc = ctx.getDcId()
+        console.log(`Connecting to DC ${this.dc}...`)
         this.connection = new Socket
         this.connection.onMessage = this.onMessage.bind(this)
         return this.connection.connect(ctx)
@@ -61,10 +62,9 @@ class Connection {
      * @param boolean   flush   Whether to flush
      */
     sendMessage(message, flush = true) {
-        const promise = new Promise((res, rej) => message['resolve'] = res, message['reject'] = rej)
         if (!message['serialized_body']) {
             let stream = new Stream
-            this.TL.serialize(stream, message['body'])
+            this.TL.serialize(stream, message['body'], {layer: this.API.layer})
             message['serialized_body'] = stream.getBuffer()
         }
 
@@ -72,9 +72,19 @@ class Connection {
         if (flush) {
             this.flush()
         }
-        return promise
     }
 
+    methodCall(method, args, aargs) {
+        args['_'] = method
+        const message = {
+            _: method,
+            body: args,
+            unencrypted: !this.authInfo.hasAuthKey() && !method.includes('.')
+        }
+        const promise = new Promise((res, rej) => { message['resolve'] = res, message['reject'] = rej})
+        this.sendMessage(message, true)
+        return promise
+    }
     /**
      * Send pending outgoing messages
      */
@@ -89,7 +99,8 @@ class Connection {
         }
     }
     flushPlain() {
-        for (const [key, message] in this.pendingMessages) {
+        for (const key in this.pendingMessages) {
+            const message = this.pendingMessages[key]
             if (this.authInfo.hasAuthKey()) {
                 return
             }
@@ -97,13 +108,14 @@ class Connection {
                 continue
             }
             const length = message['serialized_body'].byteLength
+            console.log(length)
             const buffer = new Uint32Array((length / 4) + 5)
             buffer.fill(0, 0, 1)
 
             let messageId = message['msg_id'] || this.mIdHandler.generate()
-            buffer.set(messageId.getLowBits(), 2)
-            buffer.set(messageId.getHighBits(), 3)
-            buffer.set(message['serialized_body'].byteLength, 4)
+            buffer[2] = messageId.high_
+            buffer[3] = messageId.low_
+            buffer[4] = message['serialized_body'].byteLength
             buffer.set(new Uint32Array(message['serialized_body']), 5)
 
             this.connection.write(buffer)
@@ -125,6 +137,7 @@ class Connection {
      * @param {ArrayBuffer} message 
      */
     onMessage(message) {
+        console.log("got message")
         if (message.byteLength === 4) {
             const error = new Stream(message).readSignedInt()
             if (error === -404) {
@@ -136,7 +149,7 @@ class Connection {
                 }
             }
         }
-        authInfo = this.authInfo
+        
     }
 
 }

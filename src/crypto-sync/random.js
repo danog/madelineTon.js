@@ -10,7 +10,10 @@ const fastRandom = buffer => {
     if (!(buffer instanceof Uint8Array)) {
         myBuf = new Uint8Array(buffer.buffer)
     }
-    myBuf.map(() => Math.floor((Math.random() * 0xFF)))
+    const length = myBuf.byteLength
+    for (let x = 0; x < length; x++) {
+        myBuf[x] = Math.floor(Math.random() * 0xFF)
+    }
     return buffer
 }
 

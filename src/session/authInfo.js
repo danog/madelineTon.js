@@ -31,7 +31,7 @@ class AuthInfo {
      * Bind temporary and permanent auth keys
      * @param {boolean} pfs Whether to bind using PFS
      */
-    bind(pfs = true) {
+    bindPfs(pfs = true) {
         if (!pfs && !this.tempAuthKey) {
             this.tempAuthKey = new TempAuthKey
         }

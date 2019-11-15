@@ -1,7 +1,10 @@
 import Stream from "./stream"
 import Objects from './objects'
-import TLException from "./exception"
-import { fastRandom, fastRandomInt, secureRandom } from "../crypto-sync/random"
+import {
+    fastRandom,
+    fastRandomInt,
+    secureRandom
+} from "../crypto-sync/random"
 
 /**
  * Custom TL parser based on an unreleased project of mine (madeline.py).
@@ -88,7 +91,9 @@ class Parser {
      * @param {Object} type   TL type definition
      */
     serialize(stream, data, type) {
-        switch (type) {
+        type = type || {}
+
+        switch (type['type']) {
             case 'int':
                 return stream.writeSignedInt(data)
             case "#":
@@ -107,12 +112,11 @@ class Parser {
                 return stream.writeString(data)
             case 'bytes':
                 return stream.writeBytes(data)
-        }
-        if (type['type'] === 'DataJSON') {
-            data = {
-                _: 'dataJSON',
-                data: JSON.stringify(data)
-            }
+            case 'DataJSON':
+                data = {
+                    _: 'dataJSON',
+                    data: JSON.stringify(data)
+                }
         }
         if (!type['predicate']) {
             if (type['type'] === 'Vector t') {
@@ -156,7 +160,9 @@ class Parser {
         }
         stream.prepareLength(flagSize)
 
-        for (let [key, param] in type['params']) {
+        for (let key in type['params']) {
+            let param = type['params'][key]
+
             if (!data[key]) {
                 if (param['pow']) {
                     continue
@@ -189,7 +195,7 @@ class Parser {
                             }
                             // Fall through
                             default:
-                                throw new TLException('Missing parameter ' + key)
+                                throw new Error('Missing parameter ' + key)
                     }
                     continue
                 }
@@ -212,16 +218,16 @@ class Parser {
                         continue
                     }
                 } catch (e) {}
-                let type = param['type']
-                type[0] = type[0].toLowerCase()
+                let paramType = param['type']
+                paramType[0] = paramType[0].toLowerCase()
                 try {
-                    let id = this.objects.findByPredicateAndLayer(type + "Empty", param['layer'])
+                    let id = this.objects.findByPredicateAndLayer(paramType + "Empty", param['layer'])
                     if (id['type'] === param['type']) {
                         stream.writeSignedInt(id['id'])
                         continue
                     }
                 } catch (e) {}
-                throw new TLException('Missing parameter ' + key)
+                throw new Error('Missing parameter ' + key)
             }
             this.serialize(stream, data[key], param)
         }

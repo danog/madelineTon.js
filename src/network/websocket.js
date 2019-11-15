@@ -17,15 +17,15 @@ class Websocket {
         let byteView = new Uint8Array(random.buffer)
         do {
             fastRandom(random)
-        } while (firstByte === 0xEF || obf2.includes(random[0]) || random[1] === 0)
+        } while (byteView[0] === 0xEF || obf2.includes(random[0]) || random[1] === 0)
         random[15] = 0xefefefef
         let reverse = new Uint32Array(byteView.reverse().buffer)
 
         let key = random.subarray(2, 6)
         let keyRev = reverse.subarray(2, 6)
 
-        let iv = random.subarray(10, 16)
-        let ivRev = random.subarray(10, 16)
+        let iv = random.subarray(10, 14)
+        let ivRev = random.subarray(10, 14)
 
         this.encrypt = await this.crypto.getCtr(key, iv)
         this.decrypt = await this.crypto.getCtr(keyRev, ivRev)
@@ -38,13 +38,14 @@ class Websocket {
             this.socket.onmessage = message => {
                 message = new Uint8Array(this.decrypt.process(message.data))
                 let length = message[0]
-                length = (length >= 0x7f ? length : message[1] | message[2] << 8 | message[3] << 16) >> 2
+                length = (length >= 0x7f ? length : message[1] | message[2] << 8 | message[3] << 16) << 2
                 this.onMessage(message.subarray(length >= 0x7f ? 4 : 1).buffer)
                 //this.onMessage()
             }
             this.socket.onopen = resolve
             this.socket.onerror = reject
         })
+
         this.socket.onerror = e => {
             console.log("Websocket error: ", e)
             this.close()
@@ -54,13 +55,14 @@ class Websocket {
     }
 
     write(payload) {
-        const length = payload.byteLength << 2
+        const length = payload.byteLength >> 2
+        console.log("OWO ",payload, length)
         if (length >= 0x7f) {
-            this.socket.send(new Uint32Array((length << 8) & 0x7F))
+            this.socket.send(this.encrypt.process(new Uint32Array((length << 8) & 0x7F)))
         } else {
-            this.socket.send(new Uint8Array(length))
+            this.socket.send(this.encrypt.process(new Uint8Array(length)))
         }
-        this.socket.send(payload)
+        this.socket.send(this.encrypt.process(payload))
     }
 
     close() {

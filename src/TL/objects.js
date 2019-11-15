@@ -23,17 +23,20 @@ class Objects {
      * @param {Object} schemes JSON scheme object
      */
     constructor(schemes) {
+        console.log("Parsing TL schemes")
         let data = [];
-        for (let [layer, scheme] of schemes) {
+        for (let [layer, scheme] of Object.entries(schemes)) {
             // Parse constructors
-            for (let constructor in scheme.constructors) {
+            for (let key in scheme['constructors']) {
+                let constructor = scheme['constructors'][key]
                 if ((typeof constructor['layer']) === 'undefined') {
                     constructor['layer'] = layer;
                 }
                 data.push(constructor);
             }
             // Parse functional constructors (still constructors, store in same array)
-            for (let method in scheme.methods) {
+            for (let key in scheme['methods']) {
+                let method = scheme['methods'][key]
                 if ((typeof method['layer']) === 'undefined') {
                     method['layer'] = layer;
                 }
@@ -42,11 +45,13 @@ class Objects {
                 data.push(method);
             }
         }
-        for (let constructor in data) {
+        for (let constructor of data) {
             let minSize = data['type'] === 'Vector t' ? 1 : 0
 
-            const newParams = {}
-            for (let [key, param] of constructor['params']) {
+            let newParams = {}
+            for (let key in constructor['params']) {
+                let param = constructor['params'][key]
+                
                 param['layer'] = constructor['layer'];
                 if (param['layer'] === 1 && param['type'] === 'string') {
                     param['type'] = 'bytes'
@@ -61,7 +66,7 @@ class Objects {
 
                 let match = param['type'].match(/^flags\.(\d*)\?(.+)/)
                 if (match) {
-                    param['pow'] = pow(2, match[1])
+                    param['pow'] = 2**match[1]
                     param['type'] = match[2]
                 }
 
@@ -88,15 +93,16 @@ class Objects {
                     minSize += this.basicSizes[param['type']]
                 }
 
-                newParams[param['name']] = param
-                delete newParams[param['name']]['name']
+                let name = param['name']
+                delete param['name']
+                newParams[name] = param
             }
             constructor['params'] = newParams
             constructor['minSize'] = minSize
 
             this.byId[constructor['id']] = constructor
             this.byPredicateAndLayer[constructor['predicate'] + constructor['layer']] = constructor['id']
-            if (this.layers.includes(constructor['layer'])) { // Could've used includes but meh
+            if (!this.layers.includes(constructor['layer'])) {
                 this.layers.push(constructor['layer'])
             }
         }
@@ -105,13 +111,13 @@ class Objects {
 
     findById(id) {
         if (!this.byId[id]) {
-            throw TLError("Could not find object by ID " + id)
+            throw Error("Could not find object by ID " + id)
         }
         return this.byId[id]
     }
     findByPredicateAndLayer(predicate, layer) {
         let id;
-        if (!(id = this.byPredicateAndLayer[predicate + layer])) {
+        if (id = this.byPredicateAndLayer[predicate + layer]) {
             return this.byId[id]
         }
 
@@ -120,7 +126,7 @@ class Objects {
                 return this.byId[id]
             }
         }
-        throw TLError("Could not find object by predicate " + predicate + " and layer " + layer)
+        throw Error("Could not find object by predicate " + predicate + " and layer " + layer)
     }
 
     findByType(type, layer) {
@@ -130,7 +136,7 @@ class Objects {
                 return object
             }
         }
-        throw TLError('Could not find object by type ' + type)
+        throw Error('Could not find object by type ' + type)
     }
 }
 export default Objects
