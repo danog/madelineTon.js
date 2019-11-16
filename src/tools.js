@@ -41,7 +41,7 @@ const bytesToHex = bytes => {
 const hexToBytes = (hex, out) => {
     const length = out.length
     for (let x = 0; x < length; x++) {
-        out[x] = parseInt(hex[x]+hex[x+1], 16)
+        out[x] = parseInt(hex[x*2].concat(hex[x*2+1]), 16)
     }
     return out
 }
@@ -74,6 +74,18 @@ const bufferViewEqual = (a, b) => {
 }
 
 /**
+ * Concatenate two buffers
+ * @param {Uint8Array} a 
+ * @param {Uint8Array} b 
+ */
+const bufferConcat = (a, b) => {
+    let res = new Uint8Array(a.byteLength+b.byteLength)
+    res.set(a)
+    res.set(b, a.byteLength)
+    return res
+}
+
+/**
  * Resize buffer
  * @param {ArrayBuffer} source Source buffer
  * @param {number}      length New length
@@ -95,5 +107,6 @@ export {
     xorInPlace,
     transfer,
     bufferViewEqual,
-    hexToBytes
+    hexToBytes,
+    bufferConcat
 }

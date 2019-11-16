@@ -104,7 +104,7 @@ const long = what => {
         throw new Error(`Failure factorizing (long): ${P} * ${Q} != ${what}`)
     }
 
-    return toBuffers(P.toString(10), Q.toString(16))
+    return toBuffers(P.toString(10), Q.toString(10))
 }
 
 /**
