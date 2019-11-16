@@ -173,7 +173,7 @@ class Parser {
         for (let key in type['params']) {
             let param = type['params'][key]
 
-            if (!data[key]) {
+            if (typeof data[key] === 'undefined') {
                 if (param['pow']) {
                     continue
                 }
@@ -229,7 +229,7 @@ class Parser {
                     }
                 } catch (e) {}
                 let paramType = param['type']
-                paramType[0] = paramType[0].toLowerCase()
+                paramType = paramType[0].toLowerCase().concat(paramType.slice(1))
                 try {
                     let id = this.objects.findByPredicateAndLayer(paramType + "Empty", param['layer'])
                     if (id['type'] === param['type']) {

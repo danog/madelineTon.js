@@ -120,10 +120,10 @@ class CryptoWorker {
     }
     /**
      * Bigint PowMod
-     * @param {string} b Hex base
-     * @param {string} e Hex exponent
-     * @param {string} n Hex modulus
-     * @returns {Uint8Array} Result
+     * @param {leemonBigInt} b Hex base
+     * @param {leemonBigInt} e Hex exponent
+     * @param {leemonBigInt} n Hex modulus
+     * @returns {leemonBigInt} Result
      */
     powMod(b, e, n) {
         return this.asyncTask({
@@ -135,9 +135,9 @@ class CryptoWorker {
     }
     /**
      * Check validity of diffie hellman parameters
-     * @param {*} p Hex prime
-     * @param {*} g Hex generator
-     * @param {*} G_ Hex generated
+     * @param {BigInt} p Hex prime
+     * @param {BigInt} g Hex generator
+     * @param {BigInt} G_ Hex generated
      */
     checkAll(p, g, G_) {
         return this.asyncTask({
@@ -145,6 +145,18 @@ class CryptoWorker {
             p,
             g,
             G_
+        })
+    }
+    /**
+     * Check validity of diffie hellman parameters
+     * @param {BigInt} G_ Hex generated
+     * @param {BigInt} p Hex prime
+     */
+    checkG(G_, p) {
+        return this.asyncTask({
+            task: 'checkG',
+            G_,
+            p,
         })
     }
     /**

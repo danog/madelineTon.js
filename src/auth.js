@@ -1,15 +1,15 @@
 import {
-    secureRandom
-} from "./crypto-sync/random"
-import {
     bufferViewEqual,
     hexToBytes,
     bytesToHex,
-    bufferConcat
+    bufferConcat,
+    posMod
 } from "./tools"
 import Stream from "./TL/stream"
 import {
-    str2bigInt, bigInt2str
+    str2bigInt,
+    bigInt2str,
+    int2bigInt
 } from "leemon"
 // Use constant keys and don't re-parse them from the beginning, it's pointless anyway since we don't need CDNs
 const keys = [{
@@ -60,8 +60,7 @@ class Auther {
         let crypto = this.datacenter.sockets[dcId].ctx.getCrypto()
         for (let x = 0; x < 5; x++) {
             //try {
-            let nonce = new Uint32Array(4)
-            await secureRandom(nonce)
+            let nonce = await crypto.secureRandom(new Uint32Array(4))
 
             let res = await this.API.methodCall('req_pq_multi', {
                 nonce,
@@ -91,10 +90,10 @@ class Auther {
 
             let pq = await crypto.factorize(res['pq'])
 
-            let new_nonce = new Uint32Array(8)
-            await secureRandom(new_nonce)
+            let new_nonce = await crypto.secureRandom(new Uint32Array(8))
 
-            let payload = new Stream
+            let payload = new Stream(new Uint32Array(5).buffer)
+            payload.pos += 5
             this.TL.serialize(payload, {
                 _: 'p_q_inner_data' + (expires_in < 0 ? '' : '_temp'),
                 pq: res['pq'],
@@ -106,13 +105,12 @@ class Auther {
                 new_nonce,
                 expires_in,
             })
+            payload.prepareLength(64 - payload.pos)
 
-            let final = new Uint8Array(255)
-            final.set(new Uint8Array(await crypto.sha1(payload.uBuf)), 0)
-            final.set(payload.bBuf, 20)
-            final = str2bigInt(bytesToHex(final), 16)
+            payload.bBuf.set(new Uint8Array(await crypto.sha1(payload.uBuf.slice(5, payload.pos))), 0)
+            payload = str2bigInt(bytesToHex(payload.bBuf.subarray(0, 255)), 16)
 
-            final = hexToBytes(bigInt2str(await crypto.powMod(final, chosenKey['e'], chosenKey['n']), 16))
+            payload = hexToBytes(bigInt2str(await crypto.powMod(payload, chosenKey['e'], chosenKey['n']), 16))
 
             let dhParams = await this.API.methodCall('req_DH_params', {
                 nonce,
@@ -120,7 +118,7 @@ class Auther {
                 p: pq[0],
                 q: pq[1],
                 public_key_fingerprint: fp,
-                encrypted_data: final
+                encrypted_data: payload
             }, {
                 dcId,
             })
@@ -162,10 +160,42 @@ class Auther {
                 throw new Error('Server nonce mismatch!')
             }
 
-            let g = innerDh['g'].toString(16)
-            let g_a = innerDh['g_a']
-            let dh_prime = innerDh['dh_prime']
+            let g = str2bigInt(innerDh['g'].toString(16), 16)
+            let g_a = str2bigInt(bytesToHex(innerDh['g_a']), 16)
+            let p = str2bigInt(bytesToHex(innerDh['dh_prime']), 16)
 
+            await crypto.checkAll(p, g, g_a)
+
+            for (let retry_id = 0; retry_id < 5; retry_id++) {
+                let b = str2bigInt(bytesToHex(await crypto.secureRandom(new Uint8Array(256))), 16)
+                let g_b = await crypto.powMod(g, b, p)
+                await crypto.checkG(g_b, p)
+                g_b = hexToBytes(bigInt2str(g_b, 16))
+
+                payload = new Stream(new Uint32Array(5).buffer)
+                payload.pos += 5
+                this.TL.serialize(payload, {
+                    _: 'client_DH_inner_data',
+                    nonce,
+                    server_nonce,
+                    retry_id,
+                    g_b
+                })
+
+                payload.bBuf.set(new Uint8Array(await crypto.sha1(payload.uBuf.slice(5, payload.pos))), 0)
+                payload.prepareLength(posMod(-payload.getByteLength(), 16) / 4)
+                payload = await crypto.igeEncrypt(payload.uBuf, tmpAesKey, tmpAesIv)
+
+                
+                let clientDhParams = await this.API.methodCall('set_client_DH_params', {
+                    nonce,
+                    server_nonce,
+                    encrypted_data: new Uint8Array(payload)
+                }, {
+                    dcId
+                })
+                console.log(clientDhParams)
+            }
             return
             /*} catch (e) {
                 console.error(`Error while generating auth key for DC ${dcId}: ${e} ${e.trace}, retrying (try ${x+1} out of 5)`)

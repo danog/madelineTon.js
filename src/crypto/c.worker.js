@@ -11,9 +11,11 @@ import {
     CtrProcessor
 } from '../crypto-sync/crypto'
 import {
-    checkAll
+    checkAll, checkG
 } from '../crypto-sync/math'
-import { powMod } from 'leemon'
+import {
+    powMod
+} from 'leemon'
 
 let ctrWorkers = []
 onmessage = message => {
@@ -25,7 +27,8 @@ onmessage = message => {
                 result = factorize(message['what'])
                 break
             case 'secureRandom':
-                result = secureRandom(message['buffer'])
+                secureRandom(message['buffer'])
+                result = message['buffer']
                 break
             case 'secureRandomInt':
                 result = secureRandomInt(message['mod'])
@@ -63,6 +66,9 @@ onmessage = message => {
                 break
             case 'checkAll':
                 result = checkAll(message['p'], message['g'], message['G_'])
+                break
+            case 'checkG':
+                result = checkG(message['G_'], message['p'])
                 break
         }
     } catch (e) {
