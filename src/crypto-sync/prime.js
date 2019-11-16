@@ -11,7 +11,13 @@ import {
     sub_,
     add_,
     bpe,
-    one
+    one,
+    int2bigInt,
+    leftShift_,
+    str2bigInt,
+    mult_,
+    equals,
+    mult
 } from 'leemon'
 import Long from '../lib/bigint/long'
 import {
@@ -26,9 +32,9 @@ import Stream from '../TL/stream'
  * @returns Uint8Array[]
  */
 const toBuffers = (PBig, QBig) => {
+    PBig = Stream.switcheroo(PBig)
+    QBig = Stream.switcheroo(QBig)
     let stream = new Stream(new ArrayBuffer(8))
-    PBig = stream.switcheroo(PBig)
-    QBig = stream.switcheroo(QBig)
     stream.writeUnsignedInt(PBig).writeUnsignedInt(QBig)
     stream = stream.getBuffer()
     return [new Uint8Array(stream, 0, 4), new Uint8Array(stream, 4, 4)]
@@ -39,8 +45,8 @@ const toBuffers = (PBig, QBig) => {
  * 
  * Usually the fastest on modern machines.
  * 
- * @param {Uint8Array} Array of bytes with PQ
- * @returns number[] Factors
+ * @param {number[]} PQ, low and high parts
+ * @returns Uint8Array[] Factors
  */
 const long = what => {
     var g
@@ -54,7 +60,6 @@ const long = what => {
             var a = x
             var b = x
             var c = q
-
             while (b.notEquals(Long.ZERO)) {
                 if (b.and(Long.ONE).notEquals(Long.ZERO)) {
                     c = c.add(a)
@@ -95,6 +100,10 @@ const long = what => {
         Q = f
     }
 
+    if (P.multiply(Q).notEquals(what)) {
+        throw new Error(`Failure factorizing (long): ${P} * ${Q} != ${what}`)
+    }
+
     return toBuffers(P.toString(10), Q.toString(16))
 }
 
@@ -103,10 +112,12 @@ const long = what => {
  * 
  * Slowest module, for some reason the most reliable on (very) old hardware
  * 
- * @param {Uint8Array} Array of bytes with PQ
+ * @param {number} PQ, low and high parts
  * @returns Uint8Array[] Factors
  */
 const leemon = what => {
+    what = str2bigInt(what, 16, Math.ceil(64 / bpe) + 1)
+
     var minBits = 64
     var minLen = Math.ceil(minBits / bpe) + 1
     var i, q
@@ -177,7 +188,9 @@ const leemon = what => {
         Q = x
     }
 
-    // console.log(dT(), 'done', bigInt2str(what, 10), bigInt2str(P, 10), bigInt2str(Q, 10))
+    if (!equals(mult(P, Q), what)) {
+        throw new Error(`Failure factorizing (leemon): ${bigInt2str(P)} * ${bigInt2str(Q)} != ${bigInt2str(what)}`)
+    }
 
     return toBuffers(bigInt2str(P, 10), bigInt2str(Q, 10))
 }
@@ -189,13 +202,18 @@ const leemon = what => {
  * @returns Uint8Array[] Factors
  */
 const factorize = what => {
+    what = new Stream(what.buffer)
+    const high = Stream.switcheroo(what.readSignedInt()),
+        low = Stream.switcheroo(what.readSignedInt())
+    what = new Long(low, high)
+
     try {
         return long(what)
     } catch (e) {
         console.log("Error while factorizing with long: " + e)
     }
     try {
-        return leemon(what)
+        return leemon(what.toString(16))
     } catch (e) {
         console.log("Error while factorizing with leemon: " + e)
     }

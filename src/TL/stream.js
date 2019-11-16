@@ -1,5 +1,6 @@
 import {
-    posMod, transfer
+    posMod,
+    transfer
 } from "../tools"
 /**
  * Stream of int32.
@@ -99,6 +100,16 @@ class Stream {
     }
 
     /**
+     * Write unsigned 32-bit integer
+     * @param {number} value Integer value
+     * @returns Stream
+     */
+    writeUnsignedInt(value) {
+        this.uBuf[this.pos++] = value
+        return this
+    }
+
+    /**
      * Write signed 64-bit integer value
      * @param {Array|number} value 64-bit integer value (or one 32-bit integer value)
      * @returns Stream
@@ -143,7 +154,7 @@ class Stream {
      * @returns Stream
      */
     writeBytes(bytes) {
-        const length = bytes.length
+        let length = bytes.length
         let bPos = this.pos * 4
         if (length <= 253) {
             this.bBuf[bPos++] = length

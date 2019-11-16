@@ -5,7 +5,7 @@
  * @returns number
  */
 const posMod = (a, b) => {
-    const r = -a % b
+    const r = a % b
     return r < 0 ? r + b : r
 }
 
@@ -16,19 +16,34 @@ for (let n = 0; n <= 0xff; ++n) {
     if (hexOctet.length === 1) {
         hexOctet = "0" + hexOctet
     }
-    byteToHexMap.push(hexOctet);
+    byteToHexMap[n] = hexOctet;
 }
 
 /**
  * Converts bytes to hex string
  * @param {Uint8Array} bytes Bytes
+ * @returns string
  */
 const bytesToHex = bytes => {
-    const arr = Array(bytes.length)
-    for (let i = 0; i < bytes.length; i++) {
+    const length = bytes.length
+    const arr = Array(length)
+    for (let i = 0; i < length; i++) {
         arr[i] = byteToHexMap[bytes[i]]
     }
     return arr.join('')
+}
+
+/**
+ * Converts hex string to Uint8Array
+ * @param {string} hex Hex
+ * @param {Uint8Array} out Output array
+ */
+const hexToBytes = (hex, out) => {
+    const length = out.length
+    for (let x = 0; x < length; x++) {
+        out[x] = parseInt(hex[x]+hex[x+1], 16)
+    }
+    return out
 }
 
 /**
@@ -42,7 +57,27 @@ const xorInPlace = (a, b) => {
     }
 }
 
+/**
+ * Check it two ArrayBufferViews are equal
+ * @param {ArrayBufferView} a 
+ * @param {ArrayBufferView} b 
+ */
+const bufferViewEqual = (a, b) => {
+    const length = a.length
+    if (length != b.length) return false
+    for (let x = 0; x < length; x++) {
+        if (a[x] != b[x]) {
+            return false
+        }
+    }
+    return true
+}
 
+/**
+ * Resize buffer
+ * @param {ArrayBuffer} source Source buffer
+ * @param {number}      length New length
+ */
 const transferPoly = function (source, length) {
     if (length <= source.byteLength)
         return source.slice(0, length);
@@ -58,5 +93,7 @@ export {
     posMod,
     bytesToHex,
     xorInPlace,
-    transfer
+    transfer,
+    bufferViewEqual,
+    hexToBytes
 }

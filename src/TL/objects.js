@@ -121,7 +121,7 @@ class Objects {
     }
     findByPredicateAndLayer(predicate, layer) {
         let id;
-        if (id = this.byPredicateAndLayer[predicate + layer]) {
+        if (layer && (id = this.byPredicateAndLayer[predicate + layer])) {
             return this.byId[id]
         }
 

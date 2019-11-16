@@ -10,6 +10,9 @@ import {
     igeDecrypt,
     CtrProcessor
 } from '../crypto-sync/crypto'
+import {
+    powMod
+} from '../crypto-sync/math'
 
 let ctrWorkers = []
 onmessage = message => {
@@ -17,7 +20,7 @@ onmessage = message => {
     let result
     switch (message['task']) {
         case 'factorize':
-            result = factorize(message['task'])
+            result = factorize(message['what'])
             break
         case 'secureRandom':
             result = secureRandom(message['buffer'])
@@ -52,6 +55,9 @@ onmessage = message => {
             break
         case 'seed':
             rng_seed_time()
+            break
+        case 'powMod':
+            result = powMod(message['b'], message['e'], message['n'])
             break
     }
     postMessage({

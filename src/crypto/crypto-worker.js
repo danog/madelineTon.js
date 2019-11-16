@@ -6,7 +6,7 @@ import CWorker from './c.worker'
 class CryptoWorker {
     constructor(timeout) {
         this.tasks = []
-        this.timeout = timeout || 2000 // Change later
+        this.timeout = timeout || 200000 // Change later
 
         this.worker = new CWorker()
         this.worker.onmessage = this.onMessage.bind(this)
@@ -27,7 +27,7 @@ class CryptoWorker {
         params['id'] = this.tasks.length
         return new Promise((resolve, reject) => {
             this.tasks.push(resolve)
-            setTimeout(reject, this.timeout, params['id'])
+            setTimeout(() => reject("Crypto worker timeout for task " + params['task'] + "!"), params['task'] === 'factorize' ? 5 * 60 * 1000 : this.timeout, params['id'])
             this.worker.postMessage(params)
         })
     }
@@ -112,6 +112,21 @@ class CryptoWorker {
             data,
             key,
             iv
+        })
+    }
+    /**
+     * Bigint PowMod
+     * @param {Uint8Array} b Base
+     * @param {number}     e Exponent
+     * @param {Uint8Array} n Modulus
+     * @returns {Uint8Array} Result
+     */
+    powMod(b, e, n) {
+        return this.asyncTask({
+            task: 'powMod',
+            b,
+            e,
+            n
         })
     }
     /**

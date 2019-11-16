@@ -7,6 +7,7 @@ class Connection {
     incomingMessages = {}
     outgoingMessages = {}
     newOutgoing = {}
+    newIncoming = {}
 
     toAck = []
     /**
@@ -26,6 +27,7 @@ class Connection {
      */
     connect(ctx) {
         this.dc = ctx.getDcId()
+        this.ctx = ctx
         console.log(`Connecting to DC ${this.dc}...`)
         this.connection = new Socket
         this.connection.onMessage = this.onMessage.bind(this)
@@ -63,6 +65,9 @@ class Connection {
      */
     sendMessage(message, flush = true) {
         if (!message['serialized_body']) {
+            if (message['unencrypted']) {
+                message['type'] = this.TL.objects.findByPredicateAndLayer(message['_'])['type']
+            }
             let stream = new Stream
             this.TL.serialize(stream, message['body'], {
                 layer: this.API.layer
@@ -76,10 +81,17 @@ class Connection {
         }
     }
 
+    /**
+     * 
+     * @param {string} method Method name
+     * @param {Object} args   Arguments 
+     * @param {Object} aargs  Additional arguments
+     */
     async methodCall(method, args, aargs) {
         args['_'] = method
         const message = {
             _: method,
+            method: true,
             body: args,
             unencrypted: !this.authInfo.hasAuthKey() && !method.includes('.')
         }
@@ -103,8 +115,10 @@ class Connection {
         }
     }
     async flushPlain() {
-        for (const key in this.pendingMessages) {
-            const message = this.pendingMessages[key]
+        const pendingMessages = this.pendingMessages
+        this.pendingMessages = []
+        for (const key in pendingMessages) {
+            const message = pendingMessages[key]
             if (this.authInfo.hasAuthKey()) {
                 return
             }
@@ -126,7 +140,6 @@ class Connection {
             message['sent'] = Date.now() / 1000
             message['tries'] = 0
 
-            delete this.pendingMessages[key]
             this.outgoingMessages[messageId.toString()] = message
             this.newOutgoing[messageId.toString()] = messageId
 
@@ -156,18 +169,120 @@ class Connection {
             }
         }
         let authKey = message.readSignedLong()
+        let mId
         if (authKey[0] + authKey[1] === 0) {
-            this.mIdHandler.check(message.readSignedLong())
+            mId = this.mIdHandler.check(message.readSignedLong())
             message.pos++ // Skip length, framing is handled correctly by both HTTP and websockets anyway
-            //const length = message.readUnsignedInt()
-
-            message = this.TL.deserialize(message)
-            console.log(message)
         } else {
 
         }
+        this.incomingMessages[mId] = this.TL.deserialize(message)
+        this.newIncoming[mId] = mId
+        this.handleMessages()
     }
 
+    handleMessages() {
+        while (Object.keys(this.newIncoming).length) {
+            var message, mId
+            for (let key in this.newIncoming) { // Avoid problems with multiple competing calls
+                mId = key
+                message = this.incomingMessages[key]
+                delete this.incomingMessages[key]
+                delete this.newIncoming[key]
+                break
+            }
+
+            console.log(`Received ${message['_']} from DC ${this.dc}`)
+
+            switch (message['_']) {
+                case 'msgs_ack':
+                    console.log(`msgs_ack: ${message}`)
+                    break
+                case 'rpc_result':
+                    this.toAck.push(mId)
+                    this.handleResponse(mId, message)
+                    break
+                case 'future_salts':
+                case 'msgs_state_info':
+                    var msg_id_type = 'req_msg_id';
+                    // no break
+                case 'bad_server_salt':
+                case 'bad_msg_notification':
+                    var msg_id_type = msg_id_type ? msg_id_type : 'bad_msg_id';
+                    // no break
+                case 'pong':
+                    var msg_id_type = msg_id_type ? msg_id_type : 'msg_id';
+                    this.handleResponse(message[msg_id_type], message)
+                    break
+                case 'new_session_created':
+                    console.log(`new_session_created: ${message}`)
+                    break
+                case 'msg_container':
+                    for (mId in message['messages']) {
+                        this.mIdHandler.check(mId, true)
+                        this.incomingMessages[mId] = message['messages'][mId]
+                        this.newIncoming[mId] = mId
+                    }
+                    break
+                default:
+                    var type = this.TL.objects.findByPredicateAndLayer(message['_'])['type']
+                    if (type === 'Updates') { // Do update handling stuffs
+                        break
+                    }
+                    console.log(`Trying to assing a raw response of type ${type} to its request...`)
+                    for (let rId in this.newOutgoing) {
+                        console.log(`Does the request of return type ${this.outgoingMessages[rId]['type']} match?`)
+                        if (this.outgoingMessages[rId]['type'] === type) {
+                            console.log('Yes')
+                            this.handleResponse(rId, message)
+                            break
+                        }
+                        console.log('No')
+                    }
+            }
+        }
+    }
+
+    handleResponse(reqId, response) {
+        var request = this.outgoingMessages[reqId]
+        if (typeof request === 'undefined') {
+            console.log(`Could not find request for reqId ${reqId}`)
+            return
+        }
+        if (typeof response['_'] !== undefined) { // Might be a vector return type
+            switch (response['_']) {
+                case 'rpc_error':
+
+            }
+        }
+        if (request['method'] && request['_'] === 'auth.bindTempAuthKey' && this.authInfo.hasAuthKey() && !this.authInfo.getAuthKey().isInited()) {
+            this.authInfo.getAuthKey().init(true)
+        }
+        if (!request['resolve']) {
+            console.log(`Already resolved ${response['_'] ? response['_'] : '-'}`)
+            return
+        }
+        if (response['_'] && this.TL.objects.findByPredicateAndLayer(request['_'])['type'] === 'Updates') {
+            response['request'] = request // For better peer resolution in results of method calls
+            // Here should call update handler
+        }
+        this.gotResponseForOutgoingMessageId(reqId)
+        const r = request['resolve']
+        delete request['reject']
+        delete request['resolve']
+        r(response)
+    }
+    gotResponseForOutgoingMessageId(id) {
+        if (this.newOutgoing[id]) {
+            delete this.newOutgoing[id]
+        }
+        if (this.outgoingMessages[id]['body']) {
+            delete this.outgoingMessages[id]['body']
+        }
+        if (this.outgoingMessages[id]['serialized_body']) {
+            delete this.outgoingMessages[id]['serialized_body']
+        }
+    }
 }
 
 export default Connection;
