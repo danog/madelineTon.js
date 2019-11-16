@@ -21,7 +21,8 @@ class Context
         return this
     }
     getUri(prefix) {
-        return `${prefix}${this._secure ? 's' : ''}://${this.host}:${this.port}/apiws`
+        let uri = prefix === 'ws' ? prefix : 'w1'
+        return `${prefix}${this._secure ? 's' : ''}://${this.host}:${this.port}/api${uri}`
     }
     setCrypto(crypto) {
         this.crypto = crypto

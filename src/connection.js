@@ -155,10 +155,12 @@ class Connection {
      */
     onMessage(message) {
         console.log("Got message")
-
-        message = new Stream(message)
-        if (message.byteLength === 4) {
+        console.log(message)
+        
+        console.log(message.getByteLength())
+        if (message.getByteLength() === 4) {
             const error = message.readSignedInt()
+            throw new Error(error)
             if (error === -404) {
                 if (this.authInfo.hasAuthKey()) {
                     console.log("Resetting auth key in DC " + this.dc)

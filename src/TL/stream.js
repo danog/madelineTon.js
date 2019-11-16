@@ -225,6 +225,13 @@ class Stream {
         return this.pos
     }
     /**
+     * Reset position
+     */
+    reset() {
+        this.pos = 0
+        return this
+    }
+    /**
      * Gets buffer
      * @returns ArrayBuffer
      */

@@ -4,6 +4,7 @@ import {
 import {
     obf2
 } from "../TL/constants"
+import Stream from "../TL/stream"
 
 class Websocket {
     /**
@@ -41,7 +42,7 @@ class Websocket {
                 let length = message[0]
                 length = (length >= 0x7f ? message[1] | message[2] << 8 | message[3] << 16 : length) << 2
                 console.log(message.length - 1, length)
-                this.onMessage(message.slice(-length).buffer)
+                this.onMessage(new Stream(message.slice(-length).buffer))
             }
             this.socket.onopen = resolve
             this.socket.onerror = reject
