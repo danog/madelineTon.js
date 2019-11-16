@@ -3,7 +3,8 @@ import {
     hexToBytes,
     bytesToHex,
     bufferConcat,
-    posMod
+    posMod,
+    xorInPlace
 } from "./tools"
 import Stream from "./TL/stream"
 import {
@@ -11,6 +12,8 @@ import {
     bigInt2str,
     int2bigInt
 } from "leemon"
+import PermAuthKey from "./session/permAuthKey"
+import TempAuthKey from "./session/tempAuthKey"
 // Use constant keys and don't re-parse them from the beginning, it's pointless anyway since we don't need CDNs
 const keys = [{
         e: str2bigInt("010001", 16),
@@ -130,7 +133,7 @@ class Auther {
                 throw new Error('Server nonce mismatch!')
             }
             if (dhParams['_'] === 'server_DH_params_fail') {
-                if (!bufferViewEqual(new Uint8Array(await crypto.sha1(new Uint32Array(new_nonce.buffer)), -32), dhParams['new_nonce_hash'])) {
+                if (!bufferViewEqual(new Uint8Array(await crypto.sha1(new_nonce), -32), dhParams['new_nonce_hash'])) {
                     throw new Error('New nonce hash mismatch!')
                 }
                 continue
@@ -186,7 +189,7 @@ class Auther {
                 payload.prepareLength(posMod(-payload.getByteLength(), 16) / 4)
                 payload = await crypto.igeEncrypt(payload.uBuf, tmpAesKey, tmpAesIv)
 
-                
+
                 let clientDhParams = await this.API.methodCall('set_client_DH_params', {
                     nonce,
                     server_nonce,
@@ -194,7 +197,54 @@ class Auther {
                 }, {
                     dcId
                 })
-                console.log(clientDhParams)
+
+                if (!bufferViewEqual(nonce, clientDhParams['nonce'])) {
+                    throw new Error('Nonce mismatch!')
+                }
+                if (!bufferViewEqual(server_nonce, clientDhParams['server_nonce'])) {
+                    throw new Error('Server nonce mismatch!')
+                }
+
+                let authKey = hexToBytes(bigInt2str(await crypto.powMod(g_a, b, p), 16))
+                let authKeySha = new Uint8Array(await crypto.sha1(authKey))
+                let authKeyShaAux = authKeySha.subarray(0, 8)
+
+                switch (clientDhParams['_']) {
+                    case 'dh_gen_ok':
+                        let new_nonce_hash1 = new Uint32Array(await crypto.sha1(bufferConcat(new_nonce, bufferConcat(new Uint8Array([1]), authKeyShaAux)))).subarray(-4)
+                        if (!bufferViewEqual(new_nonce_hash1, clientDhParams['new_nonce_hash1'])) {
+                            throw new Error('Wrong new_nonce_hash1')
+                        }
+
+                        let key = expires_in < 0 ? new PermAuthKey : new TempAuthKey
+                        if (expires_in >= 0) {
+                            key.expires(Date.now() / 1000 + expires_in)
+                        }
+                        key.setAuthKey(authKey, authKeySha.subarray(-8))
+
+                        new_nonce = new_nonce.subarray(0, 8)
+                        server_nonce = server_nonce.subarray(0, 8)
+                        xorInPlace(new_nonce, server_nonce)
+
+                        key.setServerSalt(new_nonce.slice())
+
+                        console.log(`Sucessfully generated auth key (expires ${expires_in}) for DC ${dcId}`)
+                        return key
+                    case 'dh_gen_retry':
+                        let new_nonce_hash2 = new Uint32Array(await crypto.sha1(bufferConcat(new_nonce, bufferConcat(new Uint8Array([2]), authKeyShaAux)))).subarray(-4)
+                        if (!bufferViewEqual(new_nonce_hash2, clientDhParams['new_nonce_hash2'])) {
+                            throw new Error('Wrong new_nonce_hash2')
+                        }
+                        console.log("Retrying auth")
+                        break;
+                    case 'dh_gen_fail':
+                        let new_nonce_hash3 = new Uint32Array(await crypto.sha1(bufferConcat(new_nonce, bufferConcat(new Uint8Array([3]), authKeyShaAux)))).subarray(-4)
+
+                        if (!bufferViewEqual(new_nonce_hash3, clientDhParams['new_nonce_hash3'])) {
+                            throw new Error('Wrong new_nonce_hash3')
+                        }
+                        throw new Error('Auth failed')
+                }
             }
             return
             /*} catch (e) {

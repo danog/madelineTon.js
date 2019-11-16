@@ -2,7 +2,7 @@ import AuthKey from "./authKey";
 import PermAuthKey from "./permAuthKey";
 
 class TempAuthKey extends AuthKey {
-    expires = 0
+    expires_at = 0
     inited = false
     pfs = true
     /**
@@ -59,14 +59,14 @@ class TempAuthKey extends AuthKey {
      * @param {number} expires 
      */
     expires(expires) {
-        this.expires = expires
+        this.expires_at = expires
     }
     /**
      * Check if auth key has expired
      * @returns boolean
      */
     expired() {
-        return Date.now() / 1000 > this.expires
+        return Date.now() / 1000 > this.expires_at
     }
 }
 export default TempAuthKey
