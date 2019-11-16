@@ -2,27 +2,31 @@ import {
     bytesToHex,
     hexToBytes
 } from "../tools"
-import {
-    str2bigInt,
-    powMod as powMod_,
-    bigInt2str
-} from "leemon"
+
 
 /**
- * PowMod using leemon
- * @param {Uint8Array} b Base
- * @param {number}     e Exponent
- * @param {string}     n Modulus
- * @returns {Uint8Array} Result
+ * Check validity of G
+ * @param {string} G Hex g_*
+ * @param {string} p Hex prime
  */
-const powMod = (b, e, n) => {
-    b = str2bigInt(bytesToHex(b), 16)
-    e = str2bigInt(e, 16)
-    n = str2bigInt(n, 16)
-
-    return hexToBytes(bigInt2str(powMod_(b, e, n), 16), new Uint8Array(256))
+const checkG = (G, p) => {
+    
 }
-
+/**
+ * Check validity of prime
+ * @param {string} p Hex prime
+ * @param {string} g Hex generator
+ */
+const checkPG = (p, g) => {
+    
+}
+/**
+ * Check validity of diffie hellman parameters
+ * @param {*} p Hex prime
+ * @param {*} g Hex generator
+ * @param {*} G_ Hex generated
+ */
+const checkAll = (p, g, G_) => checkPG(p, g) && checkG(G_, p)
 export {
-    powMod
+    checkAll
 }

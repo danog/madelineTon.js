@@ -80,7 +80,7 @@ const wordsToBytes = Stream.bigEndian ? wordsToBytesBigEndian : wordsToBytesLitt
 const toBigEndian = Stream.bigEndian ? (buffer => buffer) : buffer => buffer.map(Stream.switcheroo)
 /**
  * SHA256 hash
- * @param {ArrayBuffer} data Data to hash
+ * @param {Uint32Array} data Data to hash
  */
 const sha256 = data => wordsToBytes(CryptoJS.SHA256(bytesToWords(data)))
 
@@ -145,9 +145,7 @@ class CtrProcessor {
     }
     encryptCounter(increment) {
         this.aesCounter = this.counter.slice()
-        console.log(this.aesCounter)
         this.processor.encryptBlock(this.aesCounter, 0)
-        console.log(this.aesCounter)
         incCounter(this.counter, increment)
     }
     /**

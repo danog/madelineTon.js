@@ -39,6 +39,7 @@ const bytesToHex = bytes => {
  * @param {Uint8Array} out Output array
  */
 const hexToBytes = (hex, out) => {
+    out = out || new Uint8Array(hex.length / 2)
     const length = out.length
     for (let x = 0; x < length; x++) {
         out[x] = parseInt(hex[x*2].concat(hex[x*2+1]), 16)

@@ -19,14 +19,18 @@ class CryptoWorker {
     }
     onMessage(message) {
         message = message['data']
-        if (this.tasks[message['id']]) {
-            this.tasks[message['id']](message['result'])
+        if (!this.tasks[message['id']]) return
+        if (message['e']) {
+            this.tasks[message['id']][1](message['e'])
+        } else {
+            this.tasks[message['id']][0](message['result'])
         }
+        delete this.tasks[message['id']]
     }
     asyncTask(params) {
         params['id'] = this.tasks.length
         return new Promise((resolve, reject) => {
-            this.tasks.push(resolve)
+            this.tasks.push([resolve, reject])
             setTimeout(() => reject("Crypto worker timeout for task " + params['task'] + "!"), params['task'] === 'factorize' ? 5 * 60 * 1000 : this.timeout, params['id'])
             this.worker.postMessage(params)
         })
@@ -116,9 +120,9 @@ class CryptoWorker {
     }
     /**
      * Bigint PowMod
-     * @param {Uint8Array} b Base
-     * @param {number}     e Exponent
-     * @param {Uint8Array} n Modulus
+     * @param {string} b Hex base
+     * @param {string} e Hex exponent
+     * @param {string} n Hex modulus
      * @returns {Uint8Array} Result
      */
     powMod(b, e, n) {
@@ -127,6 +131,20 @@ class CryptoWorker {
             b,
             e,
             n
+        })
+    }
+    /**
+     * Check validity of diffie hellman parameters
+     * @param {*} p Hex prime
+     * @param {*} g Hex generator
+     * @param {*} G_ Hex generated
+     */
+    checkAll(p, g, G_) {
+        return this.asyncTask({
+            task: 'checkAll',
+            p,
+            g,
+            G_
         })
     }
     /**
