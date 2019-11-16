@@ -28,6 +28,8 @@ class Objects {
         console.log("Parsing TL schemes")
         let data = [];
         for (let [layer, scheme] of Object.entries(schemes)) {
+            layer = parseInt(layer)
+
             // Parse constructors
             for (let key in scheme['constructors']) {
                 let constructor = scheme['constructors'][key]
@@ -49,7 +51,7 @@ class Objects {
         }
         for (let constructor of data) {
             let minSize = data['type'] === 'Vector t' ? 1 : 0
-
+            
             let newParams = {}
             for (let key in constructor['params']) {
                 let param = constructor['params'][key]

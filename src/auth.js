@@ -16,14 +16,14 @@ class Auther {
         for (let x = 0; x < 5; x++) {
             //try {
                 const nonce = new Uint32Array([455527095, 1272718840, 3816210617, 3299800878])
-                //await secureRandom(nonce)
+                await secureRandom(nonce)
 
-                await this.API.methodCall('req_pq_multi', {
+                let res = await this.API.methodCall('req_pq_multi', {
                     nonce,
                 }, {
                     dcId,
                 })
-                return 69 
+                console.log(res['nonce'], nonce)
             /*} catch (e) {
                 console.log(`Error while generating auth key for DC ${dcId}: ${e}, retrying (try ${x+1} out of 5)`)
             }*/

@@ -20,13 +20,13 @@ class Websocket {
         } while (byteView[0] === 0xEF || obf2.includes(random[0]) || random[1] === 0)
         random[14] = 0xefefefef
 
-        let reverse = new Uint32Array(byteView.slice().reverse())
+        let reverse = new Uint8Array(byteView.slice().reverse())
 
         let key = random.slice(2, 10)
-        let keyRev = reverse.slice(2, 10)
+        let keyRev = reverse.slice(2 * 4, 10 * 4)
 
         let iv = random.slice(10, 14)
-        let ivRev = random.slice(10, 14)
+        let ivRev = reverse.slice(10 * 4, 14 * 4)
 
         this.encrypt = await this.crypto.getCtr(key, iv)
         this.decrypt = await this.crypto.getCtr(keyRev, ivRev)
@@ -36,12 +36,12 @@ class Websocket {
         await new Promise((resolve, reject) => {
             this.socket = new WebSocket(ctx.getUri('ws'), 'binary')
             this.socket.binaryType = "arraybuffer"
-            this.socket.onmessage = message => {
-                message = new Uint8Array(this.decrypt.process(message.data))
+            this.socket.onmessage = async message => {
+                message = new Uint8Array(await this.decrypt.process(new Uint8Array(message.data)))
                 let length = message[0]
-                length = (length >= 0x7f ? length : message[1] | message[2] << 8 | message[3] << 16) << 2
-                this.onMessage(message.subarray(length >= 0x7f ? 4 : 1).buffer)
-                //this.onMessage()
+                length = (length >= 0x7f ? message[1] | message[2] << 8 | message[3] << 16 : length) << 2
+                console.log(message.length - 1, length)
+                this.onMessage(message.slice(-length).buffer)
             }
             this.socket.onopen = resolve
             this.socket.onerror = reject

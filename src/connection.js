@@ -64,7 +64,9 @@ class Connection {
     sendMessage(message, flush = true) {
         if (!message['serialized_body']) {
             let stream = new Stream
-            this.TL.serialize(stream, message['body'], {layer: this.API.layer})
+            this.TL.serialize(stream, message['body'], {
+                layer: this.API.layer
+            })
             message['serialized_body'] = stream.getBuffer()
         }
 
@@ -81,7 +83,9 @@ class Connection {
             body: args,
             unencrypted: !this.authInfo.hasAuthKey() && !method.includes('.')
         }
-        const promise = new Promise((res, rej) => { message['resolve'] = res, message['reject'] = rej})
+        const promise = new Promise((res, rej) => {
+            message['resolve'] = res, message['reject'] = rej
+        })
         await this.sendMessage(message, true)
         return promise
     }
@@ -120,12 +124,12 @@ class Connection {
 
             await this.connection.write(buffer)
             message['sent'] = Date.now() / 1000
-            message['tries']  = 0
+            message['tries'] = 0
 
             delete this.pendingMessages[key]
             this.outgoingMessages[messageId.toString()] = message
             this.newOutgoing[messageId.toString()] = messageId
-            
+
             console.log(`Sent ${message['_']} as unencrypted message to DC ${this.dc}!`)
         }
     }
@@ -137,9 +141,11 @@ class Connection {
      * @param {ArrayBuffer} message 
      */
     onMessage(message) {
-        console.log("got message")
+        console.log("Got message")
+
+        message = new Stream(message)
         if (message.byteLength === 4) {
-            const error = new Stream(message).readSignedInt()
+            const error = message.readSignedInt()
             if (error === -404) {
                 if (this.authInfo.hasAuthKey()) {
                     console.log("Resetting auth key in DC " + this.dc)
@@ -149,7 +155,17 @@ class Connection {
                 }
             }
         }
-        
+        let authKey = message.readSignedLong()
+        if (authKey[0] + authKey[1] === 0) {
+            this.mIdHandler.check(message.readSignedLong())
+            message.pos++ // Skip length, framing is handled correctly by both HTTP and websockets anyway
+            //const length = message.readUnsignedInt()
+
+            message = this.TL.deserialize(message)
+            console.log(message)
+        } else {
+
+        }
     }
 
 }

@@ -27,12 +27,15 @@ class Parser {
     }
 
     /**
-     * Serialize TL object
+     * Deserialize TL object
      * @param {Stream} data Data
      * @param {Object} type Type info
      */
     deserialize(data, type) {
-        switch (type) {
+        type = type || {
+            type: ''
+        }
+        switch (type['type']) {
             case 'int':
                 return data.readSignedInt()
             case '#':
@@ -64,12 +67,18 @@ class Parser {
             case 'dataJSON':
                 return JSON.parse(data.readString())
             case 'vector':
-                return Array(data.readUnsignedInt()).map(() => this.deserialize(data, type['subtype']))
+                const length = data.readUnsignedInt()
+                let result = Array(length)
+                for (let x = 0; x < length; x++) {
+                    result[x] = this.deserialize(data, type['subtype'])
+                }
+                return result
         }
         const result = {
             _: type['predicate']
         }
-        for (let [key, param] in type['params']) {
+        for (let key in type['params']) {
+            let param = type['params'][key]
             if (param['pow']) {
                 if (param['type'] === 'true') {
                     result[key] = Boolean(result['flags'] & param['pow'])
@@ -147,7 +156,8 @@ class Parser {
 
         let flags = data['flags'] || 0
         let flagSize = 0
-        for (let [key, param] in type['params']) {
+        for (let key in type['params']) {
+            let param = type['params'][key]
             if (param['pow']) {
                 if (!data[key]) {
                     flags = flags & ~param['pow']

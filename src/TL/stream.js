@@ -63,7 +63,7 @@ class Stream {
      * @returns Uint8Array
      */
     readBytes() {
-        const bPos = this.pos * 4
+        let bPos = this.pos * 4
         let length = this.bBuf[bPos++]
         if (length === 254) {
             length = this.readUnsignedInt() >> 8
@@ -71,8 +71,7 @@ class Stream {
         }
         const value = this.bBuf.slice(bPos, bPos + length)
         bPos += length
-        bPos += posMod(-bPos, 4)
-        this.pos = bPos / 4
+        this.pos = Math.ceil(bPos / 4)
         return value
     }
 
@@ -199,6 +198,13 @@ class Stream {
      */
     getSize() {
         return this.iBuf.length
+    }
+    /**
+     * Get current byte stream size
+     * @returns number
+     */
+    getByteLength() {
+        return this.iBuf.byteLength
     }
     /**
      * Get current int32 stream position
