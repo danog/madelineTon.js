@@ -17,11 +17,15 @@ import {
 } from 'leemon'
 
 let ctrWorkers = []
+let parser
 onmessage = message => {
     message = message['data']
     let result
     try {
         switch (message['task']) {
+            case 'init':
+                parser = message['parser']
+                return
             case 'factorize':
                 result = factorize(message['what'])
                 break
@@ -43,6 +47,9 @@ onmessage = message => {
                 break
             case 'igeDecrypt':
                 result = igeDecrypt(message['data'], message['key'], message['iv'])
+                break
+            case 'deserialize':
+                result = parser.deserialize(message['data'])
                 break
                 /*
             case 'ctrInit':

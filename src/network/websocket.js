@@ -68,14 +68,11 @@ class Websocket {
             payload.writeUnsignedInt((length << 8) & 0x7F)
             payload = payload.bBuf
         } else {
-            payload = payload.bBuf.subarray(3)
+            payload = payload.bBuf.slice(3)
             payload[0] = length
         }
 
-        return this.encrypt.process(payload).then(ppayload => {
-            console.log(payload, ppayload)
-            return this.socket.send(ppayload)
-        })
+        return this.encrypt.process(payload).then(payload => this.socket.send(payload))
     }
     getBuffer() {
         const s = new Stream(new Uint32Array(6))

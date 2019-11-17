@@ -9,8 +9,16 @@ import {
     igeEncrypt,
     igeDecrypt
 } from "../crypto-sync/crypto"
+import { gunzipSync } from "zlib"
 
 class CryptoSync {
+    /**
+     * 
+     * @param {Parser} parser TL Parser
+     */
+    constructor(parser) {
+        this.TL = parser
+    }
     /**
      * Factorize semiprime
      * @param {Uint8Array} what Number to factorize
@@ -67,5 +75,15 @@ class CryptoSync {
     igeDecrypt(data, key, iv) {
         return Promise.resolve(igeDecrypt(data, key, iv))
     }
+    
+    /**
+     * Deserialize TL payload
+     * @param {Stream} data Data
+     * @returns {Object}
+     */
+    deserialize(data) {
+        return Promise.resolve(this.TL.deserialize(data))
+    }
 }
+
 export default CryptoSync

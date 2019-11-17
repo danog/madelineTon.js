@@ -26,8 +26,9 @@ class TempAuthKey extends AuthKey {
      */
     bindPerm(perm, pfs = true) {
         this.bound = perm
-        const instance = pfs && perm ? perm : this
+        const instance = !pfs && perm ? perm : this
         const proto = (pfs && perm ? PermAuthKey : TempAuthKey).prototype
+        console.log(proto, instance)
         for (let method of ['getAuthKey', 'setAuthKey', 'getServerSalt', 'setServerSalt', 'hasServerSalt', 'getID']) {
             this[method] = proto[method].bind(instance)
         }

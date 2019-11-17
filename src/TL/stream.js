@@ -179,12 +179,12 @@ class Stream {
      * @returns Stream
      */
     writeString(string) {
-        string = unescape(encodeURIComponent(bytes))
+        string = unescape(encodeURIComponent(string))
 
         const ln = string.length
-        const result = Uint8Array(ln)
+        const result = new Uint8Array(ln)
         for (let i = 0; i < ln; ++i) {
-            result[i] = str.charCodeAt(i)
+            result[i] = string.charCodeAt(i)
         }
 
         this.writeBytes(result)

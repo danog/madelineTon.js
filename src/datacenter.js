@@ -20,7 +20,7 @@ class DataCenter {
         }
 
         const ctx = new Context()
-        ctx.secure(true).setDcId(dcID).setUri(`${this.map[dcID - 1]}.web.telegram.org`, 443).setCrypto(new CryptoAsync)
+        ctx.secure(true).setDcId(dcID).setUri(`${this.map[dcID - 1]}.web.telegram.org`, 443).setCrypto(new CryptoAsync(API.getTL()))
 
         this.sockets[dcID] = new Connection(this.authInfo[dcID], API)
         return this.sockets[dcID].connect(ctx)

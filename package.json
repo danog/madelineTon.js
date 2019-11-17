@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "leemon": "^6.2.0",
-    "rusha": "^0.8.13"
+    "rusha": "^0.8.13",
+    "zlibjs": "^0.3.1"
   }
 }

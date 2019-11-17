@@ -4,7 +4,7 @@ import {
 import CWorker from './c.worker'
 
 class CryptoWorker {
-    constructor(timeout) {
+    constructor(parser, timeout) {
         this.tasks = []
         this.timeout = timeout || 200000 // Change later
 
@@ -16,6 +16,10 @@ class CryptoWorker {
                 task: 'seed'
             })
         }
+        this.worker.postMessage({
+            task: 'init',
+            parser
+        })
     }
     onMessage(message) {
         message = message['data']
@@ -159,7 +163,19 @@ class CryptoWorker {
             p,
         })
     }
-    
+
+    /**
+     * Deserialize TL payload
+     * @param {Stream} data Data
+     * @returns {Object}
+     */
+    deserialize(data) {
+        return this.asyncTask({
+            task: 'deserialize',
+            data,
+        })
+    }
+
     /**
      * Get continuous CTR processor
      * @param {Uint32Array} iv 

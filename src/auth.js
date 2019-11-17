@@ -229,7 +229,7 @@ class Auther {
                             server_nonce = server_nonce.subarray(0, 8)
                             xorInPlace(new_nonce, server_nonce)
 
-                            key.setServerSalt(new_nonce.slice())
+                            key.setServerSalt(new Uint32Array(new_nonce.slice().buffer))
 
                             console.log(`Sucessfully generated auth key (expires ${expires_in}) for DC ${dcId}`)
                             return key

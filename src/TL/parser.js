@@ -5,6 +5,9 @@ import {
     fastRandomInt,
     secureRandom
 } from "../crypto-sync/random"
+import {
+    gunzipSync
+} from "zlib"
 
 /**
  * Custom TL parser based on an unreleased project of mine (madeline.py).
@@ -63,7 +66,9 @@ class Parser {
         }
         switch (type['predicate']) {
             case 'gzip_packed':
-                return
+                return this.deserialize(gunzipSync(data.readBytes()), {
+                    layer: type['layer']
+                })
             case 'dataJSON':
                 return JSON.parse(data.readString())
             case 'vector':
@@ -241,6 +246,7 @@ class Parser {
             }
             this.serialize(stream, data[key], param)
         }
+        return stream
     }
 }
 export default Parser

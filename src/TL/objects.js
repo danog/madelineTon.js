@@ -60,6 +60,9 @@ class Objects {
                 if (param['layer'] === 1 && param['type'] === 'string') {
                     param['type'] = 'bytes'
                 }
+                if (param['type'] === '!X') {
+                    param['type'] = 'bytes'
+                }
 
                 if (param['type'][0] === '%') {
                     param = {
@@ -106,6 +109,7 @@ class Objects {
 
             this.byId[constructor['id']] = constructor
             this.byPredicateAndLayer[constructor['predicate'] + constructor['layer']] = constructor['id']
+
             if (!this.layers.includes(constructor['layer'])) {
                 this.layers.push(constructor['layer'])
             }
@@ -125,8 +129,9 @@ class Objects {
             return this.byId[id]
         }
 
-        for (layer in this.layers) {
-            if (id = this.byPredicateAndLayer[predicate + layer]) {
+        for (let k in this.layers) {
+            let myLayer = this.layers[k]
+            if (id = this.byPredicateAndLayer[predicate + myLayer]) {
                 return this.byId[id]
             }
         }

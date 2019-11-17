@@ -82,7 +82,7 @@ const toBigEndian = Stream.bigEndian ? (buffer => buffer) : buffer => buffer.map
  * SHA256 hash
  * @param {Uint32Array} data Data to hash
  */
-const sha256 = data => wordsToBytes(CryptoJS.SHA256(bytesToWords(data)))
+const sha256 = data => wordsToBytes(CryptoJS.SHA256(bytesToWords(data instanceof Uint32Array ? data : new Uint32Array(data.buffer)))).words.buffer
 
 const rushaInstance = new Rusha(1024 * 1024)
 /**
