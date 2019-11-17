@@ -42,7 +42,7 @@ const hexToBytes = (hex, out) => {
     out = out || new Uint8Array(hex.length / 2)
     const length = out.length
     for (let x = 0; x < length; x++) {
-        out[x] = parseInt(hex[x*2].concat(hex[x*2+1]), 16)
+        out[x] = parseInt(hex[x * 2].concat(hex[x * 2 + 1]), 16)
     }
     return out
 }
@@ -78,11 +78,15 @@ const bufferViewEqual = (a, b) => {
  * Concatenate two buffers
  * @param {Uint8Array} a 
  * @param {Uint8Array} b 
+ * @param {Uint8Array|undefined} c
  */
-const bufferConcat = (a, b) => {
-    let res = new Uint8Array(a.byteLength+b.byteLength)
+const bufferConcat = (a, b, c) => {
+    let res = new Uint8Array(a.byteLength + b.byteLength + (c ? c.byteLength : 0))
     res.set(a)
     res.set(b, a.byteLength)
+    if (c) {
+        res.set(c, a.byteLength + b.byteLength)
+    }
     return res
 }
 

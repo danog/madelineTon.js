@@ -18,14 +18,14 @@ class AuthInfo {
      * @param {boolean} temp Whether to get temporary or permanent auth key
      */
     getAuthKey(temp = true) {
-        return temp ? this.tempAuthKey : this.authKey
+        return temp ? this.tempAuthKey : this.permAuthKey
     }
     /**
      * Check whether temporary or permanent auth key exists
      * @param {boolean} temp 
      */
     hasAuthKey(temp = true) {
-        return typeof (temp ? this.tempAuthKey : this.authKey) !== 'undefined'
+        return typeof (temp ? this.tempAuthKey : this.permAuthKey) !== 'undefined'
     }
     /**
      * Bind temporary and permanent auth keys

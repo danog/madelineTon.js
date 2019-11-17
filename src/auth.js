@@ -14,6 +14,9 @@ import {
 } from "leemon"
 import PermAuthKey from "./session/permAuthKey"
 import TempAuthKey from "./session/tempAuthKey"
+import {
+    pad
+} from "./crypto-sync/crypto"
 // Use constant keys and don't re-parse them from the beginning, it's pointless anyway since we don't need CDNs
 const keys = [{
         e: str2bigInt("010001", 16),
@@ -62,7 +65,7 @@ class Auther {
     async createAuthKey(expires_in, dcId) {
         let crypto = this.datacenter.sockets[dcId].ctx.getCrypto()
         for (let x = 0; x < 5; x++) {
-            try {
+            //try {
                 let nonce = await crypto.secureRandom(new Uint32Array(4))
 
                 let res = await this.API.methodCall('req_pq_multi', {
@@ -147,7 +150,7 @@ class Auther {
 
 
                 let tmpAesKey = new Uint32Array(bufferConcat(newServerHash, serverNewHash.subarray(0, 12)).buffer)
-                let tmpAesIv = new Uint32Array(bufferConcat(bufferConcat(serverNewHash.subarray(12, 20), newNewHash), new_nonce.subarray(0, 4)).buffer)
+                let tmpAesIv = new Uint32Array(bufferConcat(serverNewHash.subarray(12, 20), newNewHash, new_nonce.subarray(0, 4)).buffer)
                 let answer = new Stream(await crypto.igeDecrypt(new Uint32Array(dhParams['encrypted_answer'].buffer), tmpAesKey, tmpAesIv))
 
                 let answerHash = answer.readUnsignedInts(5)
@@ -211,7 +214,7 @@ class Auther {
 
                     switch (clientDhParams['_']) {
                         case 'dh_gen_ok':
-                            let new_nonce_hash1 = new Uint32Array(await crypto.sha1(bufferConcat(new_nonce, bufferConcat(new Uint8Array([1]), authKeyShaAux)))).subarray(-4)
+                            let new_nonce_hash1 = new Uint32Array(await crypto.sha1(bufferConcat(new_nonce, new Uint8Array([1]), authKeyShaAux))).subarray(-4)
                             if (!bufferViewEqual(new_nonce_hash1, clientDhParams['new_nonce_hash1'])) {
                                 throw new Error('Wrong new_nonce_hash1')
                             }
@@ -231,14 +234,14 @@ class Auther {
                             console.log(`Sucessfully generated auth key (expires ${expires_in}) for DC ${dcId}`)
                             return key
                         case 'dh_gen_retry':
-                            let new_nonce_hash2 = new Uint32Array(await crypto.sha1(bufferConcat(new_nonce, bufferConcat(new Uint8Array([2]), authKeyShaAux)))).subarray(-4)
+                            let new_nonce_hash2 = new Uint32Array(await crypto.sha1(bufferConcat(new_nonce, new Uint8Array([2]), authKeyShaAux))).subarray(-4)
                             if (!bufferViewEqual(new_nonce_hash2, clientDhParams['new_nonce_hash2'])) {
                                 throw new Error('Wrong new_nonce_hash2')
                             }
                             console.log("Retrying auth")
                             break;
                         case 'dh_gen_fail':
-                            let new_nonce_hash3 = new Uint32Array(await crypto.sha1(bufferConcat(new_nonce, bufferConcat(new Uint8Array([3]), authKeyShaAux)))).subarray(-4)
+                            let new_nonce_hash3 = new Uint32Array(await crypto.sha1(bufferConcat(new_nonce, new Uint8Array([3]), authKeyShaAux))).subarray(-4)
 
                             if (!bufferViewEqual(new_nonce_hash3, clientDhParams['new_nonce_hash3'])) {
                                 throw new Error('Wrong new_nonce_hash3')
@@ -247,28 +250,109 @@ class Auther {
                     }
                 }
                 return
-            } catch (e) {
+            /*} catch (e) {
                 console.error(`Error while generating auth key for DC ${dcId}: ${e}, retrying (try ${x+1} out of 5)`)
-            }
+            }*/
         }
         throw new Error("Auth failed!")
+    }
+    
+    async bindTempAuthKey(expires_in, dcId) { // This is unfinished
+        let connection = this.datacenter.sockets[dcId]
+        let crypto = connection.ctx.getCrypto()
+        let authInfo = this.datacenter.authInfo[dcId]
+        console.log(authInfo.getAuthKey(true), authInfo.getAuthKey(false))
+        for (let x = 0; x < 5; x++) {
+            //try {
+            console.log("Binding auth keys DC " + dcId)
+
+            let expires_at = Date.now() / 1000 + expires_in
+            let nonce = await crypto.secureRandom(new Uint32Array(2))
+            let temp_auth_key_id = authInfo.getAuthKey(true).getID()
+            let perm_auth_key_id = authInfo.getAuthKey(false).getID()
+            let temp_session_id = connection.sessionId
+            let messageId = connection.mIdHandler.generate()
+
+            let payload = new Stream(new Uint32Array(8).buffer)
+            payload.writeUnsignedInts(await crypto.secureRandom(new Uint32Array(4)))
+            payload.writeSignedLong(messageId)
+            payload.writeUnsignedInt(0)
+            payload.pos += 1
+
+            this.TL.serialize(payload, {
+                _: 'bind_auth_key_inner',
+                expires_at,
+                nonce,
+                temp_auth_key_id,
+                perm_auth_key_id,
+                temp_session_id
+            })
+            let length = payload.pos - 8
+            payload.pos = 7
+            payload.writeUnsignedInt(length)
+
+            let messageKey = new Uint8Array((await crypto.sha1(payload.uBuf)).slice(-16))
+            payload = new Uint32Array(pad(payload.bBuf, 16))
+            let pair = await crypto.oldAesCalculate(messageKey, authInfo.getAuthKey(false).getAuthKey())
+
+            let encrypted_message = new Uint32Array(2 + 8 + payload.length)
+            encrypted_message.set(perm_auth_key_id, 0)
+            encrypted_message.set(messageKey, 2)
+            encrypted_message.set(await crypto.igeEncrypt(payload, pair[0], pair[1]), 10)
+            encrypted_message = new Uint8Array(encrypted_message.buffer)
+
+            console.log(encrypted_message)
+
+            let res = await this.API.methodCall('auth.bindTempAuthKey', {
+                perm_auth_key_id,
+                nonce,
+                expires_at,
+                encrypted_message,
+            }, {
+                dcId,
+                messageId,
+            })
+            if (res) {
+                console.log("Bound auth keys")
+                authInfo.bind()
+                return true
+            }
+            /*} catch (e) {
+                console.error(`Error while binding auth keys for DC ${dcId}: ${e}, retrying (try ${x+1} out of 5)`)
+            }*/
+        }
+        throw new Error("Binding failed!")
     }
     auth() {
         console.log(this.datacenter)
         let promises = []
         for (let x = 1; x <= 5; x++) {
             promises.push(this.datacenter.connect(x, this.API).then(() => this.authDc(x)))
+            break
         }
         return Promise.all(promises).then(() => this.sync())
     }
     async authDc(dcId) {
+        await this.datacenter.sockets[dcId].createSession()
+
         let authInfo = this.datacenter.authInfo[dcId]
         if (!authInfo.hasAuthKey(false) || !authInfo.hasAuthKey(true) || !authInfo.isBound()) {
-            if (!authInfo.hasAuthKey(false)) {
-                authInfo.setAuthKey(await this.createAuthKey(-1, dcId), dcId)
+            if (!authInfo.hasAuthKey(false)) { // permanent 
+                authInfo.setAuthKey(await this.createAuthKey(-1, dcId), false)
             }
-            if (!authInfo.hasAuthKey(true)) {
-                authInfo.bindPfs(false)
+            if (this.API.settings['pfs']) {
+                authInfo.setAuthKey(undefined, true) // temporary
+                authInfo.setAuthKey(await this.createAuthKey(this.API.settings['pfs'], dcId), true)
+                await this.bindTempAuthKey(this.API.settings['pfs'], dcId)
+
+            } else {
+                if (!authInfo.hasAuthKey(true)) { // temporary
+                    console.log("Bound without PFS")
+                    authInfo.bindPfs(false) // No PFS for now, also for performance reasons + we already have TLS underneath (will implement later anyway)
+                    console.log(await this.API.methodCall('help.getConfig', {}, {
+                        dcId
+                    }))
+                }
             }
         }
     }

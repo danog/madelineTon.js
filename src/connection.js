@@ -12,6 +12,28 @@ class Connection {
     toAck = []
     connected = false
 
+    inSeqNo = 0
+    outSeqNo = 0
+
+    /**
+     * Reset MTProto session
+     */
+    async resetSession() {
+        this.sessionId = await this.crypto.secureRandom(new Uint32Array(2))
+        this.inSeqNo = 0
+        this.outSeqNo = 0
+        this.mIdHandler = new MessageIdHandler
+    }
+    /**
+     * Create MTProto session if needed
+     */
+    async createSession() {
+        if (typeof this.sessionId === 'undefined') {
+            this.sessionId = await this.crypto.secureRandom(new Uint32Array(2))
+            this.inSeqNo = 0
+            this.outSeqNo = 0
+        }
+    }
     /**
      * 
      * @param {AuthInfo} shared 
@@ -30,6 +52,7 @@ class Connection {
     connect(ctx) {
         this.dc = ctx.getDcId()
         this.ctx = ctx
+        this.crypto = ctx.getCrypto()
         console.log(`Connecting to DC ${this.dc}...`)
         this.connection = new Socket
         this.connection.onMessage = this.onMessage.bind(this)
@@ -71,11 +94,15 @@ class Connection {
             if (message['unencrypted']) {
                 message['type'] = this.TL.objects.findByPredicateAndLayer(message['_'])['type']
             }
-            let stream = new Stream
+            let stream = this.connection.getBuffer()
             this.TL.serialize(stream, message['body'], {
                 layer: this.API.layer
             })
-            message['serialized_body'] = stream.getBuffer()
+            stream.pos = stream.initPos + 4
+            stream.writeUnsignedInt(stream.getByteLength() - (5 + stream.initPos) * 4)
+            stream.pos = stream.initPos
+
+            message['serialized_body'] = stream
         }
 
         this.pendingMessages.push(message)
@@ -128,18 +155,17 @@ class Connection {
             if (!message['unencrypted']) {
                 continue
             }
-            const length = message['serialized_body'].byteLength
-
-            const buffer = new Uint32Array((length / 4) + 5)
-            buffer.fill(0, 0, 1)
 
             let messageId = message['msg_id'] || this.mIdHandler.generate()
-            buffer[2] = messageId.low_
-            buffer[3] = messageId.high_
-            buffer[4] = message['serialized_body'].byteLength
-            buffer.set(new Uint32Array(message['serialized_body']), 5)
+            console.log(message['serialized_body'].uBuf)
+            message['serialized_body'].pos = message['serialized_body'].initPos + 2
+            console.log(messageId)
+            message['serialized_body'].writeSignedLong([messageId.low_, messageId.high_])
+            message['serialized_body'].pos = message['serialized_body'].initPos
+            console.log(message['serialized_body'].uBuf)
 
-            await this.connection.write(buffer)
+            await this.connection.write(message['serialized_body'])
+            
             message['sent'] = Date.now() / 1000
             message['tries'] = 0
 
@@ -159,7 +185,7 @@ class Connection {
     onMessage(message) {
         console.log("Got message")
         //console.log(message)
-        
+
         //console.log(message.getByteLength())
         if (message.getByteLength() === 4) {
             const error = message.readSignedInt()
@@ -234,15 +260,15 @@ class Connection {
                     if (type === 'Updates') { // Do update handling stuffs
                         break
                     }
-                    console.log(`Trying to assing a raw response of type ${type} to its request...`)
+                    //console.log(`Trying to assing a raw response of type ${type} to its request...`)
                     for (let rId in this.newOutgoing) {
-                        console.log(`Does the request of return type ${this.outgoingMessages[rId]['type']} match?`)
+                        //console.log(`Does the request of return type ${this.outgoingMessages[rId]['type']} match?`)
                         if (this.outgoingMessages[rId]['type'] === type) {
-                            console.log('Yes')
+                            //console.log('Yes')
                             this.handleResponse(rId, message)
                             break
                         }
-                        console.log('No')
+                        //console.log('No')
                     }
             }
         }

@@ -5,6 +5,9 @@ import {
     obf2
 } from "../TL/constants"
 import Stream from "../TL/stream"
+import {
+    transfer
+} from "../tools"
 
 class Websocket {
     /**
@@ -57,14 +60,28 @@ class Websocket {
         return this.socket.send(random)
     }
 
-    async write(payload) {
-        const length = payload.byteLength >> 2
+    write(payload) {
+        payload = payload
+        const length = (payload.getByteLength() - 4) >> 2
         if (length >= 0x7f) {
-            this.socket.send(await this.encrypt.process(new Uint32Array([(length << 8) & 0x7F])))
+            payload.pos = 0
+            payload.writeUnsignedInt((length << 8) & 0x7F)
+            payload = payload.bBuf
         } else {
-            this.socket.send(await this.encrypt.process(new Uint8Array([length])))
+            payload = payload.bBuf.subarray(3)
+            payload[0] = length
         }
-        this.socket.send(await this.encrypt.process(payload))
+
+        return this.encrypt.process(payload).then(ppayload => {
+            console.log(payload, ppayload)
+            return this.socket.send(ppayload)
+        })
+    }
+    getBuffer() {
+        const s = new Stream(new Uint32Array(6))
+        s.pos += 6
+        s.initPos = 1
+        return s
     }
 
     close() {

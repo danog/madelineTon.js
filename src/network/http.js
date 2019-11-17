@@ -5,7 +5,7 @@ class Http {
         this.uri = ctx.getUri('http')
         return Promise.resolve()
     }
-    async write(payload) {
+    write(payload) {
         let xhr = new XMLHttpRequest()
         xhr.onload = this.onHttpMessage.bind({
             xhr,
@@ -13,7 +13,14 @@ class Http {
         })
         xhr.open('POST', this.uri, true)
         xhr.responseType = 'arraybuffer'
-        xhr.send(payload)
+        xhr.send(payload.getBuffer())
+    }
+
+    getBuffer() {
+        const s = new Stream(new Uint32Array(5))
+        s.pos += 5
+        s.initPos = 0
+        return s
     }
     onHttpMessage() {
         if (this.xhr.status === 200) {
