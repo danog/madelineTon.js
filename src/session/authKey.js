@@ -28,7 +28,6 @@ class AuthKey
      * @param {BufferSource} salt 
      */
     setServerSalt(salt) {
-        console.log(salt, this)
         this.salt = salt
     }
     /**

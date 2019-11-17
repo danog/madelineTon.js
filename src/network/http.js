@@ -16,8 +16,8 @@ class Http {
         xhr.send(payload.getBuffer())
     }
 
-    getBuffer() {
-        const s = new Stream(new Uint32Array(5))
+    getBuffer(length) {
+        const s = new Stream(new Uint32Array(5 + (length || 0)))
         s.pos += 5
         s.initPos = 0
         return s

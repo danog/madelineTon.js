@@ -61,8 +61,7 @@ class Websocket {
     }
 
     write(payload) {
-        payload = payload
-        const length = (payload.getByteLength() - 4) >> 2
+        const length = payload.uBuf.length - 1
         if (length >= 0x7f) {
             payload.pos = 0
             payload.writeUnsignedInt((length << 8) & 0x7F)
@@ -74,8 +73,8 @@ class Websocket {
 
         return this.encrypt.process(payload).then(payload => this.socket.send(payload))
     }
-    getBuffer() {
-        const s = new Stream(new Uint32Array(6))
+    getBuffer(length) {
+        const s = new Stream(new Uint32Array(6 + (length || 0)))
         s.pos += 6
         s.initPos = 1
         return s

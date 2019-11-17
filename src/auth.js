@@ -65,7 +65,7 @@ class Auther {
     async createAuthKey(expires_in, dcId) {
         let crypto = this.datacenter.sockets[dcId].ctx.getCrypto()
         for (let x = 0; x < 5; x++) {
-            //try {
+            try {
                 let nonce = await crypto.secureRandom(new Uint32Array(4))
 
                 let res = await this.API.methodCall('req_pq_multi', {
@@ -208,7 +208,7 @@ class Auther {
                         throw new Error('Server nonce mismatch!')
                     }
 
-                    let authKey = hexToBytes(bigInt2str(await crypto.powMod(g_a, b, p), 16))
+                    let authKey = hexToBytes(bigInt2str(await crypto.powMod(g_a, b, p), 16))                    
                     let authKeySha = new Uint8Array(await crypto.sha1(authKey))
                     let authKeyShaAux = authKeySha.subarray(0, 8)
 
@@ -223,7 +223,7 @@ class Auther {
                             if (expires_in >= 0) {
                                 key.expires(Date.now() / 1000 + expires_in)
                             }
-                            key.setAuthKey(authKey, authKeySha.subarray(-8))
+                            key.setAuthKey(authKey, new Uint32Array(authKeySha.slice(-8).buffer))
 
                             new_nonce = new_nonce.subarray(0, 8)
                             server_nonce = server_nonce.subarray(0, 8)
@@ -250,9 +250,9 @@ class Auther {
                     }
                 }
                 return
-            /*} catch (e) {
+            } catch (e) {
                 console.error(`Error while generating auth key for DC ${dcId}: ${e}, retrying (try ${x+1} out of 5)`)
-            }*/
+            }
         }
         throw new Error("Auth failed!")
     }

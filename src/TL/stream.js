@@ -131,6 +131,7 @@ class Stream {
      * @returns Stream
      */
     writeUnsignedInts(value) {
+        console.log(value)
         this.uBuf.set(value, this.pos)
         this.pos += value.length
         return this

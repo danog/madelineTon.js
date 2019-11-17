@@ -5,7 +5,9 @@ import Http from "./network/http"
 import {
     transfer,
     posMod,
-    bufferConcat
+    bufferConcat,
+    hexToBytes,
+    bytesToHex
 } from "./tools"
 import {
     fastRandom
@@ -252,6 +254,7 @@ class Connection {
                 return
             }
             let temporaryKeys = []
+
             if (this.toAck.length) {
                 for (let x = 0; x < this.toAck.length; x += 8192) {
                     console.log(`Adding msgs_ack ${this.pendingOutgoingKey}`)
@@ -407,24 +410,42 @@ class Connection {
                 padding += 16
             }
             let buffer = new Stream(new Uint8Array(plainLength + padding).buffer)
-            buffer.writeSignedLong(this.authInfo.getAuthKey().getServerSalt())
-            buffer.writeSignedLong(this.sessionId)
-            buffer.writeSigendLong(messageId)
+            buffer.writeUnsignedInts(this.authInfo.getAuthKey().getServerSalt())
+            buffer.writeUnsignedInts(this.sessionId)
+            buffer.writeSignedLong([messageId.low_, messageId.high_])
             buffer.writeUnsignedInt(seqNo)
             buffer.writeUnsignedInt(length)
             buffer.bBuf.set(messageData, 32)
             fastRandom(buffer.bBuf.subarray(plainLength))
 
             let authKey = this.authInfo.getAuthKey().getAuthKey()
-            let messageKey = new Uint32Array((await this.crypto.sha256(bufferConcat(authKey.subarray(88, 120), buffer.bBuf))).slice(8, 24))
+            let sha = await this.crypto.sha256(bufferConcat(authKey.subarray(88, 120), buffer.bBuf))
+            let messageKey = new Uint8Array(sha).slice(8, 24)
+
             let pair = await this.crypto.aesCalculate(messageKey, authKey)
 
             let cipher = this.connection.getBuffer(1 + buffer.uBuf.length)
+            cipher.pos = cipher.initPos
             cipher.writeUnsignedInts(this.authInfo.getAuthKey().getID())
-            cipher.writeUnsignedInts(messageKey)
-            cipher.writeUnsignedInts(await this.crypto.igeEncrypt(bufer.uBuf, pair[0], pair[1]))
+            cipher.writeUnsignedInts(new Uint32Array(messageKey.buffer))
+            cipher.writeUnsignedInts(new Uint32Array(await this.crypto.igeEncrypt(buffer.uBuf, pair[0], pair[1])))
+
 
             this.connection.write(cipher)
+            let sent = Math.floor(Date.now() / 1000)
+            if (this.toAck.length) {
+                this.toAck = []
+            }
+            for (let k in keys) {
+                let mId = keys[k]
+                this.outgoingMessages[mId] = this.pendingOutgoingMessages[k]
+                if (this.outgoingMessages[mId]['resolve']) {
+                    this.outgoingMessages[mId]['sent'] = sent
+                    this.outgoingMessages[mId]['tries'] = 0
+                }
+                delete this.pendingOutgoingMessages[k]
+            }
+            console.log(`Sent encrypted payload to DC ${this.dc}`)
         } while ((hasVal = Object.keys(this.pendingOutgoingMessages).length) && !skipped)
         if (!hasVal) {
             this.pendingOutgoingKey = 0
