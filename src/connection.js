@@ -419,7 +419,10 @@ class Connection {
             fastRandom(buffer.bBuf.subarray(plainLength))
 
             let authKey = this.authInfo.getAuthKey().getAuthKey()
+            console.log(buffer.bBuf)
+
             let sha = await this.crypto.sha256(bufferConcat(authKey.subarray(88, 120), buffer.bBuf))
+
             let messageKey = new Uint8Array(sha).slice(8, 24)
 
             let pair = await this.crypto.aesCalculate(messageKey, authKey)
