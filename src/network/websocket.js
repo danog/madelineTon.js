@@ -21,13 +21,13 @@ class Websocket {
         } while (byteView[0] === 0xEF || obf2.includes(random[0]) || random[1] === 0)
         random[14] = 0xefefefef
 
-        let reverse = new Uint8Array(byteView.slice().reverse())
+        let reverse = new Uint32Array(byteView.slice().reverse().buffer)
 
         let key = random.slice(2, 10)
-        let keyRev = reverse.slice(2 * 4, 10 * 4)
+        let keyRev = reverse.slice(2, 10)
 
         let iv = random.slice(10, 14)
-        let ivRev = reverse.slice(10 * 4, 14 * 4)
+        let ivRev = reverse.slice(10, 14)
 
         this.encrypt = await this.crypto.getCtr(key, iv)
         this.decrypt = await this.crypto.getCtr(keyRev, ivRev)
@@ -41,7 +41,7 @@ class Websocket {
                 message = new Uint8Array(await this.decrypt.process(new Uint8Array(message.data)))
                 let length = message[0]
                 length = (length >= 0x7f ? message[1] | message[2] << 8 | message[3] << 16 : length) << 2
-                console.log(message.length - 1, length)
+                //console.log(message.length - 1, length)
                 this.onMessage(new Stream(message.slice(-length).buffer))
             }
             this.socket.onopen = resolve
@@ -72,6 +72,7 @@ class Websocket {
         if (this.socket) {
             this.socket.close()
             this.socket = undefined
+            this.onClose()
         }
     }
 

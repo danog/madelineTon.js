@@ -57,6 +57,7 @@ class CtrProcessor {
         let lengthOrig = data.byteLength
         let lengthCombined = lengthOrig
         let offset = 0
+        //console.log(data)
         if (offset = this.leftover.byteLength) {
             lengthCombined += offset
             let newData = new Uint8Array(lengthCombined + posMod(-lengthCombined, 16))
@@ -66,10 +67,12 @@ class CtrProcessor {
         } else {
             data = pad(data, 16)
         }
+        //console.log(new Uint8Array(data))
 
         incCounter(this.counter, this.by)
         this.by = Math.floor(lengthCombined / 16)
         this.leftover = new Uint8Array(data.slice(this.by * 16, lengthCombined))
+        //console.log(this.by, this.leftover)
 
         return windowObject.crypto.subtle.encrypt(this, this.key, data).then(res => res.slice(offset, offset + lengthOrig))
     }
@@ -89,7 +92,7 @@ const processIgeEncrypt = (key, data, offset, iv1, iv2) => {
     // I could've also used CBC, but webcrypto's CBC implementation pads the output by default.
     // This would be fine in itself if it weren't for the fact that webcrypto is forced to do one extra (& useless) AES round per block
     // CTR doesn't pad the output, so it's perfect.
-    
+
     const next = offset + 4
     const block = data.slice(offset, next)
     return windowObject.crypto.subtle.encrypt({

@@ -62,210 +62,215 @@ class Auther {
     async createAuthKey(expires_in, dcId) {
         let crypto = this.datacenter.sockets[dcId].ctx.getCrypto()
         for (let x = 0; x < 5; x++) {
-            //try {
-            let nonce = await crypto.secureRandom(new Uint32Array(4))
+            try {
+                let nonce = await crypto.secureRandom(new Uint32Array(4))
 
-            let res = await this.API.methodCall('req_pq_multi', {
-                nonce,
-            }, {
-                dcId,
-            })
-            if (!bufferViewEqual(nonce, res['nonce'])) {
-                throw new Error('Nonce mismatch!')
-            }
-            let chosenKey
-            var fp
-            for (let k in res['server_public_key_fingerprints']) {
-                fp = res['server_public_key_fingerprints'][k]
-                for (let k in keys) {
-                    if (bufferViewEqual(keys[k]['fp'], fp)) {
-                        chosenKey = keys[k]
-                        break
-                    }
-                }
-                if (chosenKey) break
-            }
-            if (!chosenKey) {
-                throw new Error("Couldn't find our key in the fingerprint vector!")
-            }
-
-            let server_nonce = res['server_nonce']
-
-            let pq = await crypto.factorize(res['pq'])
-
-            let new_nonce = await crypto.secureRandom(new Uint32Array(8))
-
-            let payload = new Stream(new Uint32Array(5).buffer)
-            payload.pos += 5
-            this.TL.serialize(payload, {
-                _: 'p_q_inner_data' + (expires_in < 0 ? '' : '_temp'),
-                pq: res['pq'],
-                p: pq[0],
-                q: pq[1],
-                dc: dcId,
-                nonce,
-                server_nonce,
-                new_nonce,
-                expires_in,
-            })
-            payload.prepareLength(64 - payload.pos)
-
-            payload.bBuf.set(new Uint8Array(await crypto.sha1(payload.uBuf.slice(5, payload.pos))), 0)
-            payload = str2bigInt(bytesToHex(payload.bBuf.subarray(0, 255)), 16)
-
-            payload = hexToBytes(bigInt2str(await crypto.powMod(payload, chosenKey['e'], chosenKey['n']), 16))
-
-            let dhParams = await this.API.methodCall('req_DH_params', {
-                nonce,
-                server_nonce,
-                p: pq[0],
-                q: pq[1],
-                public_key_fingerprint: fp,
-                encrypted_data: payload
-            }, {
-                dcId,
-            })
-
-            if (!bufferViewEqual(nonce, dhParams['nonce'])) {
-                throw new Error('Nonce mismatch!')
-            }
-            if (!bufferViewEqual(server_nonce, dhParams['server_nonce'])) {
-                throw new Error('Server nonce mismatch!')
-            }
-            if (dhParams['_'] === 'server_DH_params_fail') {
-                if (!bufferViewEqual(new Uint8Array(await crypto.sha1(new_nonce), -32), dhParams['new_nonce_hash'])) {
-                    throw new Error('New nonce hash mismatch!')
-                }
-                continue
-            }
-            new_nonce = new Uint8Array(new_nonce.buffer)
-            dhParams['server_nonce'] = new Uint8Array(dhParams['server_nonce'].buffer)
-
-            let serverNewHash = new Uint8Array(await crypto.sha1(bufferConcat(dhParams['server_nonce'], new_nonce)))
-            let newServerHash = new Uint8Array(await crypto.sha1(bufferConcat(new_nonce, dhParams['server_nonce'])))
-            let newNewHash = new Uint8Array(await crypto.sha1(bufferConcat(new_nonce, new_nonce)))
-
-
-            let tmpAesKey = new Uint32Array(bufferConcat(newServerHash, serverNewHash.subarray(0, 12)).buffer)
-            let tmpAesIv = new Uint32Array(bufferConcat(bufferConcat(serverNewHash.subarray(12, 20), newNewHash), new_nonce.subarray(0, 4)).buffer)
-            let answer = new Stream(await crypto.igeDecrypt(new Uint32Array(dhParams['encrypted_answer'].buffer), tmpAesKey, tmpAesIv))
-
-            let answerHash = answer.readUnsignedInts(5)
-            let innerDh = this.TL.deserialize(answer)
-            if (!bufferViewEqual(answerHash, new Uint32Array(await crypto.sha1(answer.uBuf.slice(5, answer.getPos()))))) {
-                throw new Error('Answer hash mismatch!')
-            }
-
-            if (!bufferViewEqual(nonce, innerDh['nonce'])) {
-                throw new Error('Nonce mismatch!')
-            }
-            if (!bufferViewEqual(server_nonce, innerDh['server_nonce'])) {
-                throw new Error('Server nonce mismatch!')
-            }
-
-            let g = str2bigInt(innerDh['g'].toString(16), 16)
-            let g_a = str2bigInt(bytesToHex(innerDh['g_a']), 16)
-            let p = str2bigInt(bytesToHex(innerDh['dh_prime']), 16)
-
-            await crypto.checkAll(p, g, g_a)
-
-            for (let retry_id = 0; retry_id < 5; retry_id++) {
-                let b = str2bigInt(bytesToHex(await crypto.secureRandom(new Uint8Array(256))), 16)
-                let g_b = await crypto.powMod(g, b, p)
-                await crypto.checkG(g_b, p)
-                g_b = hexToBytes(bigInt2str(g_b, 16))
-
-                payload = new Stream(new Uint32Array(5).buffer)
-                payload.pos += 5
-                this.TL.serialize(payload, {
-                    _: 'client_DH_inner_data',
+                let res = await this.API.methodCall('req_pq_multi', {
                     nonce,
-                    server_nonce,
-                    retry_id,
-                    g_b
-                })
-
-                payload.bBuf.set(new Uint8Array(await crypto.sha1(payload.uBuf.slice(5, payload.pos))), 0)
-                payload.prepareLength(posMod(-payload.getByteLength(), 16) / 4)
-                payload = await crypto.igeEncrypt(payload.uBuf, tmpAesKey, tmpAesIv)
-
-
-                let clientDhParams = await this.API.methodCall('set_client_DH_params', {
-                    nonce,
-                    server_nonce,
-                    encrypted_data: new Uint8Array(payload)
                 }, {
-                    dcId
+                    dcId,
                 })
-
-                if (!bufferViewEqual(nonce, clientDhParams['nonce'])) {
+                if (!bufferViewEqual(nonce, res['nonce'])) {
                     throw new Error('Nonce mismatch!')
                 }
-                if (!bufferViewEqual(server_nonce, clientDhParams['server_nonce'])) {
+                let chosenKey
+                var fp
+                for (let k in res['server_public_key_fingerprints']) {
+                    fp = res['server_public_key_fingerprints'][k]
+                    for (let k in keys) {
+                        if (bufferViewEqual(keys[k]['fp'], fp)) {
+                            chosenKey = keys[k]
+                            break
+                        }
+                    }
+                    if (chosenKey) break
+                }
+                if (!chosenKey) {
+                    throw new Error("Couldn't find our key in the fingerprint vector!")
+                }
+
+                let server_nonce = res['server_nonce']
+
+                let pq = await crypto.factorize(res['pq'])
+
+                let new_nonce = await crypto.secureRandom(new Uint32Array(8))
+
+                let payload = new Stream(new Uint32Array(5).buffer)
+                payload.pos += 5
+                this.TL.serialize(payload, {
+                    _: 'p_q_inner_data' + (expires_in < 0 ? '' : '_temp'),
+                    pq: res['pq'],
+                    p: pq[0],
+                    q: pq[1],
+                    dc: dcId,
+                    nonce,
+                    server_nonce,
+                    new_nonce,
+                    expires_in,
+                })
+                payload.prepareLength(64 - payload.pos)
+
+                payload.bBuf.set(new Uint8Array(await crypto.sha1(payload.uBuf.slice(5, payload.pos))), 0)
+                payload = str2bigInt(bytesToHex(payload.bBuf.subarray(0, 255)), 16)
+
+                payload = hexToBytes(bigInt2str(await crypto.powMod(payload, chosenKey['e'], chosenKey['n']), 16))
+
+                let dhParams = await this.API.methodCall('req_DH_params', {
+                    nonce,
+                    server_nonce,
+                    p: pq[0],
+                    q: pq[1],
+                    public_key_fingerprint: fp,
+                    encrypted_data: payload
+                }, {
+                    dcId,
+                })
+
+                if (!bufferViewEqual(nonce, dhParams['nonce'])) {
+                    throw new Error('Nonce mismatch!')
+                }
+                if (!bufferViewEqual(server_nonce, dhParams['server_nonce'])) {
+                    throw new Error('Server nonce mismatch!')
+                }
+                if (dhParams['_'] === 'server_DH_params_fail') {
+                    if (!bufferViewEqual(new Uint8Array(await crypto.sha1(new_nonce), -32), dhParams['new_nonce_hash'])) {
+                        throw new Error('New nonce hash mismatch!')
+                    }
+                    continue
+                }
+                new_nonce = new Uint8Array(new_nonce.buffer)
+                dhParams['server_nonce'] = new Uint8Array(dhParams['server_nonce'].buffer)
+
+                let serverNewHash = new Uint8Array(await crypto.sha1(bufferConcat(dhParams['server_nonce'], new_nonce)))
+                let newServerHash = new Uint8Array(await crypto.sha1(bufferConcat(new_nonce, dhParams['server_nonce'])))
+                let newNewHash = new Uint8Array(await crypto.sha1(bufferConcat(new_nonce, new_nonce)))
+
+
+                let tmpAesKey = new Uint32Array(bufferConcat(newServerHash, serverNewHash.subarray(0, 12)).buffer)
+                let tmpAesIv = new Uint32Array(bufferConcat(bufferConcat(serverNewHash.subarray(12, 20), newNewHash), new_nonce.subarray(0, 4)).buffer)
+                let answer = new Stream(await crypto.igeDecrypt(new Uint32Array(dhParams['encrypted_answer'].buffer), tmpAesKey, tmpAesIv))
+
+                let answerHash = answer.readUnsignedInts(5)
+                let innerDh = this.TL.deserialize(answer)
+                if (!bufferViewEqual(answerHash, new Uint32Array(await crypto.sha1(answer.uBuf.slice(5, answer.getPos()))))) {
+                    throw new Error('Answer hash mismatch!')
+                }
+
+                if (!bufferViewEqual(nonce, innerDh['nonce'])) {
+                    throw new Error('Nonce mismatch!')
+                }
+                if (!bufferViewEqual(server_nonce, innerDh['server_nonce'])) {
                     throw new Error('Server nonce mismatch!')
                 }
 
-                let authKey = hexToBytes(bigInt2str(await crypto.powMod(g_a, b, p), 16))
-                let authKeySha = new Uint8Array(await crypto.sha1(authKey))
-                let authKeyShaAux = authKeySha.subarray(0, 8)
+                let g = str2bigInt(innerDh['g'].toString(16), 16)
+                let g_a = str2bigInt(bytesToHex(innerDh['g_a']), 16)
+                let p = str2bigInt(bytesToHex(innerDh['dh_prime']), 16)
 
-                switch (clientDhParams['_']) {
-                    case 'dh_gen_ok':
-                        let new_nonce_hash1 = new Uint32Array(await crypto.sha1(bufferConcat(new_nonce, bufferConcat(new Uint8Array([1]), authKeyShaAux)))).subarray(-4)
-                        if (!bufferViewEqual(new_nonce_hash1, clientDhParams['new_nonce_hash1'])) {
-                            throw new Error('Wrong new_nonce_hash1')
-                        }
+                await crypto.checkAll(p, g, g_a)
 
-                        let key = expires_in < 0 ? new PermAuthKey : new TempAuthKey
-                        if (expires_in >= 0) {
-                            key.expires(Date.now() / 1000 + expires_in)
-                        }
-                        key.setAuthKey(authKey, authKeySha.subarray(-8))
+                for (let retry_id = 0; retry_id < 5; retry_id++) {
+                    let b = str2bigInt(bytesToHex(await crypto.secureRandom(new Uint8Array(256))), 16)
+                    let g_b = await crypto.powMod(g, b, p)
+                    await crypto.checkG(g_b, p)
+                    g_b = hexToBytes(bigInt2str(g_b, 16))
 
-                        new_nonce = new_nonce.subarray(0, 8)
-                        server_nonce = server_nonce.subarray(0, 8)
-                        xorInPlace(new_nonce, server_nonce)
+                    payload = new Stream(new Uint32Array(5).buffer)
+                    payload.pos += 5
+                    this.TL.serialize(payload, {
+                        _: 'client_DH_inner_data',
+                        nonce,
+                        server_nonce,
+                        retry_id,
+                        g_b
+                    })
 
-                        key.setServerSalt(new_nonce.slice())
+                    payload.bBuf.set(new Uint8Array(await crypto.sha1(payload.uBuf.slice(5, payload.pos))), 0)
+                    payload.prepareLength(posMod(-payload.getByteLength(), 16) / 4)
+                    payload = await crypto.igeEncrypt(payload.uBuf, tmpAesKey, tmpAesIv)
 
-                        console.log(`Sucessfully generated auth key (expires ${expires_in}) for DC ${dcId}`)
-                        return key
-                    case 'dh_gen_retry':
-                        let new_nonce_hash2 = new Uint32Array(await crypto.sha1(bufferConcat(new_nonce, bufferConcat(new Uint8Array([2]), authKeyShaAux)))).subarray(-4)
-                        if (!bufferViewEqual(new_nonce_hash2, clientDhParams['new_nonce_hash2'])) {
-                            throw new Error('Wrong new_nonce_hash2')
-                        }
-                        console.log("Retrying auth")
-                        break;
-                    case 'dh_gen_fail':
-                        let new_nonce_hash3 = new Uint32Array(await crypto.sha1(bufferConcat(new_nonce, bufferConcat(new Uint8Array([3]), authKeyShaAux)))).subarray(-4)
 
-                        if (!bufferViewEqual(new_nonce_hash3, clientDhParams['new_nonce_hash3'])) {
-                            throw new Error('Wrong new_nonce_hash3')
-                        }
-                        throw new Error('Auth failed')
+                    let clientDhParams = await this.API.methodCall('set_client_DH_params', {
+                        nonce,
+                        server_nonce,
+                        encrypted_data: new Uint8Array(payload)
+                    }, {
+                        dcId
+                    })
+
+                    if (!bufferViewEqual(nonce, clientDhParams['nonce'])) {
+                        throw new Error('Nonce mismatch!')
+                    }
+                    if (!bufferViewEqual(server_nonce, clientDhParams['server_nonce'])) {
+                        throw new Error('Server nonce mismatch!')
+                    }
+
+                    let authKey = hexToBytes(bigInt2str(await crypto.powMod(g_a, b, p), 16))
+                    let authKeySha = new Uint8Array(await crypto.sha1(authKey))
+                    let authKeyShaAux = authKeySha.subarray(0, 8)
+
+                    switch (clientDhParams['_']) {
+                        case 'dh_gen_ok':
+                            let new_nonce_hash1 = new Uint32Array(await crypto.sha1(bufferConcat(new_nonce, bufferConcat(new Uint8Array([1]), authKeyShaAux)))).subarray(-4)
+                            if (!bufferViewEqual(new_nonce_hash1, clientDhParams['new_nonce_hash1'])) {
+                                throw new Error('Wrong new_nonce_hash1')
+                            }
+
+                            let key = expires_in < 0 ? new PermAuthKey : new TempAuthKey
+                            if (expires_in >= 0) {
+                                key.expires(Date.now() / 1000 + expires_in)
+                            }
+                            key.setAuthKey(authKey, authKeySha.subarray(-8))
+
+                            new_nonce = new_nonce.subarray(0, 8)
+                            server_nonce = server_nonce.subarray(0, 8)
+                            xorInPlace(new_nonce, server_nonce)
+
+                            key.setServerSalt(new_nonce.slice())
+
+                            console.log(`Sucessfully generated auth key (expires ${expires_in}) for DC ${dcId}`)
+                            return key
+                        case 'dh_gen_retry':
+                            let new_nonce_hash2 = new Uint32Array(await crypto.sha1(bufferConcat(new_nonce, bufferConcat(new Uint8Array([2]), authKeyShaAux)))).subarray(-4)
+                            if (!bufferViewEqual(new_nonce_hash2, clientDhParams['new_nonce_hash2'])) {
+                                throw new Error('Wrong new_nonce_hash2')
+                            }
+                            console.log("Retrying auth")
+                            break;
+                        case 'dh_gen_fail':
+                            let new_nonce_hash3 = new Uint32Array(await crypto.sha1(bufferConcat(new_nonce, bufferConcat(new Uint8Array([3]), authKeyShaAux)))).subarray(-4)
+
+                            if (!bufferViewEqual(new_nonce_hash3, clientDhParams['new_nonce_hash3'])) {
+                                throw new Error('Wrong new_nonce_hash3')
+                            }
+                            throw new Error('Auth failed')
+                    }
                 }
+                return
+            } catch (e) {
+                console.error(`Error while generating auth key for DC ${dcId}: ${e}, retrying (try ${x+1} out of 5)`)
             }
-            return
-            /*} catch (e) {
-                console.error(`Error while generating auth key for DC ${dcId}: ${e} ${e.trace}, retrying (try ${x+1} out of 5)`)
-            }*/
         }
         throw new Error("Auth failed!")
     }
-    async auth() {
-        for (let dcId in this.datacenter.authInfo) {
-            let authInfo = this.datacenter.authInfo[dcId]
-            if (!authInfo.hasAuthKey(false) || !authInfo.hasAuthKey(true) || !authInfo.isBound()) {
-                if (!authInfo.hasAuthKey(false)) {
-                    authInfo.setAuthKey(await this.createAuthKey(-1, dcId), dcId)
-                }
-                if (!authInfo.hasAuthKey(true)) {
-                    authInfo.bindPfs(false)
-                }
+    auth() {
+        console.log(this.datacenter)
+        let promises = []
+        for (let x = 1; x <= 5; x++) {
+            promises.push(this.datacenter.connect(x, this.API).then(() => this.authDc(x)))
+        }
+        return Promise.all(promises).then(() => this.sync())
+    }
+    async authDc(dcId) {
+        let authInfo = this.datacenter.authInfo[dcId]
+        if (!authInfo.hasAuthKey(false) || !authInfo.hasAuthKey(true) || !authInfo.isBound()) {
+            if (!authInfo.hasAuthKey(false)) {
+                authInfo.setAuthKey(await this.createAuthKey(-1, dcId), dcId)
+            }
+            if (!authInfo.hasAuthKey(true)) {
+                authInfo.bindPfs(false)
             }
         }
-        await this.sync()
     }
     async sync() {
         if (!this.API.loggedIn) {

@@ -11,6 +11,10 @@ class DataCenter {
         if (!this.map[dcID - 1]) {
             throw new Error('Wrong DC ID provided: ' + dcID)
         }
+        if (this.sockets[dcID] && this.sockets[dcID].connected) {
+            console.log(`Already connected to DC ${dcID}`)
+            return
+        }
         if (!this.authInfo[dcID]) {
             this.authInfo[dcID] = new AuthInfo
         }

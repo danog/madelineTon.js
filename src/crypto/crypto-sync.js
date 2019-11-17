@@ -7,15 +7,8 @@ import {
     sha1,
     sha256,
     igeEncrypt,
-    igeDecrypt,
-    CtrProcessor
+    igeDecrypt
 } from "../crypto-sync/crypto"
-
-const SyncPromiseProcessor = CtrProcessor
-SyncPromiseProcessor.prototype.processInternal = SyncPromiseProcessor.prototype.process
-SyncPromiseProcessor.prototype.process = function(data) {
-    return Promise.resolve(this.processInternal(data))
-}
 
 class CryptoSync {
     /**
@@ -73,15 +66,6 @@ class CryptoSync {
      */
     igeDecrypt(data, key, iv) {
         return Promise.resolve(igeDecrypt(data, key, iv))
-    }
-    /**
-     * Get continuous CTR processor
-     * @param {Uint32Array} iv 
-     * @param {Uint32Array} key 
-     * @returns CtrProcessor
-     */
-    getCtr(key, iv) {
-        return Promise.resolve(new SyncPromiseProcessor(key, iv))
     }
 }
 export default CryptoSync

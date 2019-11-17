@@ -7,8 +7,7 @@ import {
     sha256,
     sha1,
     igeEncrypt,
-    igeDecrypt,
-    CtrProcessor
+    igeDecrypt
 } from '../crypto-sync/crypto'
 import {
     checkAll, checkG
@@ -45,9 +44,10 @@ onmessage = message => {
             case 'igeDecrypt':
                 result = igeDecrypt(message['data'], message['key'], message['iv'])
                 break
+                /*
             case 'ctrInit':
                 result = ctrWorkers.length
-                ctrWorkers.push(new CtrProcessor(message['key'], message['iv']))
+                ctrWorkers.push(new CtrProces(message['key'], message['iv']))
                 break
             case 'ctrClose':
                 if (typeof ctrWorkers[message['ctrId']] !== 'undefined') {
@@ -57,7 +57,7 @@ onmessage = message => {
                 break
             case 'ctr':
                 result = ctrWorkers[message['ctrId']].process(message['data'])
-                break
+                break*/
             case 'seed':
                 rng_seed_time()
                 break

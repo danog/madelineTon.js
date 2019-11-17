@@ -159,12 +159,14 @@ class CryptoWorker {
             p,
         })
     }
+    
     /**
      * Get continuous CTR processor
      * @param {Uint32Array} iv 
      * @param {Uint32Array} key 
      * @returns CtrProcessor
      */
+    /*
     getCtr(key, iv) {
         return this.asyncTask({
             task: 'ctrInit',
@@ -184,7 +186,7 @@ class CryptoWorker {
                 }),
             }
         })
-    }
+    }*/
 
     asyncCtrTask(data) {
         return this.wrapper.asyncTask({

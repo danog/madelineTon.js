@@ -128,69 +128,6 @@ const igeDecrypt = (data, key, iv) => wordsToBytes(
         }
     )
 )
-
-/**
- * Implementation of CryptoJS AES CTR continuous buffering
- */
-class CtrProcessor {
-    /**
-     * Init processor
-     * @param {Uint32Array} key 
-     * @param {Uint32Array} iv 
-     */
-    constructor(key, iv) {
-        this.counter = iv
-        this.leftover = new Uint8Array(0)
-        this.processor = CryptoJS.algo.AES.createEncryptor(key)
-    }
-    encryptCounter(increment) {
-        this.aesCounter = this.counter.slice()
-        this.processor.encryptBlock(this.aesCounter, 0)
-        incCounter(this.counter, increment)
-    }
-    /**
-     * Encrypt data
-     * @param {ArrayBufferView} data Data to encrypt
-     * @returns {ArrayBuffer}
-     */
-    process(data) {
-        // Turn block cipher into stream cypher by padding + reusing the last partial block
-        let lengthOrig = data.byteLength
-        let lengthCombined = lengthOrig
-        let offset = 0
-        if (offset = this.leftover.byteLength) {
-            lengthCombined += offset
-            let newData = new Uint8Array(lengthCombined + posMod(-lengthCombined, 16))
-            newData.set(this.leftover)
-            newData.set(new Uint8Array(data.buffer), offset)
-            data = newData.buffer
-        } else {
-            data = pad(data, 16)
-        }
-
-        const length = Math.floor(lengthCombined / 16) * 4
-        this.leftover = new Uint8Array(data.slice(length * 4, lengthCombined))
-
-        data = toBigEndian(new Uint32Array(data))
-        for (let x = 0; x < length; x++) {
-            let mod = length % 4
-            if (!mod) {
-                this.encryptCounter(1)
-            }
-            data[x] = data[x] ^ this.aesCounter[mod]
-        }
-        if (this.leftover.byteLength) {
-            this.encryptCounter(0)
-            for (let x = length; x < length + 4; x++) {
-                data[x] = data[x] ^ this.aesCounter[length % 4]
-            }
-        }
-
-        return data.buffer.slice(offset, offset + lengthOrig)
-    }
-    close() {}
-}
-
 export {
     incCounter,
     incCounterBigEndian,
@@ -198,6 +135,5 @@ export {
     sha1,
     igeEncrypt,
     igeDecrypt,
-    CtrProcessor,
     pad
 }

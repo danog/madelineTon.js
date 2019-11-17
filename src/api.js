@@ -3,8 +3,7 @@ import Parser from "./TL/parser";
 import DataCenter from "./datacenter";
 import Auther from "./auth";
 
-class API
-{
+class API {
     loggedIn = false
     lastDc = 4
     layer = 105
@@ -18,14 +17,9 @@ class API
         this.auther = new Auther(this)
     }
     async connect() {
-        let promises = []
-        for (let x = 1; x <= 5; x++) {
-            promises.push(this.datacenter.connect(x, this))
-            break
-        }
-        await Promise.all(promises)
-        console.log("Done connecting to DCs!")
         await this.auther.auth()
+        console.log("Done connecting to DCs!")
+
     }
     methodCall(method, args, aargs) {
         if (aargs['dcId']) {

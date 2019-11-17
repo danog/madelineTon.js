@@ -10,6 +10,8 @@ class Connection {
     newIncoming = {}
 
     toAck = []
+    connected = false
+
     /**
      * 
      * @param {AuthInfo} shared 
@@ -31,7 +33,8 @@ class Connection {
         console.log(`Connecting to DC ${this.dc}...`)
         this.connection = new Socket
         this.connection.onMessage = this.onMessage.bind(this)
-        return this.connection.connect(ctx)
+        this.connection.onClose = () => this.connected = false
+        return this.connection.connect(ctx).then(() => this.connected = true)
     }
     /**
      * 
@@ -155,9 +158,9 @@ class Connection {
      */
     onMessage(message) {
         console.log("Got message")
-        console.log(message)
+        //console.log(message)
         
-        console.log(message.getByteLength())
+        //console.log(message.getByteLength())
         if (message.getByteLength() === 4) {
             const error = message.readSignedInt()
             throw new Error(error)

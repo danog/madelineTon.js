@@ -3,6 +3,7 @@ import Stream from "../TL/stream"
 class Http {
     connect(ctx) {
         this.uri = ctx.getUri('http')
+        return Promise.resolve()
     }
     async write(payload) {
         let xhr = new XMLHttpRequest()
