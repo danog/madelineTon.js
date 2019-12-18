@@ -49,6 +49,8 @@ class Parser {
                 return data.readUnsignedInts(4)
             case 'int256':
                 return data.readUnsignedInts(8)
+            case 'int512':
+                return data.readUnsignedInts(8)
             case 'double':
                 return data.readDouble()
             case 'Bool':
@@ -115,8 +117,19 @@ class Parser {
             case 'long':
                 return stream.writeSignedLong(data)
             case 'int128':
+                if (typeof data === 'string' || data instanceof String) {
+                    data = new Uint32Array(new Buffer(atob(data)))
+                }
                 return stream.writeUnsignedInts(data)
             case 'int256':
+                if (typeof data === 'string' || data instanceof String) {
+                    data = new Uint32Array(new Buffer(atob(data)))
+                }
+                return stream.writeUnsignedInts(data)
+            case 'int512':
+                if (typeof data === 'string' || data instanceof String) {
+                    data = new Uint32Array(new Buffer(atob(data)))
+                }
                 return stream.writeUnsignedInts(data)
             case 'double':
                 return stream.writeDouble(data)
@@ -141,7 +154,7 @@ class Parser {
             } else {
                 type = {
                     ...type,
-                    ...this.objects.findByPredicateAndLayer(data['_'], type['layer'])
+                    ...this.objects.findByPredicateAndLayer(data['@type'], type['layer'])
                 }
             }
             stream.prepareLength(1 + type['minSize']).writeSignedInt(type['id'])
@@ -159,11 +172,12 @@ class Parser {
             return
         }
 
-        let flags = data['flags'] || 0
         let flagSize = 0
         for (let key in type['params']) {
             let param = type['params'][key]
             if (param['pow']) {
+                let flags = data[param['flag']] || 0
+
                 if (!data[key]) {
                     flags = flags & ~param['pow']
                 } else {
@@ -171,6 +185,8 @@ class Parser {
 
                     flagSize += this.objects.basicSizes[param['type']] || 0
                 }
+
+                data[param['flag']] = flags
             }
         }
         stream.prepareLength(flagSize)
@@ -180,10 +196,6 @@ class Parser {
 
             if (typeof data[key] === 'undefined') {
                 if (param['pow']) {
-                    continue
-                }
-                if (key === 'flags') {
-                    stream.writeUnsignedInt(flags)
                     continue
                 }
                 if (key === 'random_bytes') {

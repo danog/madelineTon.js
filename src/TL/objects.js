@@ -51,12 +51,19 @@ class Objects {
         }
         for (let constructor of data) {
             let minSize = data['type'] === 'Vector t' ? 1 : 0
-            
+
             let newParams = {}
             for (let key in constructor['params']) {
                 let param = constructor['params'][key]
-                
+
                 param['layer'] = constructor['layer'];
+                let match = param['type'].match(/^([\w_]+)\.(\d+)\?(.+)/)
+                if (match) {
+                    param['flag'] = match[1]
+                    param['pow'] = 2 ** match[2]
+                    param['type'] = match[3]
+                }
+
                 if (param['layer'] === 1 && param['type'] === 'string') {
                     param['type'] = 'bytes'
                 }
@@ -67,16 +74,16 @@ class Objects {
                 if (param['type'][0] === '%') {
                     param = {
                         ...param,
-                        ...this.findByType(constructor['type'].substring(1), constructor['layer'])
+                        ...this.findByType(param['type'].substring(1), constructor['layer'])
                     }
+                } else {
+                    try {
+                        param = {
+                            ...param,
+                            ...this.findByPredicateAndLayer(param['type'], constructor['layer'])
+                        }
+                    } catch (e) {}
                 }
-
-                let match = param['type'].match(/^flags\.(\d*)\?(.+)/)
-                if (match) {
-                    param['pow'] = 2**match[1]
-                    param['type'] = match[2]
-                }
-
                 match = param['type'].match(/^(vector)<(.*)>$/i)
                 if (match) {
                     param['type'] = 'Vector t'
@@ -91,7 +98,16 @@ class Objects {
                     if (param['subtype'][0] === '%') {
                         param = {
                             ...param,
-                            ...this.findByType(constructor['subtype'].substring(1), constructor['layer'])
+                            ...this.findByType(param['subtype'].substring(1), constructor['layer'])
+                        }
+                    } else {
+                        try {
+                            param = {
+                                ...param,
+                                ...this.findByPredicateAndLayer(param['subtype']['type'], constructor['layer'])
+                            }
+                        } catch (e) {
+                            console.log(param['subtype']['type'])
                         }
                     }
                 }
