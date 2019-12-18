@@ -39,7 +39,7 @@ class Stream {
      * @returns number[]
      */
     readSignedLong() {
-        return [this.uBuf[this.pos++], this.uBuf[this.pos++]]
+        return [this.iBuf[this.pos++], this.iBuf[this.pos++]]
     }
     /**
      * Read n*32 bit integer, returns n 32-bit integers
@@ -116,11 +116,11 @@ class Stream {
      */
     writeSignedLong(value) {
         if (value.constructor === Array) { // Blackbox value
-            this.uBuf[this.pos++] = value[0]
-            this.uBuf[this.pos++] = value[1]
+            this.iBuf[this.pos++] = value[0]
+            this.iBuf[this.pos++] = value[1]
         } else { // Assume plain 32-bit integer (ping_id and so on)
-            this.uBuf[this.pos++] = 0
-            this.uBuf[this.pos++] = value
+            this.iBuf[this.pos++] = 0
+            this.iBuf[this.pos++] = value
         }
         return this
     }

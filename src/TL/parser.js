@@ -9,6 +9,7 @@ import {
     gunzipSync
 } from "zlib"
 import { atobInt32 } from "../tools"
+import Long from "../lib/bigint/long"
 
 /**
  * Custom TL parser based on an unreleased project of mine (madeline.py).
@@ -116,7 +117,10 @@ class Parser {
             case "#":
                 return stream.writeUnsignedInt(data)
             case 'long':
-                console.log(data)
+                if (typeof data === 'string' || data instanceof String) {
+                    data = Long.fromString(data, 10)
+                    data = [data.low_, data.high_]
+                }
                 return stream.writeSignedLong(data)
             case 'int128':
                 if (typeof data === 'string' || data instanceof String) {
