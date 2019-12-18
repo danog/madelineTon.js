@@ -8,6 +8,7 @@ import {
 import {
     gunzipSync
 } from "zlib"
+import { atobInt32 } from "../tools"
 
 /**
  * Custom TL parser based on an unreleased project of mine (madeline.py).
@@ -115,20 +116,21 @@ class Parser {
             case "#":
                 return stream.writeUnsignedInt(data)
             case 'long':
+                console.log(data)
                 return stream.writeSignedLong(data)
             case 'int128':
                 if (typeof data === 'string' || data instanceof String) {
-                    data = new Uint32Array(new Buffer(atob(data)))
+                    data = atobInt32(data)
                 }
                 return stream.writeUnsignedInts(data)
             case 'int256':
                 if (typeof data === 'string' || data instanceof String) {
-                    data = new Uint32Array(new Buffer(atob(data)))
+                    data = atobInt32(data)
                 }
                 return stream.writeUnsignedInts(data)
             case 'int512':
                 if (typeof data === 'string' || data instanceof String) {
-                    data = new Uint32Array(new Buffer(atob(data)))
+                    data = atobInt32(data)
                 }
                 return stream.writeUnsignedInts(data)
             case 'double':
@@ -154,7 +156,7 @@ class Parser {
             } else {
                 type = {
                     ...type,
-                    ...this.objects.findByPredicateAndLayer(data['@type'], type['layer'])
+                    ...this.objects.findByPredicateAndLayer(data['_'] || data['@type'], type['layer'])
                 }
             }
             stream.prepareLength(1 + type['minSize']).writeSignedInt(type['id'])
@@ -167,7 +169,7 @@ class Parser {
                 stream.prepareLength(data.length * this.objects.basicSizes[type['subtype']])
             }
             for (let element in data) {
-                this.serialize(stream, element, type['subtype'])
+                this.serialize(stream, data[element], type['subtype'])
             }
             return
         }
@@ -228,6 +230,13 @@ class Parser {
                 }
                 if (param['type'] === 'string' || param['type'] === 'bytes') {
                     stream.writeBytes(new Uint8Array(0))
+                    continue
+                }
+                if (param['type'] === 'Vector t') {
+                    if (!param['predicate']) {
+                        stream.prepareLength(1).writeSignedInt(this.objects.findByPredicateAndLayer('vector', type['layer'])['id'])
+                    }
+                    stream.prepareLength(1).writeUnsignedInt(0)
                     continue
                 }
                 if (key === 'hash' && param['type'] === 'int') {

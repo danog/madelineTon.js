@@ -50,7 +50,7 @@ class Objects {
             }
         }
         for (let constructor of data) {
-            let minSize = data['type'] === 'Vector t' ? 1 : 0
+            let minSize = constructor['type'] === 'Vector t' ? 1 : 0
 
             let newParams = {}
             for (let key in constructor['params']) {
@@ -93,7 +93,10 @@ class Objects {
                     }
                     // If bare vector type
                     if (match[1] === 'vector') {
-                        param['predicate'] = match[1]
+                        param = {
+                            ...param,
+                            ...this.findByPredicateAndLayer(match[1], constructor['layer'])
+                        }
                     }
                     if (param['subtype'][0] === '%') {
                         param = {
@@ -102,12 +105,11 @@ class Objects {
                         }
                     } else {
                         try {
-                            param = {
-                                ...param,
+                            param['subtype'] = {
+                                ...param['subtype'],
                                 ...this.findByPredicateAndLayer(param['subtype']['type'], constructor['layer'])
                             }
                         } catch (e) {
-                            console.log(param['subtype']['type'])
                         }
                     }
                 }

@@ -106,6 +106,15 @@ const transferPoly = function (source, length) {
 
 const transfer = ArrayBuffer.transfer || transferPoly
 
+const atobInt32 = data => {
+    data = atob(data);
+    let view = new Uint8Array(data.length);
+    for (let x = 0; x < data.length; x++) {
+        view[x] = data.charCodeAt(x)
+    }
+    return new Uint32Array(view.buffer);
+};
+
 export {
     posMod,
     bytesToHex,
@@ -113,5 +122,6 @@ export {
     transfer,
     bufferViewEqual,
     hexToBytes,
-    bufferConcat
+    bufferConcat,
+    atobInt32
 }
