@@ -213,11 +213,11 @@ class Parser {
                 }
                 if (key === 'random_id') {
                     switch (param['type']) {
-                        case 'long':
-                            stream.writeUnsignedInts(fastRandom(new Uint32Array(2)))
-                            break
                         case 'int':
                             stream.writeUnsignedInts(fastRandom(new Uint32Array(1)))
+                            break
+                        case 'long':
+                            stream.writeUnsignedInts(fastRandom(new Uint32Array(2)))
                             break
                         case 'Vector t':
                             if (data['id']) {

@@ -115,7 +115,7 @@ class Stream {
      * @returns Stream
      */
     writeSignedLong(value) {
-        if (value.constructor === Array) { // Blackbox value
+        if (value.constructor === Array || value instanceof Int32Array) { // Blackbox value
             this.iBuf[this.pos++] = value[0]
             this.iBuf[this.pos++] = value[1]
         } else { // Assume plain 32-bit integer (ping_id and so on)

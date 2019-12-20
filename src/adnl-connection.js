@@ -11,6 +11,7 @@ import Stream from "./TL/stream";
 
 class ADNLConnection {
     requests = {}
+    pings = {}
 
     /**
      * 
@@ -62,10 +63,16 @@ class ADNLConnection {
             encryptedInit
         )
 
-        this.socket = new ADNL
-        this.socket.onClose = () => console.log("Closed connection!")
-        this.socket.onMessage = message => this.onMessage(message)
-        await this.socket.connect(ctx)
+        let socket = new ADNL
+        socket.onClose = () => console.log("Closed connection!")
+        socket.onMessage = message => this.onMessage(message)
+        await socket.connect(ctx)
+
+        this.socket = socket
+        this.pingId = setInterval(() => {
+            console.log("Ping!")
+            this.ping().then(() => console.log("Pong!"))
+        }, 5000)
     }
 
     /**
@@ -74,11 +81,17 @@ class ADNLConnection {
      */
     onMessage(message) {
         message = this.TLParser.deserialize(message)
+        if (message['_'] === 'tcp.pong') {
+            this.pings[message['random_id']].res(message)
+            delete this.pings[message['random_id']]
+            return
+        }
         if (message['_'] !== 'adnl.message.answer') {
             console.log("Weird message: ", message)
             return
         }
         this.requests[message['query_id']].res(this.TLParser.deserialize(new Stream(message['answer'].buffer)))
+        delete this.requests[message['query_id']]
     }
 
     /**
@@ -93,9 +106,38 @@ class ADNLConnection {
             query
         })
         const promise = new Promise((res, rej) => {
-            this.requests[query_id] = {res, rej}
+            this.requests[query_id] = {
+                res,
+                rej
+            }
         })
         return this.socket.write(query).then(() => promise)
+    }
+
+    /**
+     * Send ping
+     */
+    ping() {
+        const random_id = fastRandom(new Int32Array(2))
+        const ping = this.TLParser.serialize(this.socket.getBuffer(), {
+            _: 'tcp.ping',
+            random_id
+        })
+        const promise = new Promise((res, rej) => {
+            this.pings[random_id] = {
+                res,
+                rej
+            }
+        })
+        return this.socket.write(ping).then(() => promise)
+    }
+
+    close() {
+        if (this.socket) {
+            this.socket.close()
+            this.socket = undefined
+            clearInterval(this.pingId)
+        }
     }
 }
 
