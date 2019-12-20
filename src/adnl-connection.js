@@ -70,8 +70,7 @@ class ADNLConnection {
 
         this.socket = socket
         this.pingId = setInterval(() => {
-            console.log("Ping!")
-            this.ping().then(() => console.log("Pong!"))
+            this.ping()
         }, 5000)
     }
 
@@ -90,6 +89,7 @@ class ADNLConnection {
             console.log("Weird message: ", message)
             return
         }
+        clearTimeout(this.requests[message['query_id']]['timeoutId'])
         this.requests[message['query_id']].res(this.TLParser.deserialize(new Stream(message['answer'].buffer)))
         delete this.requests[message['query_id']]
     }
@@ -106,18 +106,25 @@ class ADNLConnection {
             query
         })
         const promise = new Promise((res, rej) => {
+            const timeoutId = setTimeout(this.timeout.bind(this), 10000, query_id)
             this.requests[query_id] = {
                 res,
-                rej
+                rej,
+                timeoutId
             }
         })
         return this.socket.write(query).then(() => promise)
     }
 
+    timeout(query_id) {
+        this.requests[query_id].rej(new Error("Timeout!"))
+        delete this.requests[query_id]
+    }
     /**
      * Send ping
      */
     ping() {
+        if (!this.socket) return
         const random_id = fastRandom(new Int32Array(2))
         const ping = this.TLParser.serialize(this.socket.getBuffer(), {
             _: 'tcp.ping',

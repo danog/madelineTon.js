@@ -4,17 +4,21 @@ import {
     bufferViewEqual
 } from "../tools"
 import {
-    fastRandom
+    fastRandom,
+    fastRandomInt
 } from "../crypto-sync/random"
 
 class ADNL {
     allRead = 0 // Data read thus far (from all active buffers)
     toRead = 4
+
     buffers = [] // All incoming messages buffered separately to avoid the overhead of concat
-    decryptedBuffers = [] // Decrypted buffers
+    promises = [] // Promises for all incoming messages
+
     offset = 0
     bufferOffset = 0
-    isRunning = false
+    cBufferIndex = 0
+
     /**
      * 
      * @param {Object} ctx Custom connection context
@@ -25,21 +29,33 @@ class ADNL {
         this.encrypt = await this.crypto.getCtr(...ctx.encrypt)
         this.decrypt = await this.crypto.getCtr(...ctx.decrypt)
 
+        this.promises[-1] = Promise.resolve()
+
         await new Promise((resolve, reject) => {
             this.socket = new WebSocket(ctx.uri, 'binary')
             this.socket.binaryType = "arraybuffer"
             this.socket.onmessage = message => {
                 message = message.data
-                //console.log("Got payload with length " + message.byteLength)
-                this.allRead += message.byteLength
-                this.buffers.push(message)
+                const idx = this.cBufferIndex++
+                this.cBufferIndex %= 0xFFFFFFFF
 
-                //console.log(this.allRead, this.toRead)
+                this.promises[idx] = this.decrypt.process(new Uint8Array(message)).then(result => {
+                    this.buffers[idx] = new Uint8Array(result)
+                    this.allRead += result.byteLength
+
+                    return this.promises[idx - 1]
+                }).then(() => {
+                    console.log("Got payload with length " + message.byteLength, this.buffers[idx])
+
+                    if (this.allRead >= this.toRead && !this.isRunning) {
+                        this.process()
+                    }
+
+                    delete this.promises[idx - 1]
+                })
+
                 // Here we have the nasty detail that a protocol-unaware websocket proxy might send out unproperly framed data
                 // All websocket proxies in this case are protocol-unaware, since MITM is NOT possible due to ECC
-                if (this.allRead >= this.toRead) {
-                    this.gotBuffer()
-                }
             };
             this.socket.onopen = resolve
             this.socket.onerror = reject
@@ -55,53 +71,33 @@ class ADNL {
     }
 
     /**
-     * Called when enough data is buffered
-     */
-    gotBuffer() {
-        // Decrypt new buffers
-        let promises = []
-        // Doing decryption like this instead of decrypting as each block arrives to avoid starting processing of buffer if some middle chunk hasn't been decrypted yet
-        this.buffers.forEach((value, index) => {
-            delete this.buffers[index]
-            promises.push(this.decrypt.process(new Uint8Array(value)).then(result => {
-                this.decryptedBuffers[index] = new Uint8Array(result)
-            }));
-        });
-        Promise.all(promises).then(() => {
-            if (!this.isRunning) {
-                this.process()
-            }
-        })
-    }
-
-    /**
      * Read N bytes from the decrypted buffer(s)
      */
     read(length) {
-        const left = this.decryptedBuffers[this.bufferOffset].byteLength - this.offset
+        const left = this.buffers[this.bufferOffset].byteLength - this.offset
         if (left > length) {
-            const buffer = this.decryptedBuffers[this.bufferOffset].slice(this.offset, this.offset + length)
+            const buffer = this.buffers[this.bufferOffset].slice(this.offset, this.offset + length)
             this.offset += length
 
             return buffer.buffer;
         }
         if (left === length) {
-            let buffer = this.decryptedBuffers[this.bufferOffset]
+            let buffer = this.buffers[this.bufferOffset]
             if (this.offset) {
                 buffer = buffer.slice(this.offset)
             }
-            delete this.decryptedBuffers[this.bufferOffset++]
+            delete this.buffers[this.bufferOffset++]
             this.offset = 0
             return buffer.buffer
         }
-        let buffer = this.decryptedBuffers[this.bufferOffset]
+        let buffer = this.buffers[this.bufferOffset]
         if (this.offset) {
             buffer = buffer.slice(this.offset)
         }
-        delete this.decryptedBuffers[this.bufferOffset++]
+        delete this.buffers[this.bufferOffset++]
         this.offset = 0
 
-        return bufferConcat(buffer, this.read(length - buffer.byteLength)).buffer
+        return bufferConcat(buffer, new Uint8Array(this.read(length - buffer.byteLength))).buffer
     }
 
     async process() {
@@ -112,12 +108,16 @@ class ADNL {
             this.toRead = (new Uint32Array(this.read(this.toRead)))[0] // Forget about exotic endiannesses for now
 
             if (this.allRead < this.toRead) {
-                console.log(`Not enough data to read, suspending (need ${this.toRead}, have ${this.allRead})`)
+                this.isRunning = false
+                console.log(`Not enough decrypted data to read actual packet, suspending (need ${this.toRead}, have ${this.allRead})`)
                 return
             }
         }
+        this.allRead -= this.toRead
+        const toRead = this.toRead - 32
+        this.toRead = 4
 
-        const message = new Uint32Array(this.read(this.toRead - 32))
+        const message = new Uint32Array(this.read(toRead))
         const sha = new Uint32Array(await this.crypto.sha256(message))
 
         if (!bufferViewEqual(sha, new Uint32Array(this.read(32)))) {
@@ -130,8 +130,6 @@ class ADNL {
             this.onMessage(new Stream(message.slice(8).buffer))
         }
 
-        this.allRead -= this.toRead
-        this.toRead = 4
 
         if (this.allRead >= this.toRead) {
             this.process()
