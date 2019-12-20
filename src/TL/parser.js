@@ -52,7 +52,7 @@ class Parser {
             case 'int256':
                 return data.readUnsignedInts(8)
             case 'int512':
-                return data.readUnsignedInts(8)
+                return data.readUnsignedInts(16)
             case 'double':
                 return data.readDouble()
             case 'Bool':
@@ -90,10 +90,10 @@ class Parser {
             let param = type['params'][key]
             if (param['pow']) {
                 if (param['type'] === 'true') {
-                    result[key] = Boolean(result['flags'] & param['pow'])
+                    result[key] = Boolean(result[param['flag']] & param['pow'])
                     continue
                 }
-                if (!(result['flags'] & param['pow'])) {
+                if (!(result[param['flag']] & param['pow'])) {
                     continue
                 }
             }

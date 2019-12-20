@@ -177,6 +177,18 @@ class CryptoWorker {
     }
 
     /**
+     * Generate elliptic-curve init context
+     * @param {Uint32Array} peerPublic Peer's public Ed25519 key
+     * @returns {Object}
+     */
+    initEC(peerPublic) {
+        return this.asyncTask({
+            task: 'initEC',
+            peerPublic
+        })
+    }
+
+    /**
      * Get continuous CTR processor
      * @param {Uint32Array} iv 
      * @param {Uint32Array} key 
@@ -203,6 +215,7 @@ class CryptoWorker {
             }
         })
     }*/
+
 
     asyncCtrTask(data) {
         return this.wrapper.asyncTask({

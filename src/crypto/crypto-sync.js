@@ -7,7 +7,8 @@ import {
     sha1,
     sha256,
     igeEncrypt,
-    igeDecrypt
+    igeDecrypt,
+    initEC
 } from "../crypto-sync/crypto"
 import { gunzipSync } from "zlib"
 
@@ -83,6 +84,15 @@ class CryptoSync {
      */
     deserialize(data) {
         return Promise.resolve(this.TL.deserialize(data))
+    }
+    
+    /**
+     * Generate elliptic-curve init context
+     * @param {Uint32Array} peerPublic Peer's public Ed25519 key
+     * @returns {Object}
+     */
+    initEC(peerPublic) {
+        return Promise.resolve(initEC(peerPublic))
     }
 }
 

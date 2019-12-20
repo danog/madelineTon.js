@@ -7,7 +7,8 @@ import {
     sha256,
     sha1,
     igeEncrypt,
-    igeDecrypt
+    igeDecrypt,
+    initEC
 } from '../crypto-sync/crypto'
 import {
     checkAll, checkG
@@ -76,6 +77,9 @@ onmessage = message => {
                 break
             case 'checkG':
                 result = checkG(message['G_'], message['p'])
+                break
+            case 'initEC':
+                result = initEC(message['peerPublic'])
                 break
         }
     } catch (e) {

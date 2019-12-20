@@ -91,7 +91,7 @@ class ADNL {
         return bufferConcat(buffer, this.read(length - buffer.byteLength)).buffer
     }
 
-    process() {
+    async process() {
         if (this.toRead === 4) { // Read length and possibly more
             this.allRead -= this.toRead
             this.toRead = (new Uint32Array(this.read(this.toRead)))[0] // Forget about exotic endiannesses for now

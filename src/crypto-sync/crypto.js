@@ -2,8 +2,12 @@ import Stream from "../TL/stream"
 import Rusha from 'rusha'
 import CryptoJS from '../lib/cryptoJS/crypto'
 import {
-    posMod, transfer
+    transfer, bytesToHex, hexToBytes
 } from "../tools"
+import { dup, addInt, sub, inverseMod, multMod, str2bigInt, mod, bigInt2str } from "leemon"
+import nacl from '../lib/nacl-fast'
+
+const modulo = str2bigInt('7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffed', 16)
 
 /**
  * Increment AES CTR counter (big endian machines)
@@ -128,6 +132,46 @@ const igeDecrypt = (data, key, iv) => wordsToBytes(
         }
     )
 )
+
+/**
+ * Generate elliptic-curve init context
+ * @param {{Uint32Array}} peerPublic Peer's public Ed25519 key
+ * @returns {Object}
+ */
+const initEC = peerPublic => {
+    peerPublic = new Uint8Array(peerPublic.buffer)
+    peerPublic[31] &= 127
+    peerPublic = peerPublic.reverse()
+
+    let y = str2bigInt(bytesToHex(peerPublic), 16)
+    let y2 = dup(y)
+
+    y = addInt(y, 1)
+    y2 = addInt(y2, -1)
+    y2 = sub(modulo, y2)
+    y2 = mod(y2, modulo)
+    y2 = inverseMod(y2, modulo)
+
+    peerPublic = multMod(y, y2, modulo)
+    peerPublic = hexToBytes(bigInt2str(peerPublic, 16)).reverse()
+
+    const edwardsPair = nacl.sign.keyPair.fromSeed(hexToBytes('de880e4b5ee99eb1e6b31b8466a63ba4add52c4c91ac34bc23b9c33cb9f4e646'))
+    const montgomeryPair = nacl.box.keyPair.fromSecretKey(edwardsPair.d.slice(0, 32))
+
+    const secret = nacl.scalarMult(montgomeryPair.secretKey, peerPublic)
+
+    console.log("Private: ", bytesToHex(montgomeryPair.secretKey))
+    console.log("Public: ", bytesToHex(peerPublic))
+    console.log("Secret: ", bytesToHex(secret))
+
+    const pub = edwardsPair.publicKey
+    console.log("Public sent: ", bytesToHex(pub))
+
+    return {
+        pub,
+        secret
+    }
+}
 export {
     incCounter,
     incCounterBigEndian,
@@ -135,5 +179,6 @@ export {
     sha1,
     igeEncrypt,
     igeDecrypt,
-    pad
+    pad,
+    initEC
 }
