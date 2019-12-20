@@ -3,6 +3,9 @@ import {
     bufferConcat,
     bufferViewEqual
 } from "../tools"
+import {
+    fastRandom
+} from "../crypto-sync/random"
 
 class ADNL {
     allRead = 0 // Data read thus far (from all active buffers)
@@ -11,6 +14,7 @@ class ADNL {
     decryptedBuffers = [] // Decrypted buffers
     offset = 0
     bufferOffset = 0
+    isRunning = false
     /**
      * 
      * @param {Object} ctx Custom connection context
@@ -26,8 +30,11 @@ class ADNL {
             this.socket.binaryType = "arraybuffer"
             this.socket.onmessage = message => {
                 message = message.data
+                //console.log("Got payload with length " + message.byteLength)
                 this.allRead += message.byteLength
                 this.buffers.push(message)
+
+                //console.log(this.allRead, this.toRead)
                 // Here we have the nasty detail that a protocol-unaware websocket proxy might send out unproperly framed data
                 // All websocket proxies in this case are protocol-unaware, since MITM is NOT possible due to ECC
                 if (this.allRead >= this.toRead) {
@@ -55,12 +62,16 @@ class ADNL {
         let promises = []
         // Doing decryption like this instead of decrypting as each block arrives to avoid starting processing of buffer if some middle chunk hasn't been decrypted yet
         this.buffers.forEach((value, index) => {
+            delete this.buffers[index]
             promises.push(this.decrypt.process(new Uint8Array(value)).then(result => {
                 this.decryptedBuffers[index] = new Uint8Array(result)
-                delete this.buffers[index]
             }));
         });
-        Promise.all(promises).then(() => this.process())
+        Promise.all(promises).then(() => {
+            if (!this.isRunning) {
+                this.process()
+            }
+        })
     }
 
     /**
@@ -94,11 +105,14 @@ class ADNL {
     }
 
     async process() {
+        this.isRunning = true
+
         if (this.toRead === 4) { // Read length and possibly more
             this.allRead -= this.toRead
             this.toRead = (new Uint32Array(this.read(this.toRead)))[0] // Forget about exotic endiannesses for now
 
             if (this.allRead < this.toRead) {
+                console.log(`Not enough data to read, suspending (need ${this.toRead}, have ${this.allRead})`)
                 return
             }
         }
@@ -118,15 +132,18 @@ class ADNL {
 
         this.allRead -= this.toRead
         this.toRead = 4
+
         if (this.allRead >= this.toRead) {
             this.process()
         }
+        this.isRunning = false
     }
     async write(payload) {
         payload.pos = 0
-        payload.writeUnsignedInt(payload.uBuf.length - 1)
+        payload.writeUnsignedInt(payload.bBuf.length - 4)
+        payload.writeUnsignedInts(fastRandom(new Uint32Array(8)))
         payload.pos = payload.uBuf.length - 8
-        payload.writeUnsignedInts(await this.crypto.sha256(payload.uBuf.slice(1, payload.pos)))
+        payload.writeUnsignedInts(new Uint32Array(await this.crypto.sha256(payload.uBuf.slice(1, payload.pos))))
 
         payload = payload.bBuf
 
@@ -134,7 +151,7 @@ class ADNL {
     }
     getBuffer(length) {
         const s = new Stream(new Uint32Array(17 + (length || 0)))
-        s.pos += 17
+        s.pos += 9
         return s
     }
 
