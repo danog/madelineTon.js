@@ -8,7 +8,9 @@ import {
 import {
     gunzipSync
 } from "zlib"
-import { atobInt32 } from "../tools"
+import {
+    atobInt32
+} from "../tools"
 import Long from "../lib/bigint/long"
 
 /**

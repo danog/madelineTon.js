@@ -6,6 +6,7 @@ import {
 
 class ADNL {
     allRead = 0 // Data read thus far (from all active buffers)
+    toRead = 4
     buffers = [] // All incoming messages buffered separately to avoid the overhead of concat
     decryptedBuffers = [] // Decrypted buffers
     offset = 0
@@ -24,6 +25,7 @@ class ADNL {
             this.socket = new WebSocket(ctx.uri, 'binary')
             this.socket.binaryType = "arraybuffer"
             this.socket.onmessage = message => {
+                message = message.data
                 this.allRead += message.byteLength
                 this.buffers.push(message)
                 // Here we have the nasty detail that a protocol-unaware websocket proxy might send out unproperly framed data
@@ -51,13 +53,13 @@ class ADNL {
     gotBuffer() {
         // Decrypt new buffers
         let promises = []
-        // Doing decryption like this instead of decrypting as each block arrives to avoid starting processing of buffer if some middle chunk is missing
-        for (let idx of this.buffers) {
-            this.promises.push(this.decrypt.process(new Uint8Array(this.buffers[idx])).then(result => {
-                this.decryptedBuffers[idx] = new Uint8Array(result)
-                delete this.buffers[idx]
+        // Doing decryption like this instead of decrypting as each block arrives to avoid starting processing of buffer if some middle chunk hasn't been decrypted yet
+        this.buffers.forEach((value, index) => {
+            promises.push(this.decrypt.process(new Uint8Array(value)).then(result => {
+                this.decryptedBuffers[index] = new Uint8Array(result)
+                delete this.buffers[index]
             }));
-        }
+        });
         Promise.all(promises).then(() => this.process())
     }
 
@@ -65,14 +67,14 @@ class ADNL {
      * Read N bytes from the decrypted buffer(s)
      */
     read(length) {
-        if (this.decryptedBuffers[this.bufferOffset].byteLength - this.offset > length) {
+        const left = this.decryptedBuffers[this.bufferOffset].byteLength - this.offset
+        if (left > length) {
             const buffer = this.decryptedBuffers[this.bufferOffset].slice(this.offset, this.offset + length)
             this.offset += length
 
-            this.decryptedBuffers[this.bufferOffset] = this.decryptedBuffers[this.bufferOffset].subarray(this.offset)
             return buffer.buffer;
         }
-        if (this.decryptedBuffers[this.bufferOffset].byteLength - this.offset === length) {
+        if (left === length) {
             let buffer = this.decryptedBuffers[this.bufferOffset]
             if (this.offset) {
                 buffer = buffer.slice(this.offset)
@@ -101,14 +103,18 @@ class ADNL {
             }
         }
 
-        const message = new Uint32Array(this.read(this.toRead - 8))
+        const message = new Uint32Array(this.read(this.toRead - 32))
         const sha = new Uint32Array(await this.crypto.sha256(message))
 
-        if (!bufferViewEqual(sha, new Uint32Array(this.read(8)))) {
+        if (!bufferViewEqual(sha, new Uint32Array(this.read(32)))) {
             throw new Error('SHA256 mismatch!');
         }
 
-        this.onMessage(new Stream(message.slice(8).buffer))
+        if (message.length === 8) {
+            console.log("OK, got empty message!")
+        } else {
+            this.onMessage(new Stream(message.slice(8).buffer))
+        }
 
         this.allRead -= this.toRead
         this.toRead = 4
@@ -121,7 +127,7 @@ class ADNL {
         payload.writeUnsignedInt(payload.uBuf.length - 1)
         payload.pos = payload.uBuf.length - 8
         payload.writeUnsignedInts(await this.crypto.sha256(payload.uBuf.slice(1, payload.pos)))
-        
+
         payload = payload.bBuf
 
         return this.encrypt.process(payload).then(payload => this.socket.send(payload))

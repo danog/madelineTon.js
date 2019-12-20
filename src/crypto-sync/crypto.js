@@ -139,7 +139,7 @@ const igeDecrypt = (data, key, iv) => wordsToBytes(
  * @returns {Object}
  */
 const initEC = peerPublic => {
-    peerPublic = new Uint8Array(peerPublic.buffer)
+    peerPublic = new Uint8Array(peerPublic.slice().buffer)
     peerPublic[31] &= 127
     peerPublic = peerPublic.reverse()
 
@@ -155,17 +155,17 @@ const initEC = peerPublic => {
     peerPublic = multMod(y, y2, modulo)
     peerPublic = hexToBytes(bigInt2str(peerPublic, 16)).reverse()
 
-    const edwardsPair = nacl.sign.keyPair.fromSeed(hexToBytes('de880e4b5ee99eb1e6b31b8466a63ba4add52c4c91ac34bc23b9c33cb9f4e646'))
+    const edwardsPair = nacl.sign.keyPair() // nacl.sign.keyPair.fromSeed(hexToBytes('de880e4b5ee99eb1e6b31b8466a63ba4add52c4c91ac34bc23b9c33cb9f4e646'))
     const montgomeryPair = nacl.box.keyPair.fromSecretKey(edwardsPair.d.slice(0, 32))
 
     const secret = nacl.scalarMult(montgomeryPair.secretKey, peerPublic)
 
-    console.log("Private: ", bytesToHex(montgomeryPair.secretKey))
-    console.log("Public: ", bytesToHex(peerPublic))
-    console.log("Secret: ", bytesToHex(secret))
+    //console.log("Private: ", bytesToHex(montgomeryPair.secretKey))
+    //console.log("Public: ", bytesToHex(peerPublic))
+    //console.log("Secret: ", bytesToHex(secret))
 
     const pub = edwardsPair.publicKey
-    console.log("Public sent: ", bytesToHex(pub))
+    //console.log("Public sent: ", bytesToHex(pub))
 
     return {
         pub,
