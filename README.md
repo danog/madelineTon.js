@@ -84,3 +84,7 @@ For a list of methods that can be used, take a look at the lite scheme files (in
 
 
 The project is actually based on yet another project of mine, a pure JS Telegram MTProto client (madeline.js) which will be released soon.
+
+## Other projects
+
+[MadelineProto with TON integration](https://github.com/danog/MadelineProto) - fully separate, standalone, async PHP implementation of the TON lite-client protocol.

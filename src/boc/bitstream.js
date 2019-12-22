@@ -1,5 +1,7 @@
 import Stream from "../TL/stream"
-import { posMod } from "../tools"
+import {
+    posMod
+} from "../tools"
 
 /**
  * Stream of bits.
@@ -41,15 +43,32 @@ class BitStream {
     /**
      * Read bits from stream
      * @param {number} length Number of bits to read
+     * @param {bool}   toInt  Whether to convert result to a javascript integer if length <= 32
      * @returns {Uint8Array} Bitstring
      */
-    readBits(length) {
+    readBits(length, toInt = true) {
         let result = new Uint8Array(Math.ceil(length / 8))
         let inputShift = posMod(-(length & 7), 8)
         length += inputShift
         for (let bitPos = inputShift; bitPos < length; bitPos++, this.pos++) {
             //console.log(this.bBuf, bitPos, bitPos >> 3, bitPos & 7, this.bBuf[bitPos >> 3], (this.bBuf[bitPos >> 3] >> (8 - ((bitPos & 7) + 1))) & 1)
             result[bitPos >> 3] |= ((this.bBuf[this.pos >> 3] >> (8 - ((this.pos & 7) + 1))) & 1) << (8 - ((bitPos & 7) + 1))
+        }
+
+        if (toInt) {
+            length = result.length
+            switch (length) {
+                case 1:
+                    return result[0]
+                case 2:
+                    return new Uint16Array(Stream.bigEndian ? result.buffer : result.reverse().buffer)[0]
+                case 3:
+                    let tmp = new Uint8Array(4)
+                    tmp.set(result, 1)
+                    result = tmp
+                case 4:
+                    return new Uint32Array(Stream.bigEndian ? result.buffer : result.reverse().buffer)[0]
+            }
         }
 
         return result
