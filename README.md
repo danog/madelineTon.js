@@ -2,6 +2,8 @@
 
 Pure JS client-side implementation of the [Telegram TON blockchain protocol](https://test.ton.org).  
 
+![](https://github.com/danog/madelineTon.js/raw/master/res/screen.png)
+
 Interact **directly with the TON blockchain** with no middlemans, directly from your browser!  
 
 This is possible thanks to a client-side implementation of the ADNL P2P protocol ([whitepaper](https://test.ton.org/ton.pdf)).  
