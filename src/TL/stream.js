@@ -43,7 +43,7 @@ class Stream {
     }
     /**
      * Read n*32 bit integer, returns n 32-bit integers
-     * @returns number
+     * @returns number[]
      */
     readUnsignedInts(length) {
         const res = this.uBuf.slice(this.pos, this.pos + length);

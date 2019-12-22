@@ -8,7 +8,8 @@ import {
     sha1,
     igeEncrypt,
     igeDecrypt,
-    initEC
+    initEC,
+    crc16
 } from '../crypto-sync/crypto'
 import {
     checkAll, checkG
@@ -18,14 +19,14 @@ import {
 } from 'leemon'
 
 let ctrWorkers = []
-let parser
+//let parser
 onmessage = message => {
     message = message['data']
     let result
     try {
         switch (message['task']) {
             case 'init':
-                parser = message['parser']
+                //parser = message['parser']
                 return
             case 'factorize':
                 result = factorize(message['what'])
@@ -49,9 +50,9 @@ onmessage = message => {
             case 'igeDecrypt':
                 result = igeDecrypt(message['data'], message['key'], message['iv'])
                 break
-            case 'deserialize':
+            /*case 'deserialize':
                 result = parser.deserialize(message['data'])
-                break
+                break*/
                 /*
             case 'ctrInit':
                 result = ctrWorkers.length
@@ -81,6 +82,9 @@ onmessage = message => {
             case 'initEC':
                 result = initEC(message['peerPublic'])
                 break
+            case 'crc16':
+                result = crc16(message['data'])
+                berak
         }
     } catch (e) {
         return postMessage({

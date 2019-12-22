@@ -11,6 +11,18 @@ class Tester {
         console.log("OK " + name + ": data is the same!")
     }
     test() {
+
+        const test = new BitStream
+        test.writeBits(5, 3)
+        test.writeBits(1, 2)
+        test.writeBits(0, 1)
+        test.writeBits(0, 1)
+        test.writeBits(1, 1)
+        
+        test.pos = 0
+        console.log(test, test.readBits(6))
+
+        
         const input = new Uint32Array([0, 12, 3, 4, 214, 14364, 4633, 21172, 21492, 127856, 597458, 87]);
         const expected = new Uint32Array([1965066766, 3647278943, 949049929, 1156405627, 2696884890, 2601192231, 2300300808, 4270421025, 1649691074, 2710313659, 2410003310, 1216036349])
 

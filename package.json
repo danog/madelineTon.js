@@ -1,15 +1,15 @@
 {
-  "name": "madelineNode",
+  "name": "madeline-ton",
   "version": "1.0.0",
-  "description": "JS MTProto client",
-  "main": "index.js",
+  "description": "Pure JS client-side implementation of the Telegram TON blockchain protocol",
   "author": "Daniil Gentili <daniil@daniil.it>",
-  "license": "GPLv3",
+  "license": "AGPLv3",
   "private": true,
   "devDependencies": {
     "typescript": "^3.6.4"
   },
   "dependencies": {
+    "deep-equal": "^2.0.1",
     "leemon": "^6.2.0",
     "rusha": "^0.8.13",
     "zlibjs": "^0.3.1"

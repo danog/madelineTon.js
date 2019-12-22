@@ -18,7 +18,7 @@ class CryptoWorker {
         }
         this.worker.postMessage({
             task: 'init',
-            parser
+            //parser
         })
     }
     onMessage(message) {
@@ -188,6 +188,17 @@ class CryptoWorker {
         })
     }
 
+    /**
+     * Get crc16 checksum of data
+     * @param {Uint8Array} data Data
+     * @returns {Uint8Array} Checksum
+     */
+    crc16(data) {
+        return this.asyncTask({
+            task: 'crc16',
+            data
+        })
+    }
     /**
      * Get continuous CTR processor
      * @param {Uint32Array} iv 

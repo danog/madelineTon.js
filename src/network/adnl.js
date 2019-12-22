@@ -13,7 +13,6 @@ class ADNL {
     toRead = 4
 
     buffers = [] // All incoming messages buffered separately to avoid the overhead of concat
-    promises = [] // Promises for all incoming messages
 
     offset = 0
     bufferOffset = 0
@@ -29,7 +28,7 @@ class ADNL {
         this.encrypt = await this.crypto.getCtr(...ctx.encrypt)
         this.decrypt = await this.crypto.getCtr(...ctx.decrypt)
 
-        this.promises[-1] = Promise.resolve()
+        this.previous = Promise.resolve()
 
         await new Promise((resolve, reject) => {
             this.socket = new WebSocket(ctx.uri, 'binary')
@@ -39,19 +38,18 @@ class ADNL {
                 const idx = this.cBufferIndex++
                 this.cBufferIndex %= 0xFFFFFFFF
 
-                this.promises[idx] = this.decrypt.process(new Uint8Array(message)).then(result => {
+                const previous = this.previous
+                this.previous = this.decrypt.process(new Uint8Array(message)).then(result => {
                     this.buffers[idx] = new Uint8Array(result)
                     this.allRead += result.byteLength
 
-                    return this.promises[idx - 1]
+                    return previous
                 }).then(() => {
-                    console.log("Got payload with length " + message.byteLength, this.buffers[idx])
+                    //console.log("Got payload with length " + message.byteLength)
 
                     if (this.allRead >= this.toRead && !this.isRunning) {
                         this.process()
                     }
-
-                    delete this.promises[idx - 1]
                 })
 
                 // Here we have the nasty detail that a protocol-unaware websocket proxy might send out unproperly framed data
@@ -109,7 +107,7 @@ class ADNL {
 
             if (this.allRead < this.toRead) {
                 this.isRunning = false
-                console.log(`Not enough decrypted data to read actual packet, suspending (need ${this.toRead}, have ${this.allRead})`)
+                //console.log(`Not enough decrypted data to read actual packet, suspending (need ${this.toRead}, have ${this.allRead})`)
                 return
             }
         }

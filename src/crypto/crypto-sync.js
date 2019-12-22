@@ -8,9 +8,12 @@ import {
     sha256,
     igeEncrypt,
     igeDecrypt,
-    initEC
+    initEC,
+    crc16
 } from "../crypto-sync/crypto"
-import { gunzipSync } from "zlib"
+import {
+    gunzipSync
+} from "zlib"
 
 class CryptoSync {
     /**
@@ -76,7 +79,7 @@ class CryptoSync {
     igeDecrypt(data, key, iv) {
         return Promise.resolve(igeDecrypt(data, key, iv))
     }
-    
+
     /**
      * Deserialize TL payload
      * @param {Stream} data Data
@@ -85,7 +88,7 @@ class CryptoSync {
     deserialize(data) {
         return Promise.resolve(this.TL.deserialize(data))
     }
-    
+
     /**
      * Generate elliptic-curve init context
      * @param {Uint32Array} peerPublic Peer's public Ed25519 key
@@ -93,6 +96,16 @@ class CryptoSync {
      */
     initEC(peerPublic) {
         return Promise.resolve(initEC(peerPublic))
+    }
+
+
+    /**
+     * Get crc16 checksum of data
+     * @param {Uint8Array} data Data
+     * @returns {Uint8Array} Checksum
+     */
+    crc16(data) {
+        return Promise.resolve(crc16(data));
     }
 }
 

@@ -22,8 +22,9 @@ class Parser {
      * Set TL Object store
      * @param {Objects} objects 
      */
-    constructor(objects) {
+    constructor(objects, callbacks) {
         this.objects = objects
+        this.callbacks = callbacks
     }
     /**
      * Set TL Object store
@@ -180,6 +181,10 @@ class Parser {
             return
         }
 
+        if (typeof data === 'string' || data instanceof String) {
+            data = this.callbacks.typeConversion[type['type']](data)
+        }
+
         let flagSize = 0
         for (let key in type['params']) {
             let param = type['params'][key]
@@ -204,6 +209,10 @@ class Parser {
 
             if (typeof data[key] === 'undefined') {
                 if (param['pow']) {
+                    continue
+                }
+                if (param['type'] === '#') {
+                    stream.writeUnsignedInt(0)
                     continue
                 }
                 if (key === 'random_bytes') {
