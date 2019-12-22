@@ -29,7 +29,16 @@ In the [whitepaper](https://test.ton.org/ton.pdf), the TON blockchain is propose
 I initially decided to develop a custom TON workchain for the needs of my ad network, but then realized that I first needed a way to interact with the TON network, first.  
 Which is why I developed this pure-JS lite-client, which can be directly downloaded by the users viewing ads, and used to directly send an external event to the on-chain ad network smart contract.
 
-There are many other possible applications for a pure-JS TON blockchain client, it's up to you to discover them all ;)
+I initially intended to create also a very basic ad network smart contract, but then decided to focus all efforts on finishing this library, first.
+
+TL-B parser, fift interpreter and TVM are all on the roadmap in this order (TL-B in particular should be pretty easy with the current TL parser and my bitstream.js, with the only real problem being template parameters (damn you Unary)).
+BOC deserialization is implemented in lite.js (builder/slice is represented by a BitStream, a cell is a Uint8Array).
+
+
+## Other projects
+
+[MadelineProto with TON integration](https://github.com/danog/MadelineProto) - fully separate, standalone, async PHP implementation of the TON lite-client protocol.
+
 
 ## Usage
 
@@ -53,15 +62,7 @@ liteClient.connect().then(async () => {
         account: 'EQAnoW6-IZHisrcCsiSFDewx79W4oYfocKveh3b44uNIIepe'
     })
     console.log(state)
-
-    let stream = new BitStream(state.state.buffer)
-    console.log("CRC", stream.readBits(32))
-    console.log("Has index", stream.readBits(1))
-    console.log("Has crc32c", stream.readBits(1))
-    console.log("Has cache bits", stream.readBits(1))
-    console.log("Flags", stream.readBits(2))
-    console.log("Size", stream.readBits(3))
-    console.log("off_bytes", stream.readBits(8))
+    console.log(liteClient.slice(state.state)) // Deserialize BOC
 })
 ```
 
@@ -83,10 +84,4 @@ const liteClient = new Lite({
 
 For a list of methods that can be used, take a look at the lite scheme files (in a few days will provide an automatically-generated doc here).
 
-
-
 The project is actually based on yet another project of mine, a pure JS Telegram MTProto client (madeline.js) which will be released soon.
-
-## Other projects
-
-[MadelineProto with TON integration](https://github.com/danog/MadelineProto) - fully separate, standalone, async PHP implementation of the TON lite-client protocol.

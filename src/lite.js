@@ -7,13 +7,17 @@ import {
 } from "./crypto-sync/random";
 import deepEqual from 'deep-equal'
 import {
-    bufferViewEqual, atobInt8
+    bufferViewEqual,
+    atobInt8
 } from "./tools";
 import CryptoAsync from "./crypto";
-import { crc16 } from "./crypto-sync/crypto";
+import {
+    crc16
+} from "./crypto-sync/crypto";
 import schemeTON from './config/ton_api.json'
 import schemeLite from './config/lite_api.json'
 import liteConfig from './config/ton-lite-client-test1.config.json'
+import BitStream from "./boc/bitstream";
 
 class Lite {
     min_ls_version = 0x101
@@ -45,8 +49,7 @@ class Lite {
 
         this.TLObjects = new Objects(settings['schemes'])
         this.TLParser = new Parser(
-            this.TLObjects,
-            {
+            this.TLObjects, {
                 typeConversion: {
                     'liteServer.AccountId': data => this.unpackAccountId(data)
                 }
@@ -85,6 +88,102 @@ class Lite {
         result.bounceable = !(result.flags & 0x40)
         result.workchain = data[1] > 0x7F ? -(data[1] - 0xFF) : data[1]
         result.id = new Uint32Array(data.slice(2, 34).buffer)
+
+        return result
+    }
+    /**
+     * Deserialize bag of cells
+     * @param {Uint8Array} cell Serialized cell data
+     */
+    slice(cell) {
+        if (!cell.byteLength) {
+            return {}
+        }
+        // This should be all done automatically by the TL parser
+        console.log(cell)
+
+        let stream = new BitStream(cell.buffer)
+        const crc = stream.readBits(32)
+        if (crc !== 3052313714) {
+            throw new Error(`Invalid BOC constructor ${crc}`)
+        }
+        let result = {
+            _: 'serialized_boc',
+            has_idx: stream.readBits(1),
+            has_crc32c: stream.readBits(1),
+            has_cache_bits: stream.readBits(1),
+            flags: stream.readBits(2),
+            size: stream.readBits(3),
+            off_bytes: stream.readBits(8),
+        }
+        const size = result.size * 8
+        result.cell_count = stream.readBits(size)
+        result.roots = stream.readBits(size)
+        result.absent = stream.readBits(size)
+        result.tot_cells_size = stream.readBits(result.off_bytes * 8)
+        result.root_list = stream.readBits(result.roots * size)
+
+        if (result.has_idx) {
+            result.index = stream.readBits(result.cell_count * result.off_bytes * 8)
+        }
+        result.cell_data = stream.readBits(result.tot_cells_size * 8, false)
+        if (result.has_crc32c) {
+            result.crc32c = stream.readBits(32)
+        }
+
+        stream = new BitStream(result.cell_data.buffer)
+        result.cellsRaw = []
+        result.cells = []
+        for (let x = 0; x < result.cell_count; x++) {
+            // Will optimize later
+            result.cellsRaw.push(this.deserializeCell(stream, size))
+            result.cells.push(new BitStream(result.cellsRaw[x].data.buffer))
+        }
+
+        for (let x = 0; x < result.cell_count; x++) {
+            for (let ref in result.cellsRaw[x].refs) {
+                result.cells[x].pushRef(result.cells[ref])
+            }
+        }
+        result.root = result.cells[0]
+        return result
+    }
+    /**
+     * Deserialize cell
+     * @param {BitStream} stream Bitstream of cells
+     * @param {number}    size   Ref size
+     */
+    deserializeCell(stream, size) {
+        // Approximated TL-B schema
+        // cell$_ flags:(## 2) level:(## 1) hash:(## 1) exotic:(## 1) absent:(## 1) refCount:(## 2) 
+        let result = {}
+        result.flags = stream.readBits(2)
+        result.level = stream.readBits(1)
+        result.hash = stream.readBits(1)
+        result.exotic = stream.readBits(1)
+        result.absent = stream.readBits(1)
+        result.refCount = stream.readBits(2)
+
+        if (result.absent) {
+            throw new Error("Can't deserialize absent cell!")
+        }
+        result.length = stream.readBits(7)
+        result.lengthHasBits = stream.readBits(1)
+        result.data = stream.readBits((result.length + result.lengthHasBits) * 8)
+        if (result.lengthHasBits) {
+            let idx = result.data.byteLength - 1
+            for (let x = 0; x < 6; x++) {
+                if (result.data[idx] & (1 << x)) {
+                    result.data[idx] &= ~(1 << x)
+                    break
+                }
+            }
+        }
+
+        result.refs = []
+        for (let x = 0; x < result.refCount; x++) {
+            result.refs.push(stream.readBits(length))
+        }
 
         return result
     }

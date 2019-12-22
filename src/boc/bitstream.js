@@ -4,7 +4,7 @@ import {
 } from "../tools"
 
 /**
- * Stream of bits.
+ * Stream of bits, roughly equivalent to a builder or a slice, depending on the mode
  */
 class BitStream {
     /**
@@ -15,6 +15,8 @@ class BitStream {
         this.pos = 0 // In bits
         this.aBuf = aBuf || new ArrayBuffer(128) // Max length for cells
         this.bBuf = new Uint8Array(this.aBuf)
+        this.refs = []
+        this.refIdx = 0
     }
     /**
      * Write bits to stream
@@ -87,6 +89,58 @@ class BitStream {
         return this
     }
 
+    /**
+     * Push reference
+     * @param {Uint8Array} buffer Serialized cell buffer
+     * @returns BitStream
+     */
+    pushRef(buffer) {
+        if (this.refIdx === 4)  {
+            throw new Error("Trying to add too many references!")
+        }
+        this.refs[this.refIdx++] = buffer
+        return this
+    }
+
+    /**
+     * Load reference, returning slice
+     * @returns {BitStream} Slice
+     */
+    loadRefSlice() {
+        return new BitStream(this.refs[this.refIdx++])
+    }
+    /**
+     * Load reference
+     * @returns {Uint8Array} Cell
+     */
+    loadRef() {
+        return this.refs[this.refIdx++]
+    }
+    /**
+     * Preload reference
+     * @returns {Uint8Array} Cell
+     */
+    preloadRef() {
+        return this.refs[this.refIdx]
+    }
+
+    /**
+     * Skip reference
+     */
+    skipRef() {
+        if (this.refIdx === 4)  {
+            throw new Error("Trying to add too many references!")
+        }
+        this.refIdx++
+    }
+
+    /**
+     * Skip bits
+     * @param {number} length Bits to skip
+     */
+    skip(length) {
+        this.pos += length
+    }
 }
 
 BitStream.bigEndian = Stream.bigEndian
