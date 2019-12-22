@@ -11,11 +11,27 @@ Connection to the liteservers is made through a simple [websocket proxy](https:/
 
 The client is fully asynchronous, making use of workers and/or browser webcrypto APIs for cryptography (curves & AES).
 
+Possible applications are entirely client-side off-chain components for a distributed TON project; API explorers; and much more!  
+
+---
+
+This is my submission for the second stage of the TON blockchain contest.
+
+Initially, I intended to submit an [OUTPACE-inspired](https://github.com/AdExNetwork/adex-protocol#ocean-based-unidirectional-trust-less-payment-channel-outpace) ad network controlled by the TON blockchain.  
+
+However, as I studied the concepts of OUTPACE payment channels, I realized that OUTPACE is a suboptimal solution in the context of the TON blockchain.
+
+The TON blockchain is an incredibly powerful and flexible blockchain:
+In the [whitepaper](https://test.ton.org/ton.pdf), the TON blockchain is proposed as a solution to all scalability issues of previous blockchains: with support for infinite sharding and most importantly **custom workchains**, the need for side-chain applications like PLASMA and OUTPACE is removed, allowing developers to simply write their own workchain instances with custom rules.
+
+I initially decided to develop a custom TON workchain for the needs of my ad network, but then realized that I first needed a way to interact with the TON network, first.  
+Which is why I developed this pure-JS lite-client, which can be directly downloaded by the users viewing ads, and used to directly send an external event to the on-chain ad network smart contract.
+
+There are many other possible applications for a pure-JS TON blockchain client, it's up to you to discover them all ;)
+
 ## Usage
 
 This project provides an ADNL protocol lite-client, allowing to fetch blocks from the TON blockchain and send ext messages to the validators.  
-
-Possible applications are entirely client-side off-chain components for a distributed TON project; API explorers; and much more!  
 
 ```js
 import Lite from 'madeline-ton/lite';
