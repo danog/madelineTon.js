@@ -13,7 +13,7 @@
     "prepare": "yarn run build"
   },
   "main": "./dist/index.js",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Pure JS client-side implementation of the Telegram TON blockchain protocol",
   "author": "Daniil Gentili <daniil@daniil.it>",
   "license": "AGPL-3.0",
