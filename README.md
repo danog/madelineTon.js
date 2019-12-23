@@ -45,8 +45,7 @@ BOC deserialization is implemented in lite.js (builder/slice is represented by a
 This project provides an ADNL protocol lite-client, allowing to fetch blocks from the TON blockchain and send ext messages to the validators.  
 
 ```js
-import Lite from 'madeline-ton/lite';
-import BitStream from "madeline-ton/boc/bitstream";
+import Lite from 'madeline-ton';
 
 const liteClient = new Lite()
 
