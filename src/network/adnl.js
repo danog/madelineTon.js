@@ -31,7 +31,7 @@ class ADNL {
         this.previous = Promise.resolve()
 
         await new Promise((resolve, reject) => {
-            this.socket = new WebSocket(ctx.uri, 'binary')
+            this.socket = new WebSocket(ctx.uri)
             this.socket.binaryType = "arraybuffer"
             this.socket.onmessage = message => {
                 message = message.data

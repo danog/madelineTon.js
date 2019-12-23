@@ -38,7 +38,7 @@ class Websocket {
         random.set(new Uint32Array(await this.encrypt.process(random)).slice(14, 16), 14)
 
         await new Promise((resolve, reject) => {
-            this.socket = new WebSocket(ctx.getUri('ws'), 'binary')
+            this.socket = new WebSocket(ctx.getUri('ws'))
             this.socket.binaryType = "arraybuffer"
             this.socket.onmessage = async message => {
                 message = new Uint8Array(await this.decrypt.process(new Uint8Array(message.data)))
