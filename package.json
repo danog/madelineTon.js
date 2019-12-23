@@ -8,11 +8,21 @@
     "MadelineProto",
     "madeline.js"
   ],
-  "version": "1.0.3",
+  "scripts": {
+    "build": "babel src --presets=@babel/preset-env  --plugins @babel/plugin-proposal-class-properties --out-dir dist",
+    "test": "node ./distribution/test.js",
+    "prepare": "yarn run build"
+  },
+  "main": "./dist/index.js",
+  "version": "1.0.4",
   "description": "Pure JS client-side implementation of the Telegram TON blockchain protocol",
   "author": "Daniil Gentili <daniil@daniil.it>",
-  "license": "AGPLv3",
+  "license": "AGPL-3.0",
   "devDependencies": {
+    "@babel/cli": "^7.7.7",
+    "@babel/core": "^7.7.7",
+    "@babel/plugin-proposal-class-properties": "^7.7.4",
+    "@babel/preset-env": "^7.7.7",
     "typescript": "^3.6.4"
   },
   "dependencies": {
