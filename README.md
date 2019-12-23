@@ -39,6 +39,18 @@ BOC deserialization is implemented in lite.js (builder/slice is represented by a
 
 [MadelineProto with TON integration](https://github.com/danog/MadelineProto) - fully separate, standalone, async PHP implementation of the TON lite-client protocol.
 
+## Install
+
+Yarn:
+
+```bash
+yarn add madeline-ton
+```
+
+NPM (ew :):
+```bash
+npm install madeline-ton
+```
 
 ## Usage
 
