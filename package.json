@@ -10,7 +10,6 @@
   ],
   "scripts": {
     "build": "babel src --presets=@babel/preset-env  --plugins @babel/plugin-proposal-class-properties --out-dir dist",
-    "test": "node ./distribution/test.js",
     "prepare": "yarn run build"
   },
   "main": "./dist/index.js",
