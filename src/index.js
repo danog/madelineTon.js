@@ -1,3 +1,3 @@
-import Lite from './src/lite'
+import Lite from './lite'
 
 export default Lite;
