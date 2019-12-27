@@ -6,7 +6,7 @@ Pure JS client-side implementation of the [Telegram TON blockchain protocol](htt
 
 Interact **directly with the TON blockchain** with no middlemans, directly from your browser!  
 
-This is possible thanks to a client-side implementation of the ADNL P2P protocol ([whitepaper](https://test.ton.org/ton.pdf)).  
+This is possible thanks to a client-side implementation of the ADNL liteserver protocol ([whitepaper](https://test.ton.org/ton.pdf)).  
 Connection to the liteservers is made through a simple [websocket proxy](https://github.com/danog/tonProxy) that simply acts as a TCP <=> websocket proxy.  
 
 **All cryptography is done exclusively in the browser, allowing fully secure interaction with the chosen TON node**.
