@@ -9,7 +9,7 @@
     "madeline.js"
   ],
   "scripts": {
-    "build": "babel src --presets=@babel/preset-env  --plugins @babel/plugin-proposal-class-properties --plugins @babel/plugin-transform-runtime --copy-files --out-dir dist",
+    "build": "babel src --copy-files --out-dir dist",
     "prepare": "yarn run build"
   },
   "main": "./dist/index.js",
@@ -20,6 +20,7 @@
   "devDependencies": {
     "@babel/cli": "^7.7.7",
     "@babel/core": "^7.7.7",
+    "@babel/node": "^7.8.4",
     "@babel/plugin-proposal-class-properties": "^7.7.4",
     "@babel/plugin-transform-runtime": "^7.7.6",
     "@babel/preset-env": "^7.7.7",
