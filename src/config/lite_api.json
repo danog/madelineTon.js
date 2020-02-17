@@ -1,742 +1,1013 @@
 {
     "methods": [{
-        "method": "liteServer.getMasterchainInfo",
-        "id": -1984567762,
-        "params": [],
-        "type": "liteServer.MasterchainInfo"
-    }, {
-        "method": "liteServer.getMasterchainInfoExt",
-        "id": 1889956319,
-        "params": [{
-            "name": "mode",
-            "type": "#"
-        }],
-        "type": "liteServer.MasterchainInfoExt"
-    }, {
-        "method": "liteServer.getTime",
-        "id": 380459572,
-        "params": [],
-        "type": "liteServer.CurrentTime"
-    }, {
-        "method": "liteServer.getVersion",
-        "id": 590058507,
-        "params": [],
-        "type": "liteServer.Version"
-    }, {
-        "method": "liteServer.getBlock",
-        "id": 1668796173,
-        "params": [{
-            "name": "id",
-            "type": "tonNode.blockIdExt"
-        }],
-        "type": "liteServer.BlockData"
-    }, {
-        "method": "liteServer.getState",
-        "id": -1167184202,
-        "params": [{
-            "name": "id",
-            "type": "tonNode.blockIdExt"
-        }],
-        "type": "liteServer.BlockState"
-    }, {
-        "method": "liteServer.getBlockHeader",
-        "id": 569116318,
-        "params": [{
-            "name": "id",
-            "type": "tonNode.blockIdExt"
-        }, {
-            "name": "mode",
-            "type": "#"
-        }],
-        "type": "liteServer.BlockHeader"
-    }, {
-        "method": "liteServer.sendMessage",
-        "id": 1762317442,
-        "params": [{
-            "name": "body",
-            "type": "bytes"
-        }],
-        "type": "liteServer.SendMsgStatus"
-    }, {
-        "method": "liteServer.getAccountState",
-        "id": 1804144165,
-        "params": [{
-            "name": "id",
-            "type": "tonNode.blockIdExt"
-        }, {
-            "name": "account",
-            "type": "liteServer.accountId"
-        }],
-        "type": "liteServer.AccountState"
-    }, {
-        "method": "liteServer.getShardInfo",
-        "id": 1185084453,
-        "params": [{
-            "name": "id",
-            "type": "tonNode.blockIdExt"
-        }, {
-            "name": "workchain",
-            "type": "int"
-        }, {
-            "name": "shard",
-            "type": "long"
-        }, {
-            "name": "exact",
-            "type": "Bool"
-        }],
-        "type": "liteServer.ShardInfo"
-    }, {
-        "method": "liteServer.getAllShardsInfo",
-        "id": 1960050027,
-        "params": [{
-            "name": "id",
-            "type": "tonNode.blockIdExt"
-        }],
-        "type": "liteServer.AllShardsInfo"
-    }, {
-        "method": "liteServer.getOneTransaction",
-        "id": -737205014,
-        "params": [{
-            "name": "id",
-            "type": "tonNode.blockIdExt"
-        }, {
-            "name": "account",
-            "type": "liteServer.accountId"
-        }, {
-            "name": "lt",
-            "type": "long"
-        }],
-        "type": "liteServer.TransactionInfo"
-    }, {
-        "method": "liteServer.getTransactions",
-        "id": 474015649,
-        "params": [{
-            "name": "count",
-            "type": "#"
-        }, {
-            "name": "account",
-            "type": "liteServer.accountId"
-        }, {
-            "name": "lt",
-            "type": "long"
-        }, {
-            "name": "hash",
-            "type": "int256"
-        }],
-        "type": "liteServer.TransactionList"
-    }, {
-        "method": "liteServer.lookupBlock",
-        "id": -87492834,
-        "params": [{
-            "name": "mode",
-            "type": "#"
-        }, {
-            "name": "id",
-            "type": "tonNode.blockId"
-        }, {
-            "name": "lt",
-            "type": "mode.1?long"
-        }, {
-            "name": "utime",
-            "type": "mode.2?int"
-        }],
-        "type": "liteServer.BlockHeader"
-    }, {
-        "method": "liteServer.listBlockTransactions",
-        "id": -1375942694,
-        "params": [{
-            "name": "id",
-            "type": "tonNode.blockIdExt"
-        }, {
-            "name": "mode",
-            "type": "#"
-        }, {
-            "name": "count",
-            "type": "#"
-        }, {
-            "name": "after",
-            "type": "mode.7?liteServer.transactionId3"
-        }, {
-            "name": "reverse_order",
-            "type": "mode.6?true"
-        }, {
-            "name": "want_proof",
-            "type": "mode.5?true"
-        }],
-        "type": "liteServer.BlockTransactions"
-    }, {
-        "method": "liteServer.getBlockProof",
-        "id": -1964336060,
-        "params": [{
-            "name": "mode",
-            "type": "#"
-        }, {
-            "name": "known_block",
-            "type": "tonNode.blockIdExt"
-        }, {
-            "name": "target_block",
-            "type": "mode.0?tonNode.blockIdExt"
-        }],
-        "type": "liteServer.PartialBlockProof"
-    }, {
-        "method": "liteServer.getConfigAll",
-        "id": -1860491593,
-        "params": [{
-            "name": "mode",
-            "type": "#"
-        }, {
-            "name": "id",
-            "type": "tonNode.blockIdExt"
-        }],
-        "type": "liteServer.ConfigInfo"
-    }, {
-        "method": "liteServer.getConfigParams",
-        "id": 705764377,
-        "params": [{
-            "name": "mode",
-            "type": "#"
-        }, {
-            "name": "id",
-            "type": "tonNode.blockIdExt"
-        }, {
-            "name": "param_list",
-            "type": "vector<int>"
-        }],
-        "type": "liteServer.ConfigInfo"
-    }, {
-        "method": "liteServer.getValidatorStats",
-        "id": 152721596,
-        "params": [{
-            "name": "mode",
-            "type": "#"
-        }, {
-            "name": "id",
-            "type": "tonNode.blockIdExt"
-        }, {
-            "name": "limit",
-            "type": "int"
-        }, {
-            "name": "start_after",
-            "type": "mode.0?int256"
-        }, {
-            "name": "modified_after",
-            "type": "mode.2?int"
-        }],
-        "type": "liteServer.ValidatorStats"
-    }, {
-        "method": "liteServer.queryPrefix",
-        "id": 1926489734,
-        "params": [],
-        "type": "Object"
-    }, {
-        "method": "liteServer.query",
-        "id": 2039219935,
-        "params": [{
-            "name": "data",
-            "type": "bytes"
-        }],
-        "type": "Object"
-    }, {
-        "method": "liteServer.waitMasterchainSeqno",
-        "id": -1159022446,
-        "params": [{
-            "name": "seqno",
-            "type": "int"
-        }, {
-            "name": "timeout_ms",
-            "type": "int"
-        }],
-        "type": "Object "
-    }],
+            "method": "liteServer.getMasterchainInfo",
+            "id": -1984567762,
+            "params": [],
+            "type": "liteServer.MasterchainInfo"
+        },
+        {
+            "method": "liteServer.getMasterchainInfoExt",
+            "id": 1889956319,
+            "params": [{
+                "name": "mode",
+                "type": "#"
+            }],
+            "type": "liteServer.MasterchainInfoExt"
+        },
+        {
+            "method": "liteServer.getTime",
+            "id": 380459572,
+            "params": [],
+            "type": "liteServer.CurrentTime"
+        },
+        {
+            "method": "liteServer.getVersion",
+            "id": 590058507,
+            "params": [],
+            "type": "liteServer.Version"
+        },
+        {
+            "method": "liteServer.getBlock",
+            "id": 1668796173,
+            "params": [{
+                "name": "id",
+                "type": "tonNode.blockIdExt"
+            }],
+            "type": "liteServer.BlockData"
+        },
+        {
+            "method": "liteServer.getState",
+            "id": -1167184202,
+            "params": [{
+                "name": "id",
+                "type": "tonNode.blockIdExt"
+            }],
+            "type": "liteServer.BlockState"
+        },
+        {
+            "method": "liteServer.getBlockHeader",
+            "id": 569116318,
+            "params": [{
+                    "name": "id",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "mode",
+                    "type": "#"
+                }
+            ],
+            "type": "liteServer.BlockHeader"
+        },
+        {
+            "method": "liteServer.sendMessage",
+            "id": 1762317442,
+            "params": [{
+                "name": "body",
+                "type": "bytes"
+            }],
+            "type": "liteServer.SendMsgStatus"
+        },
+        {
+            "method": "liteServer.getAccountState",
+            "id": 1804144165,
+            "params": [{
+                    "name": "id",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "account",
+                    "type": "liteServer.accountId"
+                }
+            ],
+            "type": "liteServer.AccountState"
+        },
+        {
+            "method": "liteServer.runSmcMethod",
+            "id": 1556504018,
+            "params": [{
+                    "name": "mode",
+                    "type": "#"
+                },
+                {
+                    "name": "id",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "account",
+                    "type": "liteServer.accountId"
+                },
+                {
+                    "name": "method_id",
+                    "type": "long"
+                },
+                {
+                    "name": "params",
+                    "type": "bytes"
+                }
+            ],
+            "type": "liteServer.RunMethodResult"
+        },
+        {
+            "method": "liteServer.getShardInfo",
+            "id": 1185084453,
+            "params": [{
+                    "name": "id",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "workchain",
+                    "type": "int"
+                },
+                {
+                    "name": "shard",
+                    "type": "long"
+                },
+                {
+                    "name": "exact",
+                    "type": "Bool"
+                }
+            ],
+            "type": "liteServer.ShardInfo"
+        },
+        {
+            "method": "liteServer.getAllShardsInfo",
+            "id": 1960050027,
+            "params": [{
+                "name": "id",
+                "type": "tonNode.blockIdExt"
+            }],
+            "type": "liteServer.AllShardsInfo"
+        },
+        {
+            "method": "liteServer.getOneTransaction",
+            "id": -737205014,
+            "params": [{
+                    "name": "id",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "account",
+                    "type": "liteServer.accountId"
+                },
+                {
+                    "name": "lt",
+                    "type": "long"
+                }
+            ],
+            "type": "liteServer.TransactionInfo"
+        },
+        {
+            "method": "liteServer.getTransactions",
+            "id": 474015649,
+            "params": [{
+                    "name": "count",
+                    "type": "#"
+                },
+                {
+                    "name": "account",
+                    "type": "liteServer.accountId"
+                },
+                {
+                    "name": "lt",
+                    "type": "long"
+                },
+                {
+                    "name": "hash",
+                    "type": "int256"
+                }
+            ],
+            "type": "liteServer.TransactionList"
+        },
+        {
+            "method": "liteServer.lookupBlock",
+            "id": -87492834,
+            "params": [{
+                    "name": "mode",
+                    "type": "#"
+                },
+                {
+                    "name": "id",
+                    "type": "tonNode.blockId"
+                },
+                {
+                    "name": "lt",
+                    "type": "mode.1?long"
+                },
+                {
+                    "name": "utime",
+                    "type": "mode.2?int"
+                }
+            ],
+            "type": "liteServer.BlockHeader"
+        },
+        {
+            "method": "liteServer.listBlockTransactions",
+            "id": -1375942694,
+            "params": [{
+                    "name": "id",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "mode",
+                    "type": "#"
+                },
+                {
+                    "name": "count",
+                    "type": "#"
+                },
+                {
+                    "name": "after",
+                    "type": "mode.7?liteServer.transactionId3"
+                },
+                {
+                    "name": "reverse_order",
+                    "type": "mode.6?true"
+                },
+                {
+                    "name": "want_proof",
+                    "type": "mode.5?true"
+                }
+            ],
+            "type": "liteServer.BlockTransactions"
+        },
+        {
+            "method": "liteServer.getBlockProof",
+            "id": -1964336060,
+            "params": [{
+                    "name": "mode",
+                    "type": "#"
+                },
+                {
+                    "name": "known_block",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "target_block",
+                    "type": "mode.0?tonNode.blockIdExt"
+                }
+            ],
+            "type": "liteServer.PartialBlockProof"
+        },
+        {
+            "method": "liteServer.getConfigAll",
+            "id": -1860491593,
+            "params": [{
+                    "name": "mode",
+                    "type": "#"
+                },
+                {
+                    "name": "id",
+                    "type": "tonNode.blockIdExt"
+                }
+            ],
+            "type": "liteServer.ConfigInfo"
+        },
+        {
+            "method": "liteServer.getConfigParams",
+            "id": 705764377,
+            "params": [{
+                    "name": "mode",
+                    "type": "#"
+                },
+                {
+                    "name": "id",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "param_list",
+                    "type": "vector<int>"
+                }
+            ],
+            "type": "liteServer.ConfigInfo"
+        },
+        {
+            "method": "liteServer.getValidatorStats",
+            "id": 152721596,
+            "params": [{
+                    "name": "mode",
+                    "type": "#"
+                },
+                {
+                    "name": "id",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "limit",
+                    "type": "int"
+                },
+                {
+                    "name": "start_after",
+                    "type": "mode.0?int256"
+                },
+                {
+                    "name": "modified_after",
+                    "type": "mode.2?int"
+                }
+            ],
+            "type": "liteServer.ValidatorStats"
+        },
+        {
+            "method": "liteServer.queryPrefix",
+            "id": 1926489734,
+            "params": [],
+            "type": "Object"
+        },
+        {
+            "method": "liteServer.query",
+            "id": 2039219935,
+            "params": [{
+                "name": "data",
+                "type": "bytes"
+            }],
+            "type": "Object"
+        },
+        {
+            "method": "liteServer.waitMasterchainSeqno",
+            "id": -1159022446,
+            "params": [{
+                    "name": "seqno",
+                    "type": "int"
+                },
+                {
+                    "name": "timeout_ms",
+                    "type": "int"
+                }
+            ],
+            "type": "Object "
+        }
+    ],
     "constructors": [{
-        "predicate": "true",
-        "id": 1072550713,
-        "params": [],
-        "type": "True"
-    }, {
-        "predicate": "boolTrue",
-        "id": -1720552011,
-        "params": [],
-        "type": "Bool"
-    }, {
-        "predicate": "boolFalse",
-        "id": -1132882121,
-        "params": [],
-        "type": "Bool"
-    }, {
-        "predicate": "vector",
-        "id": 481674261,
-        "params": [],
-        "type": "Vector t"
-    }, {
-        "predicate": "tonNode.blockId",
-        "id": -1211256473,
-        "params": [{
-            "name": "workchain",
-            "type": "int"
-        }, {
-            "name": "shard",
-            "type": "long"
-        }, {
-            "name": "seqno",
-            "type": "int"
-        }],
-        "type": "tonNode.BlockId"
-    }, {
-        "predicate": "tonNode.blockIdExt",
-        "id": 1733487480,
-        "params": [{
-            "name": "workchain",
-            "type": "int"
-        }, {
-            "name": "shard",
-            "type": "long"
-        }, {
-            "name": "seqno",
-            "type": "int"
-        }, {
-            "name": "root_hash",
-            "type": "int256"
-        }, {
-            "name": "file_hash",
-            "type": "int256"
-        }],
-        "type": "tonNode.BlockIdExt"
-    }, {
-        "predicate": "tonNode.zeroStateIdExt",
-        "id": 494024110,
-        "params": [{
-            "name": "workchain",
-            "type": "int"
-        }, {
-            "name": "root_hash",
-            "type": "int256"
-        }, {
-            "name": "file_hash",
-            "type": "int256"
-        }],
-        "type": "tonNode.ZeroStateIdExt"
-    }, {
-        "predicate": "adnl.message.query",
-        "id": -1265895046,
-        "params": [{
-            "name": "query_id",
-            "type": "int256"
-        }, {
-            "name": "query",
-            "type": "bytes"
-        }],
-        "type": "adnl.Message"
-    }, {
-        "predicate": "adnl.message.answer",
-        "id": 262964246,
-        "params": [{
-            "name": "query_id",
-            "type": "int256"
-        }, {
-            "name": "answer",
-            "type": "bytes"
-        }],
-        "type": "adnl.Message"
-    }, {
-        "predicate": "liteServer.error",
-        "id": -1146494648,
-        "params": [{
-            "name": "code",
-            "type": "int"
-        }, {
-            "name": "message",
-            "type": "string"
-        }],
-        "type": "liteServer.Error"
-    }, {
-        "predicate": "liteServer.accountId",
-        "id": 1973478085,
-        "params": [{
-            "name": "workchain",
-            "type": "int"
-        }, {
-            "name": "id",
-            "type": "int256"
-        }],
-        "type": "liteServer.AccountId"
-    }, {
-        "predicate": "liteServer.masterchainInfo",
-        "id": -2055001983,
-        "params": [{
-            "name": "last",
-            "type": "tonNode.blockIdExt"
-        }, {
-            "name": "state_root_hash",
-            "type": "int256"
-        }, {
-            "name": "init",
-            "type": "tonNode.zeroStateIdExt"
-        }],
-        "type": "liteServer.MasterchainInfo"
-    }, {
-        "predicate": "liteServer.masterchainInfoExt",
-        "id": -1462968075,
-        "params": [{
-            "name": "mode",
-            "type": "#"
-        }, {
-            "name": "version",
-            "type": "int"
-        }, {
-            "name": "capabilities",
-            "type": "long"
-        }, {
-            "name": "last",
-            "type": "tonNode.blockIdExt"
-        }, {
-            "name": "last_utime",
-            "type": "int"
-        }, {
-            "name": "now",
-            "type": "int"
-        }, {
-            "name": "state_root_hash",
-            "type": "int256"
-        }, {
-            "name": "init",
-            "type": "tonNode.zeroStateIdExt"
-        }],
-        "type": "liteServer.MasterchainInfoExt"
-    }, {
-        "predicate": "liteServer.currentTime",
-        "id": -380436467,
-        "params": [{
-            "name": "now",
-            "type": "int"
-        }],
-        "type": "liteServer.CurrentTime"
-    }, {
-        "predicate": "liteServer.version",
-        "id": 1510248933,
-        "params": [{
-            "name": "mode",
-            "type": "#"
-        }, {
-            "name": "version",
-            "type": "int"
-        }, {
-            "name": "capabilities",
-            "type": "long"
-        }, {
-            "name": "now",
-            "type": "int"
-        }],
-        "type": "liteServer.Version"
-    }, {
-        "predicate": "liteServer.blockData",
-        "id": -1519063700,
-        "params": [{
-            "name": "id",
-            "type": "tonNode.blockIdExt"
-        }, {
-            "name": "data",
-            "type": "bytes"
-        }],
-        "type": "liteServer.BlockData"
-    }, {
-        "predicate": "liteServer.blockState",
-        "id": -1414669300,
-        "params": [{
-            "name": "id",
-            "type": "tonNode.blockIdExt"
-        }, {
-            "name": "root_hash",
-            "type": "int256"
-        }, {
-            "name": "file_hash",
-            "type": "int256"
-        }, {
-            "name": "data",
-            "type": "bytes"
-        }],
-        "type": "liteServer.BlockState"
-    }, {
-        "predicate": "liteServer.blockHeader",
-        "id": 1965916697,
-        "params": [{
-            "name": "id",
-            "type": "tonNode.blockIdExt"
-        }, {
-            "name": "mode",
-            "type": "#"
-        }, {
-            "name": "header_proof",
-            "type": "bytes"
-        }],
-        "type": "liteServer.BlockHeader"
-    }, {
-        "predicate": "liteServer.sendMsgStatus",
-        "id": 961602967,
-        "params": [{
-            "name": "status",
-            "type": "int"
-        }],
-        "type": "liteServer.SendMsgStatus"
-    }, {
-        "predicate": "liteServer.accountState",
-        "id": 1887029073,
-        "params": [{
-            "name": "id",
-            "type": "tonNode.blockIdExt"
-        }, {
-            "name": "shardblk",
-            "type": "tonNode.blockIdExt"
-        }, {
-            "name": "shard_proof",
-            "type": "bytes"
-        }, {
-            "name": "proof",
-            "type": "bytes"
-        }, {
-            "name": "state",
-            "type": "bytes"
-        }],
-        "type": "liteServer.AccountState"
-    }, {
-        "predicate": "liteServer.shardInfo",
-        "id": -1612264060,
-        "params": [{
-            "name": "id",
-            "type": "tonNode.blockIdExt"
-        }, {
-            "name": "shardblk",
-            "type": "tonNode.blockIdExt"
-        }, {
-            "name": "shard_proof",
-            "type": "bytes"
-        }, {
-            "name": "shard_descr",
-            "type": "bytes"
-        }],
-        "type": "liteServer.ShardInfo"
-    }, {
-        "predicate": "liteServer.allShardsInfo",
-        "id": 160425773,
-        "params": [{
-            "name": "id",
-            "type": "tonNode.blockIdExt"
-        }, {
-            "name": "proof",
-            "type": "bytes"
-        }, {
-            "name": "data",
-            "type": "bytes"
-        }],
-        "type": "liteServer.AllShardsInfo"
-    }, {
-        "predicate": "liteServer.transactionInfo",
-        "id": 249490759,
-        "params": [{
-            "name": "id",
-            "type": "tonNode.blockIdExt"
-        }, {
-            "name": "proof",
-            "type": "bytes"
-        }, {
-            "name": "transaction",
-            "type": "bytes"
-        }],
-        "type": "liteServer.TransactionInfo"
-    }, {
-        "predicate": "liteServer.transactionList",
-        "id": 1864812043,
-        "params": [{
-            "name": "ids",
-            "type": "vector<tonNode.blockIdExt>"
-        }, {
-            "name": "transactions",
-            "type": "bytes"
-        }],
-        "type": "liteServer.TransactionList"
-    }, {
-        "predicate": "liteServer.transactionId",
-        "id": -1322293841,
-        "params": [{
-            "name": "mode",
-            "type": "#"
-        }, {
-            "name": "account",
-            "type": "mode.0?int256"
-        }, {
-            "name": "lt",
-            "type": "mode.1?long"
-        }, {
-            "name": "hash",
-            "type": "mode.2?int256"
-        }],
-        "type": "liteServer.TransactionId"
-    }, {
-        "predicate": "liteServer.transactionId3",
-        "id": 746707575,
-        "params": [{
-            "name": "account",
-            "type": "int256"
-        }, {
-            "name": "lt",
-            "type": "long"
-        }],
-        "type": "liteServer.TransactionId3"
-    }, {
-        "predicate": "liteServer.blockTransactions",
-        "id": -1114854101,
-        "params": [{
-            "name": "id",
-            "type": "tonNode.blockIdExt"
-        }, {
-            "name": "req_count",
-            "type": "#"
-        }, {
-            "name": "incomplete",
+            "predicate": "true",
+            "id": 1072550713,
+            "params": [],
+            "type": "True"
+        },
+        {
+            "predicate": "boolTrue",
+            "id": -1720552011,
+            "params": [],
             "type": "Bool"
-        }, {
-            "name": "ids",
-            "type": "vector<liteServer.transactionId>"
-        }, {
-            "name": "proof",
-            "type": "bytes"
-        }],
-        "type": "liteServer.BlockTransactions"
-    }, {
-        "predicate": "liteServer.signature",
-        "id": -1545668523,
-        "params": [{
-            "name": "node_id_short",
-            "type": "int256"
-        }, {
-            "name": "signature",
-            "type": "bytes"
-        }],
-        "type": "liteServer.Signature"
-    }, {
-        "predicate": "liteServer.signatureSet",
-        "id": -163272986,
-        "params": [{
-            "name": "validator_set_hash",
-            "type": "int"
-        }, {
-            "name": "catchain_seqno",
-            "type": "int"
-        }, {
-            "name": "signatures",
-            "type": "vector<liteServer.signature>"
-        }],
-        "type": "liteServer.SignatureSet"
-    }, {
-        "predicate": "liteServer.blockLinkBack",
-        "id": -276947985,
-        "params": [{
-            "name": "to_key_block",
+        },
+        {
+            "predicate": "boolFalse",
+            "id": -1132882121,
+            "params": [],
             "type": "Bool"
-        }, {
-            "name": "from",
-            "type": "tonNode.blockIdExt"
-        }, {
-            "name": "to",
-            "type": "tonNode.blockIdExt"
-        }, {
-            "name": "dest_proof",
-            "type": "bytes"
-        }, {
-            "name": "proof",
-            "type": "bytes"
-        }, {
-            "name": "state_proof",
-            "type": "bytes"
-        }],
-        "type": "liteServer.BlockLink"
-    }, {
-        "predicate": "liteServer.blockLinkForward",
-        "id": 1376767516,
-        "params": [{
-            "name": "to_key_block",
-            "type": "Bool"
-        }, {
-            "name": "from",
-            "type": "tonNode.blockIdExt"
-        }, {
-            "name": "to",
-            "type": "tonNode.blockIdExt"
-        }, {
-            "name": "dest_proof",
-            "type": "bytes"
-        }, {
-            "name": "config_proof",
-            "type": "bytes"
-        }, {
-            "name": "signatures",
+        },
+        {
+            "predicate": "vector",
+            "id": 481674261,
+            "params": [],
+            "type": "Vector t"
+        },
+        {
+            "predicate": "tonNode.blockId",
+            "id": -1211256473,
+            "params": [{
+                    "name": "workchain",
+                    "type": "int"
+                },
+                {
+                    "name": "shard",
+                    "type": "long"
+                },
+                {
+                    "name": "seqno",
+                    "type": "int"
+                }
+            ],
+            "type": "tonNode.BlockId"
+        },
+        {
+            "predicate": "tonNode.blockIdExt",
+            "id": 1733487480,
+            "params": [{
+                    "name": "workchain",
+                    "type": "int"
+                },
+                {
+                    "name": "shard",
+                    "type": "long"
+                },
+                {
+                    "name": "seqno",
+                    "type": "int"
+                },
+                {
+                    "name": "root_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "file_hash",
+                    "type": "int256"
+                }
+            ],
+            "type": "tonNode.BlockIdExt"
+        },
+        {
+            "predicate": "tonNode.zeroStateIdExt",
+            "id": 494024110,
+            "params": [{
+                    "name": "workchain",
+                    "type": "int"
+                },
+                {
+                    "name": "root_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "file_hash",
+                    "type": "int256"
+                }
+            ],
+            "type": "tonNode.ZeroStateIdExt"
+        },
+        {
+            "predicate": "adnl.message.query",
+            "id": -1265895046,
+            "params": [{
+                    "name": "query_id",
+                    "type": "int256"
+                },
+                {
+                    "name": "query",
+                    "type": "bytes"
+                }
+            ],
+            "type": "adnl.Message"
+        },
+        {
+            "predicate": "adnl.message.answer",
+            "id": 262964246,
+            "params": [{
+                    "name": "query_id",
+                    "type": "int256"
+                },
+                {
+                    "name": "answer",
+                    "type": "bytes"
+                }
+            ],
+            "type": "adnl.Message"
+        },
+        {
+            "predicate": "liteServer.error",
+            "id": -1146494648,
+            "params": [{
+                    "name": "code",
+                    "type": "int"
+                },
+                {
+                    "name": "message",
+                    "type": "string"
+                }
+            ],
+            "type": "liteServer.Error"
+        },
+        {
+            "predicate": "liteServer.accountId",
+            "id": 1973478085,
+            "params": [{
+                    "name": "workchain",
+                    "type": "int"
+                },
+                {
+                    "name": "id",
+                    "type": "int256"
+                }
+            ],
+            "type": "liteServer.AccountId"
+        },
+        {
+            "predicate": "liteServer.masterchainInfo",
+            "id": -2055001983,
+            "params": [{
+                    "name": "last",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "state_root_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "init",
+                    "type": "tonNode.zeroStateIdExt"
+                }
+            ],
+            "type": "liteServer.MasterchainInfo"
+        },
+        {
+            "predicate": "liteServer.masterchainInfoExt",
+            "id": -1462968075,
+            "params": [{
+                    "name": "mode",
+                    "type": "#"
+                },
+                {
+                    "name": "version",
+                    "type": "int"
+                },
+                {
+                    "name": "capabilities",
+                    "type": "long"
+                },
+                {
+                    "name": "last",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "last_utime",
+                    "type": "int"
+                },
+                {
+                    "name": "now",
+                    "type": "int"
+                },
+                {
+                    "name": "state_root_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "init",
+                    "type": "tonNode.zeroStateIdExt"
+                }
+            ],
+            "type": "liteServer.MasterchainInfoExt"
+        },
+        {
+            "predicate": "liteServer.currentTime",
+            "id": -380436467,
+            "params": [{
+                "name": "now",
+                "type": "int"
+            }],
+            "type": "liteServer.CurrentTime"
+        },
+        {
+            "predicate": "liteServer.version",
+            "id": 1510248933,
+            "params": [{
+                    "name": "mode",
+                    "type": "#"
+                },
+                {
+                    "name": "version",
+                    "type": "int"
+                },
+                {
+                    "name": "capabilities",
+                    "type": "long"
+                },
+                {
+                    "name": "now",
+                    "type": "int"
+                }
+            ],
+            "type": "liteServer.Version"
+        },
+        {
+            "predicate": "liteServer.blockData",
+            "id": -1519063700,
+            "params": [{
+                    "name": "id",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "data",
+                    "type": "bytes"
+                }
+            ],
+            "type": "liteServer.BlockData"
+        },
+        {
+            "predicate": "liteServer.blockState",
+            "id": -1414669300,
+            "params": [{
+                    "name": "id",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "root_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "file_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "data",
+                    "type": "bytes"
+                }
+            ],
+            "type": "liteServer.BlockState"
+        },
+        {
+            "predicate": "liteServer.blockHeader",
+            "id": 1965916697,
+            "params": [{
+                    "name": "id",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "mode",
+                    "type": "#"
+                },
+                {
+                    "name": "header_proof",
+                    "type": "bytes"
+                }
+            ],
+            "type": "liteServer.BlockHeader"
+        },
+        {
+            "predicate": "liteServer.sendMsgStatus",
+            "id": 961602967,
+            "params": [{
+                "name": "status",
+                "type": "int"
+            }],
+            "type": "liteServer.SendMsgStatus"
+        },
+        {
+            "predicate": "liteServer.accountState",
+            "id": 1887029073,
+            "params": [{
+                    "name": "id",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "shardblk",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "shard_proof",
+                    "type": "bytes"
+                },
+                {
+                    "name": "proof",
+                    "type": "bytes"
+                },
+                {
+                    "name": "state",
+                    "type": "bytes"
+                }
+            ],
+            "type": "liteServer.AccountState"
+        },
+        {
+            "predicate": "liteServer.runMethodResult",
+            "id": -1550163605,
+            "params": [{
+                    "name": "mode",
+                    "type": "#"
+                },
+                {
+                    "name": "id",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "shardblk",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "shard_proof",
+                    "type": "mode.0?bytes"
+                },
+                {
+                    "name": "proof",
+                    "type": "mode.0?bytes"
+                },
+                {
+                    "name": "state_proof",
+                    "type": "mode.1?bytes"
+                },
+                {
+                    "name": "init_c7",
+                    "type": "mode.3?bytes"
+                },
+                {
+                    "name": "lib_extras",
+                    "type": "mode.4?bytes"
+                },
+                {
+                    "name": "exit_code",
+                    "type": "int"
+                },
+                {
+                    "name": "result",
+                    "type": "mode.2?bytes"
+                }
+            ],
+            "type": "liteServer.RunMethodResult"
+        },
+        {
+            "predicate": "liteServer.shardInfo",
+            "id": -1612264060,
+            "params": [{
+                    "name": "id",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "shardblk",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "shard_proof",
+                    "type": "bytes"
+                },
+                {
+                    "name": "shard_descr",
+                    "type": "bytes"
+                }
+            ],
+            "type": "liteServer.ShardInfo"
+        },
+        {
+            "predicate": "liteServer.allShardsInfo",
+            "id": 160425773,
+            "params": [{
+                    "name": "id",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "proof",
+                    "type": "bytes"
+                },
+                {
+                    "name": "data",
+                    "type": "bytes"
+                }
+            ],
+            "type": "liteServer.AllShardsInfo"
+        },
+        {
+            "predicate": "liteServer.transactionInfo",
+            "id": 249490759,
+            "params": [{
+                    "name": "id",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "proof",
+                    "type": "bytes"
+                },
+                {
+                    "name": "transaction",
+                    "type": "bytes"
+                }
+            ],
+            "type": "liteServer.TransactionInfo"
+        },
+        {
+            "predicate": "liteServer.transactionList",
+            "id": 1864812043,
+            "params": [{
+                    "name": "ids",
+                    "type": "vector<tonNode.blockIdExt>"
+                },
+                {
+                    "name": "transactions",
+                    "type": "bytes"
+                }
+            ],
+            "type": "liteServer.TransactionList"
+        },
+        {
+            "predicate": "liteServer.transactionId",
+            "id": -1322293841,
+            "params": [{
+                    "name": "mode",
+                    "type": "#"
+                },
+                {
+                    "name": "account",
+                    "type": "mode.0?int256"
+                },
+                {
+                    "name": "lt",
+                    "type": "mode.1?long"
+                },
+                {
+                    "name": "hash",
+                    "type": "mode.2?int256"
+                }
+            ],
+            "type": "liteServer.TransactionId"
+        },
+        {
+            "predicate": "liteServer.transactionId3",
+            "id": 746707575,
+            "params": [{
+                    "name": "account",
+                    "type": "int256"
+                },
+                {
+                    "name": "lt",
+                    "type": "long"
+                }
+            ],
+            "type": "liteServer.TransactionId3"
+        },
+        {
+            "predicate": "liteServer.blockTransactions",
+            "id": -1114854101,
+            "params": [{
+                    "name": "id",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "req_count",
+                    "type": "#"
+                },
+                {
+                    "name": "incomplete",
+                    "type": "Bool"
+                },
+                {
+                    "name": "ids",
+                    "type": "vector<liteServer.transactionId>"
+                },
+                {
+                    "name": "proof",
+                    "type": "bytes"
+                }
+            ],
+            "type": "liteServer.BlockTransactions"
+        },
+        {
+            "predicate": "liteServer.signature",
+            "id": -1545668523,
+            "params": [{
+                    "name": "node_id_short",
+                    "type": "int256"
+                },
+                {
+                    "name": "signature",
+                    "type": "bytes"
+                }
+            ],
+            "type": "liteServer.Signature"
+        },
+        {
+            "predicate": "liteServer.signatureSet",
+            "id": -163272986,
+            "params": [{
+                    "name": "validator_set_hash",
+                    "type": "int"
+                },
+                {
+                    "name": "catchain_seqno",
+                    "type": "int"
+                },
+                {
+                    "name": "signatures",
+                    "type": "vector<liteServer.signature>"
+                }
+            ],
             "type": "liteServer.SignatureSet"
-        }],
-        "type": "liteServer.BlockLink"
-    }, {
-        "predicate": "liteServer.partialBlockProof",
-        "id": -1898917183,
-        "params": [{
-            "name": "complete",
-            "type": "Bool"
-        }, {
-            "name": "from",
-            "type": "tonNode.blockIdExt"
-        }, {
-            "name": "to",
-            "type": "tonNode.blockIdExt"
-        }, {
-            "name": "steps",
-            "type": "vector<liteServer.BlockLink>"
-        }],
-        "type": "liteServer.PartialBlockProof"
-    }, {
-        "predicate": "liteServer.configInfo",
-        "id": -1367660753,
-        "params": [{
-            "name": "mode",
-            "type": "#"
-        }, {
-            "name": "id",
-            "type": "tonNode.blockIdExt"
-        }, {
-            "name": "state_proof",
-            "type": "bytes"
-        }, {
-            "name": "config_proof",
-            "type": "bytes"
-        }],
-        "type": "liteServer.ConfigInfo"
-    }, {
-        "predicate": "liteServer.validatorStats",
-        "id": -1174956328,
-        "params": [{
-            "name": "mode",
-            "type": "#"
-        }, {
-            "name": "id",
-            "type": "tonNode.blockIdExt"
-        }, {
-            "name": "count",
-            "type": "int"
-        }, {
-            "name": "complete",
-            "type": "Bool"
-        }, {
-            "name": "state_proof",
-            "type": "bytes"
-        }, {
-            "name": "data_proof",
-            "type": "bytes"
-        }],
-        "type": "liteServer.ValidatorStats"
-    }, {
-        "predicate": "liteServer.debug.verbosity",
-        "id": 1564493619,
-        "params": [{
-            "name": "value",
-            "type": "int"
-        }],
-        "type": "liteServer.debug.Verbosity"
-    }]
+        },
+        {
+            "predicate": "liteServer.blockLinkBack",
+            "id": -276947985,
+            "params": [{
+                    "name": "to_key_block",
+                    "type": "Bool"
+                },
+                {
+                    "name": "from",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "to",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "dest_proof",
+                    "type": "bytes"
+                },
+                {
+                    "name": "proof",
+                    "type": "bytes"
+                },
+                {
+                    "name": "state_proof",
+                    "type": "bytes"
+                }
+            ],
+            "type": "liteServer.BlockLink"
+        },
+        {
+            "predicate": "liteServer.blockLinkForward",
+            "id": 1376767516,
+            "params": [{
+                    "name": "to_key_block",
+                    "type": "Bool"
+                },
+                {
+                    "name": "from",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "to",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "dest_proof",
+                    "type": "bytes"
+                },
+                {
+                    "name": "config_proof",
+                    "type": "bytes"
+                },
+                {
+                    "name": "signatures",
+                    "type": "liteServer.SignatureSet"
+                }
+            ],
+            "type": "liteServer.BlockLink"
+        },
+        {
+            "predicate": "liteServer.partialBlockProof",
+            "id": -1898917183,
+            "params": [{
+                    "name": "complete",
+                    "type": "Bool"
+                },
+                {
+                    "name": "from",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "to",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "steps",
+                    "type": "vector<liteServer.BlockLink>"
+                }
+            ],
+            "type": "liteServer.PartialBlockProof"
+        },
+        {
+            "predicate": "liteServer.configInfo",
+            "id": -1367660753,
+            "params": [{
+                    "name": "mode",
+                    "type": "#"
+                },
+                {
+                    "name": "id",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "state_proof",
+                    "type": "bytes"
+                },
+                {
+                    "name": "config_proof",
+                    "type": "bytes"
+                }
+            ],
+            "type": "liteServer.ConfigInfo"
+        },
+        {
+            "predicate": "liteServer.validatorStats",
+            "id": -1174956328,
+            "params": [{
+                    "name": "mode",
+                    "type": "#"
+                },
+                {
+                    "name": "id",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "count",
+                    "type": "int"
+                },
+                {
+                    "name": "complete",
+                    "type": "Bool"
+                },
+                {
+                    "name": "state_proof",
+                    "type": "bytes"
+                },
+                {
+                    "name": "data_proof",
+                    "type": "bytes"
+                }
+            ],
+            "type": "liteServer.ValidatorStats"
+        },
+        {
+            "predicate": "liteServer.debug.verbosity",
+            "id": 1564493619,
+            "params": [{
+                "name": "value",
+                "type": "int"
+            }],
+            "type": "liteServer.debug.Verbosity"
+        }
+    ]
 }

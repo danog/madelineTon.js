@@ -95,6 +95,29 @@ class ADNLConnection {
     }
 
     /**
+     * Send RLDP query
+     * @param {Uint8Array} query Query
+     */
+    queryRLDP(data) {
+        const query_id = fastRandom(new Uint32Array(8))
+        data = this.TLParser.serialize(this.socket.getBuffer(), {
+            _: 'rldp.query',
+            query_id,
+            max_answer_size: 1024 * 1024,
+            timeout: 10,
+            data
+        })
+        const promise = new Promise((res, rej) => {
+            const timeoutId = setTimeout(this.timeout.bind(this), 10000, query_id)
+            this.requests[query_id] = {
+                res,
+                rej,
+                timeoutId
+            }
+        })
+        return this.socket.write(data).then(() => promise)
+    }
+    /**
      * Send ADNL query
      * @param {Uint8Array} query Query
      */

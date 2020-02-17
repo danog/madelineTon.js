@@ -369,6 +369,20 @@ class Lite {
 
         return this.connections[fastRandomInt(this.connections.length)].query(data)
     }
+
+    /**
+     * Call RLDP method
+     * @param {string} method RLDP method name
+     * @param {Object} args   Arguments
+     */
+    rldpCall(method, args = {}) {
+        args['_'] = method
+
+        let data
+        data = this.TLParser.serialize(new Stream, args).bBuf
+
+        return this.connections[fastRandomInt(this.connections.length)].queryRLDP(data)
+    }
     getTL() {
         return this.TLParser
     }
