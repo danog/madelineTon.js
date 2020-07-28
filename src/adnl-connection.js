@@ -66,7 +66,11 @@ class ADNLConnection {
         let socket = new ADNL
         socket.onClose = () => console.log("Closed connection!")
         socket.onMessage = message => this.onMessage(message)
-        await socket.connect(ctx)
+        try {
+            await socket.connect(ctx)
+        } catch (e) {
+            console.log("connect error: ", e);
+        }
 
         this.socket = socket
         this.pingId = setInterval(() => {
@@ -92,6 +96,7 @@ class ADNLConnection {
         clearTimeout(this.requests[message['query_id']]['timeoutId'])
         this.requests[message['query_id']].res(this.TLParser.deserialize(new Stream(message['answer'].buffer)))
         delete this.requests[message['query_id']]
+        delete this.socket.onError
     }
 
     /**
@@ -115,6 +120,7 @@ class ADNLConnection {
                 timeoutId
             }
         })
+        this.socket.onError = (error) => this.timeout(query_id, error);
         return this.socket.write(data).then(() => promise)
     }
     /**
@@ -136,11 +142,13 @@ class ADNLConnection {
                 timeoutId
             }
         })
+        this.socket.onError = (error) => this.timeout(query_id, error);
         return this.socket.write(query).then(() => promise)
     }
 
-    timeout(query_id) {
-        this.requests[query_id].rej(new Error("Timeout!"))
+    timeout(query_id, error="Timeout!") {
+        clearTimeout(this.requests[query_id]['timeoutId'])
+        this.requests[query_id].rej(new Error(error))
         delete this.requests[query_id]
     }
     /**

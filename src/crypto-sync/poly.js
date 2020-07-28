@@ -16,7 +16,8 @@ if (windowObject.crypto && windowObject.crypto.webkitSubtle) {
 let useWebCrypto = !!windowObject.crypto
 let useWebCryptoRandom = useWebCrypto && !!windowObject.crypto.getRandomValues
 let useWebCryptoSha1 = useWebCrypto && !windowObject.msCrypto
-let useWorkers = !!windowObject.Worker
+//let useWorkers = !!windowObject.Worker
+let useWorkers = false
 let isWorker = typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope
 
 let prefix = isWorker ? "Worker: " : ""

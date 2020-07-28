@@ -58,6 +58,9 @@ class ADNL {
             this.socket.onopen = resolve
             this.socket.onerror = reject
             this.socket.onclose = this.close.bind(this)
+        }).catch(e => {
+            console.log("Cannot connect to " + ctx.uri + ": ", e);
+            throw "Cannot connect to " + ctx.uri;
         })
 
         this.socket.onerror = e => {
@@ -119,15 +122,17 @@ class ADNL {
         const sha = new Uint32Array(await this.crypto.sha256(message))
 
         if (!bufferViewEqual(sha, new Uint32Array(this.read(32)))) {
-            throw new Error('SHA256 mismatch!');
-        }
-
-        if (message.length === 8) {
-            console.log("OK, got empty message!")
+            if (this.onError)
+                this.onError('SHA256 mismatch!')
+            else
+                throw new Error('SHA256 mismatch!');
         } else {
-            this.onMessage(new Stream(message.slice(8).buffer))
+            if (message.length === 8) {
+                console.log("OK, got empty message!")
+            } else {
+                this.onMessage(new Stream(message.slice(8).buffer))
+            }
         }
-
 
         if (this.allRead >= this.toRead) {
             this.process()
