@@ -32,7 +32,6 @@ class Lite {
     connections = []
     constructor(settings) {
         settings = {
-            ...settings,
             schemes: {
                 1: schemeTON,
                 2: schemeLite
@@ -41,7 +40,8 @@ class Lite {
             wssProxies: {
                 861606190: 'wss://ton-ws.madelineproto.xyz/testnetDebug',
                 1137658550: 'wss://ton-ws.madelineproto.xyz/testnet'
-            }
+            },
+           ...settings
         }
         let config = settings.config
         delete settings.config
@@ -72,7 +72,7 @@ class Lite {
      * @param {string} data Account ID
      */
     unpackAccountId(data) {
-        data = atobInt8(data.replace('-', '+').replace('_', '/'))
+        data = atobInt8(data.replace(/\-/g, '+').replace(/_/g, '/'))
         const crc = crc16(data.subarray(0, 34))
         if (!bufferViewEqual(crc, data.subarray(34))) {
             throw new Error('Invalid account ID provided, crc16 invalid!')
@@ -86,7 +86,7 @@ class Lite {
         }
         result.testnet = result.flags & 0x80
         result.bounceable = !(result.flags & 0x40)
-        result.workchain = data[1] > 0x7F ? -(data[1] - 0xFF) : data[1]
+        result.workchain = data[1] > 0x7F ? -(0x100 - data[1]) : data[1]
         result.id = new Uint32Array(data.slice(2, 34).buffer)
 
         return result
@@ -208,8 +208,10 @@ class Lite {
         }
         console.log(`Server time is ${this.serverTime}`)
 
+        /*
         // Get masterchain info
         await this.getMasterchainInfo()
+        */
     }
     /**
      * Get masterchain info (equivalent to `last`)

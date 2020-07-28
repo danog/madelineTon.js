@@ -172,8 +172,8 @@ class Parser {
         }
         if (type['predicate'] === 'vector') {
             stream.writeUnsignedInt(data.length)
-            if (this.objects.basicSizes[type['subtype']]) {
-                stream.prepareLength(data.length * this.objects.basicSizes[type['subtype']])
+            if (this.objects.basicSizes[type['subtype'].type]) {
+                stream.prepareLength(data.length * this.objects.basicSizes[type['subtype'].type])
             }
             for (let element in data) {
                 this.serialize(stream, data[element], type['subtype'])
