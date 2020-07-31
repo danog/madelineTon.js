@@ -59,7 +59,7 @@ class Parser {
             case 'double':
                 return data.readDouble()
             case 'Bool':
-                return data.readSignedInt() === 0x997275b5
+                return data.readUnsignedInt() === 0x997275b5
             case 'string':
                 return data.readString()
             case 'bytes':
