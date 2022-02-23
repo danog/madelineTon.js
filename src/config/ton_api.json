@@ -1,0 +1,4904 @@
+{
+    "methods": [{
+            "method": "tcp.ping",
+            "id": 1292381082,
+            "params": [{
+                "name": "random_id",
+                "type": "long"
+            }],
+            "type": "tcp.Pong"
+        },
+        {
+            "method": "getTestObject",
+            "id": 197109379,
+            "params": [],
+            "type": "TestObject"
+        },
+        {
+            "method": "dht.ping",
+            "id": -873775336,
+            "params": [{
+                "name": "random_id",
+                "type": "long"
+            }],
+            "type": "dht.Pong"
+        },
+        {
+            "method": "dht.store",
+            "id": 882065938,
+            "params": [{
+                "name": "value",
+                "type": "dht.value"
+            }],
+            "type": "dht.Stored"
+        },
+        {
+            "method": "dht.findNode",
+            "id": 1826803307,
+            "params": [{
+                    "name": "key",
+                    "type": "int256"
+                },
+                {
+                    "name": "k",
+                    "type": "int"
+                }
+            ],
+            "type": "dht.Nodes"
+        },
+        {
+            "method": "dht.findValue",
+            "id": -1370791919,
+            "params": [{
+                    "name": "key",
+                    "type": "int256"
+                },
+                {
+                    "name": "k",
+                    "type": "int"
+                }
+            ],
+            "type": "dht.ValueResult"
+        },
+        {
+            "method": "dht.getSignedAddressList",
+            "id": -1451669267,
+            "params": [],
+            "type": "dht.Node"
+        },
+        {
+            "method": "dht.query",
+            "id": 2102593385,
+            "params": [{
+                "name": "node",
+                "type": "dht.node"
+            }],
+            "type": "True"
+        },
+        {
+            "method": "overlay.getRandomPeers",
+            "id": 1223582891,
+            "params": [{
+                "name": "peers",
+                "type": "overlay.nodes"
+            }],
+            "type": "overlay.Nodes"
+        },
+        {
+            "method": "overlay.query",
+            "id": -855800765,
+            "params": [{
+                "name": "overlay",
+                "type": "int256"
+            }],
+            "type": "True"
+        },
+        {
+            "method": "overlay.getBroadcast",
+            "id": 758510240,
+            "params": [{
+                "name": "hash",
+                "type": "int256"
+            }],
+            "type": "overlay.Broadcast"
+        },
+        {
+            "method": "overlay.getBroadcastList",
+            "id": 1109141562,
+            "params": [{
+                "name": "list",
+                "type": "overlay.broadcastList"
+            }],
+            "type": "overlay.BroadcastList"
+        },
+        {
+            "method": "catchain.getBlock",
+            "id": 155049336,
+            "params": [{
+                "name": "block",
+                "type": "int256"
+            }],
+            "type": "catchain.BlockResult"
+        },
+        {
+            "method": "catchain.getBlocks",
+            "id": 53062594,
+            "params": [{
+                "name": "blocks",
+                "type": "vector<int256>"
+            }],
+            "type": "catchain.Sent"
+        },
+        {
+            "method": "catchain.getDifference",
+            "id": -798175528,
+            "params": [{
+                "name": "rt",
+                "type": "vector<int>"
+            }],
+            "type": "catchain.Difference"
+        },
+        {
+            "method": "catchain.getBlockHistory",
+            "id": -1470730762,
+            "params": [{
+                    "name": "block",
+                    "type": "int256"
+                },
+                {
+                    "name": "height",
+                    "type": "long"
+                },
+                {
+                    "name": "stop_if",
+                    "type": "vector<int256>"
+                }
+            ],
+            "type": "catchain.Sent"
+        },
+        {
+            "method": "validatorSession.ping",
+            "id": 1745111469,
+            "params": [{
+                "name": "hash",
+                "type": "long"
+            }],
+            "type": "validatorSession.Pong"
+        },
+        {
+            "method": "validatorSession.downloadCandidate",
+            "id": -520274443,
+            "params": [{
+                    "name": "round",
+                    "type": "int"
+                },
+                {
+                    "name": "id",
+                    "type": "validatorSession.candidateId"
+                }
+            ],
+            "type": "validatorSession.Candidate"
+        },
+        {
+            "method": "tonNode.getNextBlockDescription",
+            "id": 341160179,
+            "params": [{
+                "name": "prev_block",
+                "type": "tonNode.blockIdExt"
+            }],
+            "type": "tonNode.BlockDescription"
+        },
+        {
+            "method": "tonNode.getNextBlocksDescription",
+            "id": 1059590852,
+            "params": [{
+                    "name": "prev_block",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "limit",
+                    "type": "int"
+                }
+            ],
+            "type": "tonNode.BlocksDescription"
+        },
+        {
+            "method": "tonNode.getPrevBlocksDescription",
+            "id": 1550675145,
+            "params": [{
+                    "name": "next_block",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "limit",
+                    "type": "int"
+                },
+                {
+                    "name": "cutoff_seqno",
+                    "type": "int"
+                }
+            ],
+            "type": "tonNode.BlocksDescription"
+        },
+        {
+            "method": "tonNode.prepareBlockProof",
+            "id": -2024000760,
+            "params": [{
+                    "name": "block",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "allow_partial",
+                    "type": "Bool"
+                }
+            ],
+            "type": "tonNode.PreparedProof"
+        },
+        {
+            "method": "tonNode.prepareBlockProofs",
+            "id": -310791496,
+            "params": [{
+                    "name": "blocks",
+                    "type": "vector<tonNode.blockIdExt>"
+                },
+                {
+                    "name": "allow_partial",
+                    "type": "Bool"
+                }
+            ],
+            "type": "tonNode.PreparedProof"
+        },
+        {
+            "method": "tonNode.prepareBlock",
+            "id": 1973649230,
+            "params": [{
+                "name": "block",
+                "type": "tonNode.blockIdExt"
+            }],
+            "type": "tonNode.Prepared"
+        },
+        {
+            "method": "tonNode.prepareBlocks",
+            "id": 1795140604,
+            "params": [{
+                "name": "blocks",
+                "type": "vector<tonNode.blockIdExt>"
+            }],
+            "type": "tonNode.Prepared"
+        },
+        {
+            "method": "tonNode.preparePersistentState",
+            "id": -18209122,
+            "params": [{
+                    "name": "block",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "masterchain_block",
+                    "type": "tonNode.blockIdExt"
+                }
+            ],
+            "type": "tonNode.PreparedState"
+        },
+        {
+            "method": "tonNode.prepareZeroState",
+            "id": 1104021541,
+            "params": [{
+                "name": "block",
+                "type": "tonNode.blockIdExt"
+            }],
+            "type": "tonNode.PreparedState"
+        },
+        {
+            "method": "tonNode.getNextKeyBlockIds",
+            "id": -219689029,
+            "params": [{
+                    "name": "block",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "max_size",
+                    "type": "int"
+                }
+            ],
+            "type": "tonNode.KeyBlocks"
+        },
+        {
+            "method": "tonNode.downloadNextBlockFull",
+            "id": 1855993674,
+            "params": [{
+                "name": "prev_block",
+                "type": "tonNode.blockIdExt"
+            }],
+            "type": "tonNode.DataFull"
+        },
+        {
+            "method": "tonNode.downloadBlockFull",
+            "id": 1780991133,
+            "params": [{
+                "name": "block",
+                "type": "tonNode.blockIdExt"
+            }],
+            "type": "tonNode.DataFull"
+        },
+        {
+            "method": "tonNode.downloadBlock",
+            "id": -495814205,
+            "params": [{
+                "name": "block",
+                "type": "tonNode.blockIdExt"
+            }],
+            "type": "tonNode.Data"
+        },
+        {
+            "method": "tonNode.downloadBlocks",
+            "id": 1985594749,
+            "params": [{
+                "name": "blocks",
+                "type": "vector<tonNode.blockIdExt>"
+            }],
+            "type": "tonNode.DataList"
+        },
+        {
+            "method": "tonNode.downloadPersistentState",
+            "id": 2140791736,
+            "params": [{
+                    "name": "block",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "masterchain_block",
+                    "type": "tonNode.blockIdExt"
+                }
+            ],
+            "type": "tonNode.Data"
+        },
+        {
+            "method": "tonNode.downloadPersistentStateSlice",
+            "id": -169220381,
+            "params": [{
+                    "name": "block",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "masterchain_block",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "offset",
+                    "type": "long"
+                },
+                {
+                    "name": "max_size",
+                    "type": "long"
+                }
+            ],
+            "type": "tonNode.Data"
+        },
+        {
+            "method": "tonNode.downloadZeroState",
+            "id": -1379131814,
+            "params": [{
+                "name": "block",
+                "type": "tonNode.blockIdExt"
+            }],
+            "type": "tonNode.Data"
+        },
+        {
+            "method": "tonNode.downloadBlockProof",
+            "id": 1272334218,
+            "params": [{
+                "name": "block",
+                "type": "tonNode.blockIdExt"
+            }],
+            "type": "tonNode.Data"
+        },
+        {
+            "method": "tonNode.downloadBlockProofs",
+            "id": -1515170827,
+            "params": [{
+                "name": "blocks",
+                "type": "vector<tonNode.blockIdExt>"
+            }],
+            "type": "tonNode.DataList"
+        },
+        {
+            "method": "tonNode.downloadBlockProofLink",
+            "id": 632488134,
+            "params": [{
+                "name": "block",
+                "type": "tonNode.blockIdExt"
+            }],
+            "type": "tonNode.Data"
+        },
+        {
+            "method": "tonNode.downloadBlockProofLinks",
+            "id": 684796771,
+            "params": [{
+                "name": "blocks",
+                "type": "vector<tonNode.blockIdExt>"
+            }],
+            "type": "tonNode.DataList"
+        },
+        {
+            "method": "tonNode.getArchiveInfo",
+            "id": 2066602305,
+            "params": [{
+                "name": "masterchain_seqno",
+                "type": "int"
+            }],
+            "type": "tonNode.ArchiveInfo"
+        },
+        {
+            "method": "tonNode.getArchiveSlice",
+            "id": 540758376,
+            "params": [{
+                    "name": "archive_id",
+                    "type": "long"
+                },
+                {
+                    "name": "offset",
+                    "type": "long"
+                },
+                {
+                    "name": "max_size",
+                    "type": "int"
+                }
+            ],
+            "type": "tonNode.Data"
+        },
+        {
+            "method": "tonNode.getCapabilities",
+            "id": -555345672,
+            "params": [],
+            "type": "tonNode.Capabilities"
+        },
+        {
+            "method": "tonNode.slave.sendExtMessage",
+            "id": 58127017,
+            "params": [{
+                "name": "message",
+                "type": "tonNode.externalMessage"
+            }],
+            "type": "tonNode.Success"
+        },
+        {
+            "method": "tonNode.query",
+            "id": 1777542355,
+            "params": [],
+            "type": "Object"
+        },
+        {
+            "method": "adnl.ping",
+            "id": 531276223,
+            "params": [{
+                "name": "value",
+                "type": "long"
+            }],
+            "type": "adnl.Pong"
+        },
+        {
+            "method": "engine.validator.getTime",
+            "id": -515850543,
+            "params": [],
+            "type": "engine.validator.Time"
+        },
+        {
+            "method": "engine.validator.importPrivateKey",
+            "id": 360741575,
+            "params": [{
+                "name": "key",
+                "type": "PrivateKey"
+            }],
+            "type": "engine.validator.KeyHash"
+        },
+        {
+            "method": "engine.validator.exportPrivateKey",
+            "id": -864911288,
+            "params": [{
+                "name": "key_hash",
+                "type": "int256"
+            }],
+            "type": "PrivateKey"
+        },
+        {
+            "method": "engine.validator.exportPublicKey",
+            "id": 1647618233,
+            "params": [{
+                "name": "key_hash",
+                "type": "int256"
+            }],
+            "type": "PublicKey"
+        },
+        {
+            "method": "engine.validator.generateKeyPair",
+            "id": -349872005,
+            "params": [],
+            "type": "engine.validator.KeyHash"
+        },
+        {
+            "method": "engine.validator.addAdnlId",
+            "id": -310029141,
+            "params": [{
+                    "name": "key_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "category",
+                    "type": "int"
+                }
+            ],
+            "type": "engine.validator.Success"
+        },
+        {
+            "method": "engine.validator.addDhtId",
+            "id": -183755124,
+            "params": [{
+                "name": "key_hash",
+                "type": "int256"
+            }],
+            "type": "engine.validator.Success"
+        },
+        {
+            "method": "engine.validator.addValidatorPermanentKey",
+            "id": -1844116104,
+            "params": [{
+                    "name": "key_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "election_date",
+                    "type": "int"
+                },
+                {
+                    "name": "ttl",
+                    "type": "int"
+                }
+            ],
+            "type": "engine.validator.Success"
+        },
+        {
+            "method": "engine.validator.addValidatorTempKey",
+            "id": -1926009038,
+            "params": [{
+                    "name": "permanent_key_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "key_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "ttl",
+                    "type": "int"
+                }
+            ],
+            "type": "engine.validator.Success"
+        },
+        {
+            "method": "engine.validator.addValidatorAdnlAddress",
+            "id": -624187774,
+            "params": [{
+                    "name": "permanent_key_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "key_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "ttl",
+                    "type": "int"
+                }
+            ],
+            "type": "engine.validator.Success"
+        },
+        {
+            "method": "engine.validator.changeFullNodeAdnlAddress",
+            "id": -1094268539,
+            "params": [{
+                "name": "adnl_id",
+                "type": "int256"
+            }],
+            "type": "engine.validator.Success"
+        },
+        {
+            "method": "engine.validator.addLiteserver",
+            "id": -259387577,
+            "params": [{
+                    "name": "key_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "port",
+                    "type": "int"
+                }
+            ],
+            "type": "engine.validator.Success"
+        },
+        {
+            "method": "engine.validator.addControlInterface",
+            "id": 881587196,
+            "params": [{
+                    "name": "key_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "port",
+                    "type": "int"
+                }
+            ],
+            "type": "engine.validator.Success"
+        },
+        {
+            "method": "engine.validator.addControlProcess",
+            "id": 1524692816,
+            "params": [{
+                    "name": "key_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "port",
+                    "type": "int"
+                },
+                {
+                    "name": "peer_key",
+                    "type": "int256"
+                },
+                {
+                    "name": "permissions",
+                    "type": "int"
+                }
+            ],
+            "type": "engine.validator.Success"
+        },
+        {
+            "method": "engine.validator.delAdnlId",
+            "id": 691696882,
+            "params": [{
+                "name": "key_hash",
+                "type": "int256"
+            }],
+            "type": "engine.validator.Success"
+        },
+        {
+            "method": "engine.validator.delDhtId",
+            "id": -2063770818,
+            "params": [{
+                "name": "key_hash",
+                "type": "int256"
+            }],
+            "type": "engine.validator.Success"
+        },
+        {
+            "method": "engine.validator.delValidatorPermanentKey",
+            "id": 390777082,
+            "params": [{
+                "name": "key_hash",
+                "type": "int256"
+            }],
+            "type": "engine.validator.Success"
+        },
+        {
+            "method": "engine.validator.delValidatorTempKey",
+            "id": -1595481903,
+            "params": [{
+                    "name": "permanent_key_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "key_hash",
+                    "type": "int256"
+                }
+            ],
+            "type": "engine.validator.Success"
+        },
+        {
+            "method": "engine.validator.delValidatorAdnlAddress",
+            "id": -150453414,
+            "params": [{
+                    "name": "permanent_key_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "key_hash",
+                    "type": "int256"
+                }
+            ],
+            "type": "engine.validator.Success"
+        },
+        {
+            "method": "engine.validator.addListeningPort",
+            "id": -362051147,
+            "params": [{
+                    "name": "ip",
+                    "type": "int"
+                },
+                {
+                    "name": "port",
+                    "type": "int"
+                },
+                {
+                    "name": "categories",
+                    "type": "vector<int>"
+                },
+                {
+                    "name": "priority_categories",
+                    "type": "vector<int>"
+                }
+            ],
+            "type": "engine.validator.Success"
+        },
+        {
+            "method": "engine.validator.addProxy",
+            "id": -151178251,
+            "params": [{
+                    "name": "in_ip",
+                    "type": "int"
+                },
+                {
+                    "name": "in_port",
+                    "type": "int"
+                },
+                {
+                    "name": "out_ip",
+                    "type": "int"
+                },
+                {
+                    "name": "out_port",
+                    "type": "int"
+                },
+                {
+                    "name": "proxy",
+                    "type": "adnl.Proxy"
+                },
+                {
+                    "name": "categories",
+                    "type": "vector<int>"
+                },
+                {
+                    "name": "priority_categories",
+                    "type": "vector<int>"
+                }
+            ],
+            "type": "engine.validator.Success"
+        },
+        {
+            "method": "engine.validator.delListeningPort",
+            "id": 828094543,
+            "params": [{
+                    "name": "ip",
+                    "type": "int"
+                },
+                {
+                    "name": "port",
+                    "type": "int"
+                },
+                {
+                    "name": "categories",
+                    "type": "vector<int>"
+                },
+                {
+                    "name": "priority_categories",
+                    "type": "vector<int>"
+                }
+            ],
+            "type": "engine.validator.Success"
+        },
+        {
+            "method": "engine.validator.delProxy",
+            "id": 1970850941,
+            "params": [{
+                    "name": "out_ip",
+                    "type": "int"
+                },
+                {
+                    "name": "out_port",
+                    "type": "int"
+                },
+                {
+                    "name": "categories",
+                    "type": "vector<int>"
+                },
+                {
+                    "name": "priority_categories",
+                    "type": "vector<int>"
+                }
+            ],
+            "type": "engine.validator.Success"
+        },
+        {
+            "method": "engine.validator.sign",
+            "id": 451549736,
+            "params": [{
+                    "name": "key_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "data",
+                    "type": "bytes"
+                }
+            ],
+            "type": "engine.validator.Signature"
+        },
+        {
+            "method": "engine.validator.getStats",
+            "id": 1389740817,
+            "params": [],
+            "type": "engine.validator.Stats"
+        },
+        {
+            "method": "engine.validator.getConfig",
+            "id": 1504518693,
+            "params": [],
+            "type": "engine.validator.JsonConfig"
+        },
+        {
+            "method": "engine.validator.setVerbosity",
+            "id": -1316856190,
+            "params": [{
+                "name": "verbosity",
+                "type": "int"
+            }],
+            "type": "engine.validator.Success"
+        },
+        {
+            "method": "engine.validator.createElectionBid",
+            "id": -451038907,
+            "params": [{
+                    "name": "election_date",
+                    "type": "int"
+                },
+                {
+                    "name": "election_addr",
+                    "type": "string"
+                },
+                {
+                    "name": "wallet",
+                    "type": "string"
+                }
+            ],
+            "type": "engine.validator.ElectionBid"
+        },
+        {
+            "method": "engine.validator.checkDhtServers",
+            "id": -773578550,
+            "params": [{
+                "name": "id",
+                "type": "int256"
+            }],
+            "type": "engine.validator.DhtServersStatus"
+        },
+        {
+            "method": "engine.validator.controlQuery",
+            "id": -1535722048,
+            "params": [{
+                "name": "data",
+                "type": "bytes"
+            }],
+            "type": "Object"
+        },
+        {
+            "method": "http.request",
+            "id": 1639027169,
+            "params": [{
+                    "name": "id",
+                    "type": "int256"
+                },
+                {
+                    "name": "method",
+                    "type": "string"
+                },
+                {
+                    "name": "url",
+                    "type": "string"
+                },
+                {
+                    "name": "http_version",
+                    "type": "string"
+                },
+                {
+                    "name": "headers",
+                    "type": "vector<http.header>"
+                }
+            ],
+            "type": "http.Response"
+        },
+        {
+            "method": "http.getNextPayloadPart",
+            "id": -1871422196,
+            "params": [{
+                    "name": "id",
+                    "type": "int256"
+                },
+                {
+                    "name": "seqno",
+                    "type": "int"
+                },
+                {
+                    "name": "max_chunk_size",
+                    "type": "int"
+                }
+            ],
+            "type": "http.PayloadPart"
+        }
+    ],
+    "constructors": [{
+            "predicate": "true",
+            "id": 1072550713,
+            "params": [],
+            "type": "True"
+        },
+        {
+            "predicate": "boolTrue",
+            "id": -1720552011,
+            "params": [],
+            "type": "Bool"
+        },
+        {
+            "predicate": "boolFalse",
+            "id": -1132882121,
+            "params": [],
+            "type": "Bool"
+        },
+        {
+            "predicate": "vector",
+            "id": 481674261,
+            "params": [],
+            "type": "Vector t"
+        },
+        {
+            "predicate": "testObject",
+            "id": -1521006198,
+            "params": [{
+                    "name": "value",
+                    "type": "int"
+                },
+                {
+                    "name": "o",
+                    "type": "object"
+                },
+                {
+                    "name": "f",
+                    "type": "function"
+                }
+            ],
+            "type": "TestObject"
+        },
+        {
+            "predicate": "testString",
+            "id": -934972983,
+            "params": [{
+                "name": "value",
+                "type": "string"
+            }],
+            "type": "TestObject"
+        },
+        {
+            "predicate": "testInt",
+            "id": 731271633,
+            "params": [{
+                "name": "value",
+                "type": "int"
+            }],
+            "type": "TestObject"
+        },
+        {
+            "predicate": "testVectorBytes",
+            "id": 1267407827,
+            "params": [{
+                "name": "value",
+                "type": "vector<bytes>"
+            }],
+            "type": "TestObject"
+        },
+        {
+            "predicate": "tcp.pong",
+            "id": -597034237,
+            "params": [{
+                "name": "random_id",
+                "type": "long"
+            }],
+            "type": "tcp.Pong"
+        },
+        {
+            "predicate": "tcp.authentificate",
+            "id": 1146858258,
+            "params": [{
+                "name": "nonce",
+                "type": "bytes"
+            }],
+            "type": "tcp.Message"
+        },
+        {
+            "predicate": "tcp.authentificationNonce",
+            "id": -480425290,
+            "params": [{
+                "name": "nonce",
+                "type": "bytes"
+            }],
+            "type": "tcp.Message"
+        },
+        {
+            "predicate": "tcp.authentificationComplete",
+            "id": -139616602,
+            "params": [{
+                    "name": "key",
+                    "type": "PublicKey"
+                },
+                {
+                    "name": "signature",
+                    "type": "bytes"
+                }
+            ],
+            "type": "tcp.Message"
+        },
+        {
+            "predicate": "fec.raptorQ",
+            "id": -1953257504,
+            "params": [{
+                    "name": "data_size",
+                    "type": "int"
+                },
+                {
+                    "name": "symbol_size",
+                    "type": "int"
+                },
+                {
+                    "name": "symbols_count",
+                    "type": "int"
+                }
+            ],
+            "type": "fec.Type"
+        },
+        {
+            "predicate": "fec.roundRobin",
+            "id": 854927588,
+            "params": [{
+                    "name": "data_size",
+                    "type": "int"
+                },
+                {
+                    "name": "symbol_size",
+                    "type": "int"
+                },
+                {
+                    "name": "symbols_count",
+                    "type": "int"
+                }
+            ],
+            "type": "fec.Type"
+        },
+        {
+            "predicate": "fec.online",
+            "id": 19359244,
+            "params": [{
+                    "name": "data_size",
+                    "type": "int"
+                },
+                {
+                    "name": "symbol_size",
+                    "type": "int"
+                },
+                {
+                    "name": "symbols_count",
+                    "type": "int"
+                }
+            ],
+            "type": "fec.Type"
+        },
+        {
+            "predicate": "pk.unenc",
+            "id": -1311007952,
+            "params": [{
+                "name": "data",
+                "type": "bytes"
+            }],
+            "type": "PrivateKey"
+        },
+        {
+            "predicate": "pk.ed25519",
+            "id": 1231561495,
+            "params": [{
+                "name": "key",
+                "type": "int256"
+            }],
+            "type": "PrivateKey"
+        },
+        {
+            "predicate": "pk.aes",
+            "id": -1511501513,
+            "params": [{
+                "name": "key",
+                "type": "int256"
+            }],
+            "type": "PrivateKey"
+        },
+        {
+            "predicate": "pk.overlay",
+            "id": 933623387,
+            "params": [{
+                "name": "name",
+                "type": "bytes"
+            }],
+            "type": "PrivateKey"
+        },
+        {
+            "predicate": "pub.unenc",
+            "id": -1239464694,
+            "params": [{
+                "name": "data",
+                "type": "bytes"
+            }],
+            "type": "PublicKey"
+        },
+        {
+            "predicate": "pub.ed25519",
+            "id": 1209251014,
+            "params": [{
+                "name": "key",
+                "type": "int256"
+            }],
+            "type": "PublicKey"
+        },
+        {
+            "predicate": "pub.aes",
+            "id": 767339988,
+            "params": [{
+                "name": "key",
+                "type": "int256"
+            }],
+            "type": "PublicKey"
+        },
+        {
+            "predicate": "pub.overlay",
+            "id": 884622795,
+            "params": [{
+                "name": "name",
+                "type": "bytes"
+            }],
+            "type": "PublicKey"
+        },
+        {
+            "predicate": "adnl.id.short",
+            "id": 1044342095,
+            "params": [{
+                "name": "id",
+                "type": "int256"
+            }],
+            "type": "adnl.id.Short"
+        },
+        {
+            "predicate": "adnl.proxyToFastHash",
+            "id": -574752674,
+            "params": [{
+                    "name": "ip",
+                    "type": "int"
+                },
+                {
+                    "name": "port",
+                    "type": "int"
+                },
+                {
+                    "name": "date",
+                    "type": "int"
+                },
+                {
+                    "name": "data_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "shared_secret",
+                    "type": "int256"
+                }
+            ],
+            "type": "adnl.ProxyTo"
+        },
+        {
+            "predicate": "adnl.proxyToFast",
+            "id": -1259462186,
+            "params": [{
+                    "name": "ip",
+                    "type": "int"
+                },
+                {
+                    "name": "port",
+                    "type": "int"
+                },
+                {
+                    "name": "date",
+                    "type": "int"
+                },
+                {
+                    "name": "signature",
+                    "type": "int256"
+                }
+            ],
+            "type": "adnl.ProxyToSign"
+        },
+        {
+            "predicate": "adnl.proxy.none",
+            "id": -90551726,
+            "params": [],
+            "type": "adnl.Proxy"
+        },
+        {
+            "predicate": "adnl.proxy.fast",
+            "id": 554536094,
+            "params": [{
+                "name": "shared_secret",
+                "type": "bytes"
+            }],
+            "type": "adnl.Proxy"
+        },
+        {
+            "predicate": "adnl.address.udp",
+            "id": 1728947943,
+            "params": [{
+                    "name": "ip",
+                    "type": "int"
+                },
+                {
+                    "name": "port",
+                    "type": "int"
+                }
+            ],
+            "type": "adnl.Address"
+        },
+        {
+            "predicate": "adnl.address.udp6",
+            "id": -484613126,
+            "params": [{
+                    "name": "ip",
+                    "type": "int128"
+                },
+                {
+                    "name": "port",
+                    "type": "int"
+                }
+            ],
+            "type": "adnl.Address"
+        },
+        {
+            "predicate": "adnl.addressList",
+            "id": 573040216,
+            "params": [{
+                    "name": "addrs",
+                    "type": "vector<adnl.Address>"
+                },
+                {
+                    "name": "version",
+                    "type": "int"
+                },
+                {
+                    "name": "reinit_date",
+                    "type": "int"
+                },
+                {
+                    "name": "priority",
+                    "type": "int"
+                },
+                {
+                    "name": "expire_at",
+                    "type": "int"
+                }
+            ],
+            "type": "adnl.AddressList"
+        },
+        {
+            "predicate": "adnl.node",
+            "id": 1800802949,
+            "params": [{
+                    "name": "id",
+                    "type": "PublicKey"
+                },
+                {
+                    "name": "addr_list",
+                    "type": "adnl.addressList"
+                }
+            ],
+            "type": "adnl.Node"
+        },
+        {
+            "predicate": "adnl.nodes",
+            "id": -1576412330,
+            "params": [{
+                "name": "nodes",
+                "type": "vector<adnl.node>"
+            }],
+            "type": "adnl.Nodes"
+        },
+        {
+            "predicate": "adnl.packetContents",
+            "id": -784151159,
+            "params": [{
+                    "name": "rand1",
+                    "type": "bytes"
+                },
+                {
+                    "name": "flags",
+                    "type": "#"
+                },
+                {
+                    "name": "from",
+                    "type": "flags.0?PublicKey"
+                },
+                {
+                    "name": "from_short",
+                    "type": "flags.1?adnl.id.short"
+                },
+                {
+                    "name": "message",
+                    "type": "flags.2?adnl.Message"
+                },
+                {
+                    "name": "messages",
+                    "type": "flags.3?vector<adnl.Message>"
+                },
+                {
+                    "name": "address",
+                    "type": "flags.4?adnl.addressList"
+                },
+                {
+                    "name": "priority_address",
+                    "type": "flags.5?adnl.addressList"
+                },
+                {
+                    "name": "seqno",
+                    "type": "flags.6?long"
+                },
+                {
+                    "name": "confirm_seqno",
+                    "type": "flags.7?long"
+                },
+                {
+                    "name": "recv_addr_list_version",
+                    "type": "flags.8?int"
+                },
+                {
+                    "name": "recv_priority_addr_list_version",
+                    "type": "flags.9?int"
+                },
+                {
+                    "name": "reinit_date",
+                    "type": "flags.10?int"
+                },
+                {
+                    "name": "dst_reinit_date",
+                    "type": "flags.10?int"
+                },
+                {
+                    "name": "signature",
+                    "type": "flags.11?bytes"
+                },
+                {
+                    "name": "rand2",
+                    "type": "bytes"
+                }
+            ],
+            "type": "adnl.PacketContents"
+        },
+        {
+            "predicate": "adnl.message.createChannel",
+            "id": -428620869,
+            "params": [{
+                    "name": "key",
+                    "type": "int256"
+                },
+                {
+                    "name": "date",
+                    "type": "int"
+                }
+            ],
+            "type": "adnl.Message"
+        },
+        {
+            "predicate": "adnl.message.confirmChannel",
+            "id": 1625103721,
+            "params": [{
+                    "name": "key",
+                    "type": "int256"
+                },
+                {
+                    "name": "peer_key",
+                    "type": "int256"
+                },
+                {
+                    "name": "date",
+                    "type": "int"
+                }
+            ],
+            "type": "adnl.Message"
+        },
+        {
+            "predicate": "adnl.message.custom",
+            "id": 541595893,
+            "params": [{
+                "name": "data",
+                "type": "bytes"
+            }],
+            "type": "adnl.Message"
+        },
+        {
+            "predicate": "adnl.message.nop",
+            "id": 402186202,
+            "params": [],
+            "type": "adnl.Message"
+        },
+        {
+            "predicate": "adnl.message.reinit",
+            "id": 281150752,
+            "params": [{
+                "name": "date",
+                "type": "int"
+            }],
+            "type": "adnl.Message"
+        },
+        {
+            "predicate": "adnl.message.query",
+            "id": -1265895046,
+            "params": [{
+                    "name": "query_id",
+                    "type": "int256"
+                },
+                {
+                    "name": "query",
+                    "type": "bytes"
+                }
+            ],
+            "type": "adnl.Message"
+        },
+        {
+            "predicate": "adnl.message.answer",
+            "id": 262964246,
+            "params": [{
+                    "name": "query_id",
+                    "type": "int256"
+                },
+                {
+                    "name": "answer",
+                    "type": "bytes"
+                }
+            ],
+            "type": "adnl.Message"
+        },
+        {
+            "predicate": "adnl.message.part",
+            "id": -45798087,
+            "params": [{
+                    "name": "hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "total_size",
+                    "type": "int"
+                },
+                {
+                    "name": "offset",
+                    "type": "int"
+                },
+                {
+                    "name": "data",
+                    "type": "bytes"
+                }
+            ],
+            "type": "adnl.Message"
+        },
+        {
+            "predicate": "adnl.db.node.key",
+            "id": -979114962,
+            "params": [{
+                    "name": "local_id",
+                    "type": "int256"
+                },
+                {
+                    "name": "peer_id",
+                    "type": "int256"
+                }
+            ],
+            "type": "adnl.db.Key"
+        },
+        {
+            "predicate": "adnl.db.node.value",
+            "id": 1415390983,
+            "params": [{
+                    "name": "date",
+                    "type": "int"
+                },
+                {
+                    "name": "id",
+                    "type": "PublicKey"
+                },
+                {
+                    "name": "addr_list",
+                    "type": "adnl.addressList"
+                },
+                {
+                    "name": "priority_addr_list",
+                    "type": "adnl.addressList"
+                }
+            ],
+            "type": "adnl.db.node.Value"
+        },
+        {
+            "predicate": "rldp.messagePart",
+            "id": 408691404,
+            "params": [{
+                    "name": "transfer_id",
+                    "type": "int256"
+                },
+                {
+                    "name": "fec_type",
+                    "type": "fec.Type"
+                },
+                {
+                    "name": "part",
+                    "type": "int"
+                },
+                {
+                    "name": "total_size",
+                    "type": "long"
+                },
+                {
+                    "name": "seqno",
+                    "type": "int"
+                },
+                {
+                    "name": "data",
+                    "type": "bytes"
+                }
+            ],
+            "type": "rldp.MessagePart"
+        },
+        {
+            "predicate": "rldp.confirm",
+            "id": -175973288,
+            "params": [{
+                    "name": "transfer_id",
+                    "type": "int256"
+                },
+                {
+                    "name": "part",
+                    "type": "int"
+                },
+                {
+                    "name": "seqno",
+                    "type": "int"
+                }
+            ],
+            "type": "rldp.MessagePart"
+        },
+        {
+            "predicate": "rldp.complete",
+            "id": -1140018497,
+            "params": [{
+                    "name": "transfer_id",
+                    "type": "int256"
+                },
+                {
+                    "name": "part",
+                    "type": "int"
+                }
+            ],
+            "type": "rldp.MessagePart"
+        },
+        {
+            "predicate": "rldp.message",
+            "id": 2098973982,
+            "params": [{
+                    "name": "id",
+                    "type": "int256"
+                },
+                {
+                    "name": "data",
+                    "type": "bytes"
+                }
+            ],
+            "type": "rldp.Message"
+        },
+        {
+            "predicate": "rldp.query",
+            "id": -1971761815,
+            "params": [{
+                    "name": "query_id",
+                    "type": "int256"
+                },
+                {
+                    "name": "max_answer_size",
+                    "type": "long"
+                },
+                {
+                    "name": "timeout",
+                    "type": "int"
+                },
+                {
+                    "name": "data",
+                    "type": "bytes"
+                }
+            ],
+            "type": "rldp.Message"
+        },
+        {
+            "predicate": "rldp.answer",
+            "id": -1543742461,
+            "params": [{
+                    "name": "query_id",
+                    "type": "int256"
+                },
+                {
+                    "name": "data",
+                    "type": "bytes"
+                }
+            ],
+            "type": "rldp.Message"
+        },
+        {
+            "predicate": "dht.node",
+            "id": -2074922424,
+            "params": [{
+                    "name": "id",
+                    "type": "PublicKey"
+                },
+                {
+                    "name": "addr_list",
+                    "type": "adnl.addressList"
+                },
+                {
+                    "name": "version",
+                    "type": "int"
+                },
+                {
+                    "name": "signature",
+                    "type": "bytes"
+                }
+            ],
+            "type": "dht.Node"
+        },
+        {
+            "predicate": "dht.nodes",
+            "id": 2037686462,
+            "params": [{
+                "name": "nodes",
+                "type": "vector<dht.node>"
+            }],
+            "type": "dht.Nodes"
+        },
+        {
+            "predicate": "dht.key",
+            "id": -160964977,
+            "params": [{
+                    "name": "id",
+                    "type": "int256"
+                },
+                {
+                    "name": "name",
+                    "type": "bytes"
+                },
+                {
+                    "name": "idx",
+                    "type": "int"
+                }
+            ],
+            "type": "dht.Key"
+        },
+        {
+            "predicate": "dht.updateRule.signature",
+            "id": -861982217,
+            "params": [],
+            "type": "dht.UpdateRule"
+        },
+        {
+            "predicate": "dht.updateRule.anybody",
+            "id": 1633127956,
+            "params": [],
+            "type": "dht.UpdateRule"
+        },
+        {
+            "predicate": "dht.updateRule.overlayNodes",
+            "id": 645370755,
+            "params": [],
+            "type": "dht.UpdateRule"
+        },
+        {
+            "predicate": "dht.keyDescription",
+            "id": 673009157,
+            "params": [{
+                    "name": "key",
+                    "type": "dht.key"
+                },
+                {
+                    "name": "id",
+                    "type": "PublicKey"
+                },
+                {
+                    "name": "update_rule",
+                    "type": "dht.UpdateRule"
+                },
+                {
+                    "name": "signature",
+                    "type": "bytes"
+                }
+            ],
+            "type": "dht.KeyDescription"
+        },
+        {
+            "predicate": "dht.value",
+            "id": -1867700277,
+            "params": [{
+                    "name": "key",
+                    "type": "dht.keyDescription"
+                },
+                {
+                    "name": "value",
+                    "type": "bytes"
+                },
+                {
+                    "name": "ttl",
+                    "type": "int"
+                },
+                {
+                    "name": "signature",
+                    "type": "bytes"
+                }
+            ],
+            "type": "dht.Value"
+        },
+        {
+            "predicate": "dht.pong",
+            "id": 1519054721,
+            "params": [{
+                "name": "random_id",
+                "type": "long"
+            }],
+            "type": "dht.Pong"
+        },
+        {
+            "predicate": "dht.valueNotFound",
+            "id": -1570634392,
+            "params": [{
+                "name": "nodes",
+                "type": "dht.nodes"
+            }],
+            "type": "dht.ValueResult"
+        },
+        {
+            "predicate": "dht.valueFound",
+            "id": -468912268,
+            "params": [{
+                "name": "value",
+                "type": "dht.Value"
+            }],
+            "type": "dht.ValueResult"
+        },
+        {
+            "predicate": "dht.stored",
+            "id": 1881602824,
+            "params": [],
+            "type": "dht.Stored"
+        },
+        {
+            "predicate": "dht.message",
+            "id": -1140008050,
+            "params": [{
+                "name": "node",
+                "type": "dht.node"
+            }],
+            "type": "dht.Message"
+        },
+        {
+            "predicate": "dht.db.bucket",
+            "id": -1281557908,
+            "params": [{
+                "name": "nodes",
+                "type": "dht.nodes"
+            }],
+            "type": "dht.db.Bucket"
+        },
+        {
+            "predicate": "dht.db.key.bucket",
+            "id": -1553420724,
+            "params": [{
+                "name": "id",
+                "type": "int"
+            }],
+            "type": "dht.db.Key"
+        },
+        {
+            "predicate": "overlay.node.toSign",
+            "id": 64530657,
+            "params": [{
+                    "name": "id",
+                    "type": "adnl.id.short"
+                },
+                {
+                    "name": "overlay",
+                    "type": "int256"
+                },
+                {
+                    "name": "version",
+                    "type": "int"
+                }
+            ],
+            "type": "overlay.node.ToSign"
+        },
+        {
+            "predicate": "overlay.node",
+            "id": -1200911741,
+            "params": [{
+                    "name": "id",
+                    "type": "PublicKey"
+                },
+                {
+                    "name": "overlay",
+                    "type": "int256"
+                },
+                {
+                    "name": "version",
+                    "type": "int"
+                },
+                {
+                    "name": "signature",
+                    "type": "bytes"
+                }
+            ],
+            "type": "overlay.Node"
+        },
+        {
+            "predicate": "overlay.nodes",
+            "id": -460904178,
+            "params": [{
+                "name": "nodes",
+                "type": "vector<overlay.node>"
+            }],
+            "type": "overlay.Nodes"
+        },
+        {
+            "predicate": "overlay.message",
+            "id": 1965368352,
+            "params": [{
+                "name": "overlay",
+                "type": "int256"
+            }],
+            "type": "overlay.Message"
+        },
+        {
+            "predicate": "overlay.broadcastList",
+            "id": 416407263,
+            "params": [{
+                "name": "hashes",
+                "type": "vector<int256>"
+            }],
+            "type": "overlay.BroadcastList"
+        },
+        {
+            "predicate": "overlay.fec.received",
+            "id": -715385620,
+            "params": [{
+                "name": "hash",
+                "type": "int256"
+            }],
+            "type": "overlay.Broadcast"
+        },
+        {
+            "predicate": "overlay.fec.completed",
+            "id": 165112084,
+            "params": [{
+                "name": "hash",
+                "type": "int256"
+            }],
+            "type": "overlay.Broadcast"
+        },
+        {
+            "predicate": "overlay.broadcast.id",
+            "id": 1375565978,
+            "params": [{
+                    "name": "src",
+                    "type": "int256"
+                },
+                {
+                    "name": "data_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "flags",
+                    "type": "int"
+                }
+            ],
+            "type": "overlay.broadcast.Id"
+        },
+        {
+            "predicate": "overlay.broadcastFec.id",
+            "id": -80652890,
+            "params": [{
+                    "name": "src",
+                    "type": "int256"
+                },
+                {
+                    "name": "type",
+                    "type": "int256"
+                },
+                {
+                    "name": "data_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "size",
+                    "type": "int"
+                },
+                {
+                    "name": "flags",
+                    "type": "int"
+                }
+            ],
+            "type": "overlay.broadcastFec.Id"
+        },
+        {
+            "predicate": "overlay.broadcastFec.partId",
+            "id": -1536597296,
+            "params": [{
+                    "name": "broadcast_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "data_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "seqno",
+                    "type": "int"
+                }
+            ],
+            "type": "overlay.broadcastFec.PartId"
+        },
+        {
+            "predicate": "overlay.broadcast.toSign",
+            "id": -97038724,
+            "params": [{
+                    "name": "hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "date",
+                    "type": "int"
+                }
+            ],
+            "type": "overlay.broadcast.ToSign"
+        },
+        {
+            "predicate": "overlay.certificate",
+            "id": -526461135,
+            "params": [{
+                    "name": "issued_by",
+                    "type": "PublicKey"
+                },
+                {
+                    "name": "expire_at",
+                    "type": "int"
+                },
+                {
+                    "name": "max_size",
+                    "type": "int"
+                },
+                {
+                    "name": "signature",
+                    "type": "bytes"
+                }
+            ],
+            "type": "overlay.Certificate"
+        },
+        {
+            "predicate": "overlay.emptyCertificate",
+            "id": 853195983,
+            "params": [],
+            "type": "overlay.Certificate"
+        },
+        {
+            "predicate": "overlay.certificateId",
+            "id": -1884397383,
+            "params": [{
+                    "name": "overlay_id",
+                    "type": "int256"
+                },
+                {
+                    "name": "node",
+                    "type": "int256"
+                },
+                {
+                    "name": "expire_at",
+                    "type": "int"
+                },
+                {
+                    "name": "max_size",
+                    "type": "int"
+                }
+            ],
+            "type": "overlay.CertificateId"
+        },
+        {
+            "predicate": "overlay.unicast",
+            "id": 861097508,
+            "params": [{
+                "name": "data",
+                "type": "bytes"
+            }],
+            "type": "overlay.Broadcast"
+        },
+        {
+            "predicate": "overlay.broadcast",
+            "id": -1319490709,
+            "params": [{
+                    "name": "src",
+                    "type": "PublicKey"
+                },
+                {
+                    "name": "certificate",
+                    "type": "overlay.Certificate"
+                },
+                {
+                    "name": "flags",
+                    "type": "int"
+                },
+                {
+                    "name": "data",
+                    "type": "bytes"
+                },
+                {
+                    "name": "date",
+                    "type": "int"
+                },
+                {
+                    "name": "signature",
+                    "type": "bytes"
+                }
+            ],
+            "type": "overlay.Broadcast"
+        },
+        {
+            "predicate": "overlay.broadcastFec",
+            "id": -1160264854,
+            "params": [{
+                    "name": "src",
+                    "type": "PublicKey"
+                },
+                {
+                    "name": "certificate",
+                    "type": "overlay.Certificate"
+                },
+                {
+                    "name": "data_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "data_size",
+                    "type": "int"
+                },
+                {
+                    "name": "flags",
+                    "type": "int"
+                },
+                {
+                    "name": "data",
+                    "type": "bytes"
+                },
+                {
+                    "name": "seqno",
+                    "type": "int"
+                },
+                {
+                    "name": "fec",
+                    "type": "fec.Type"
+                },
+                {
+                    "name": "date",
+                    "type": "int"
+                },
+                {
+                    "name": "signature",
+                    "type": "bytes"
+                }
+            ],
+            "type": "overlay.Broadcast"
+        },
+        {
+            "predicate": "overlay.broadcastFecShort",
+            "id": -242740414,
+            "params": [{
+                    "name": "src",
+                    "type": "PublicKey"
+                },
+                {
+                    "name": "certificate",
+                    "type": "overlay.Certificate"
+                },
+                {
+                    "name": "broadcast_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "part_data_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "seqno",
+                    "type": "int"
+                },
+                {
+                    "name": "signature",
+                    "type": "bytes"
+                }
+            ],
+            "type": "overlay.Broadcast"
+        },
+        {
+            "predicate": "overlay.broadcastNotFound",
+            "id": -1786366428,
+            "params": [],
+            "type": "overlay.Broadcast"
+        },
+        {
+            "predicate": "overlay.db.nodes",
+            "id": -712454630,
+            "params": [{
+                "name": "nodes",
+                "type": "overlay.nodes"
+            }],
+            "type": "overlay.db.Nodes"
+        },
+        {
+            "predicate": "overlay.db.key.nodes",
+            "id": -992972010,
+            "params": [{
+                    "name": "local_id",
+                    "type": "int256"
+                },
+                {
+                    "name": "overlay",
+                    "type": "int256"
+                }
+            ],
+            "type": "overlay.db.Key"
+        },
+        {
+            "predicate": "catchain.block.id",
+            "id": 620665018,
+            "params": [{
+                    "name": "incarnation",
+                    "type": "int256"
+                },
+                {
+                    "name": "src",
+                    "type": "int256"
+                },
+                {
+                    "name": "height",
+                    "type": "int"
+                },
+                {
+                    "name": "data_hash",
+                    "type": "int256"
+                }
+            ],
+            "type": "catchain.block.Id"
+        },
+        {
+            "predicate": "catchain.block.dep",
+            "id": 1511706959,
+            "params": [{
+                    "name": "src",
+                    "type": "int"
+                },
+                {
+                    "name": "height",
+                    "type": "int"
+                },
+                {
+                    "name": "data_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "signature",
+                    "type": "bytes"
+                }
+            ],
+            "type": "catchain.block.Dep"
+        },
+        {
+            "predicate": "catchain.block.data",
+            "id": -122903008,
+            "params": [{
+                    "name": "prev",
+                    "type": "catchain.block.dep"
+                },
+                {
+                    "name": "deps",
+                    "type": "vector<catchain.block.dep>"
+                }
+            ],
+            "type": "catchain.block.Data"
+        },
+        {
+            "predicate": "catchain.block",
+            "id": -699055756,
+            "params": [{
+                    "name": "incarnation",
+                    "type": "int256"
+                },
+                {
+                    "name": "src",
+                    "type": "int"
+                },
+                {
+                    "name": "height",
+                    "type": "int"
+                },
+                {
+                    "name": "data",
+                    "type": "catchain.block.data"
+                },
+                {
+                    "name": "signature",
+                    "type": "bytes"
+                }
+            ],
+            "type": "catchain.Block"
+        },
+        {
+            "predicate": "catchain.blocks",
+            "id": 1357697473,
+            "params": [{
+                "name": "blocks",
+                "type": "vector<catchain.block>"
+            }],
+            "type": "catchain.Blocks"
+        },
+        {
+            "predicate": "catchain.blockUpdate",
+            "id": 593975492,
+            "params": [{
+                "name": "block",
+                "type": "catchain.block"
+            }],
+            "type": "catchain.Update"
+        },
+        {
+            "predicate": "catchain.block.data.badBlock",
+            "id": -1241359786,
+            "params": [{
+                "name": "block",
+                "type": "catchain.block"
+            }],
+            "type": "catchain.block.inner.Data"
+        },
+        {
+            "predicate": "catchain.block.data.fork",
+            "id": 1685731922,
+            "params": [{
+                    "name": "left",
+                    "type": "catchain.block.Dep"
+                },
+                {
+                    "name": "right",
+                    "type": "catchain.block.Dep"
+                }
+            ],
+            "type": "catchain.block.inner.Data"
+        },
+        {
+            "predicate": "catchain.block.data.nop",
+            "id": 1417852112,
+            "params": [],
+            "type": "catchain.block.inner.Data"
+        },
+        {
+            "predicate": "catchain.block.data.vector",
+            "id": 1688809258,
+            "params": [{
+                "name": "msgs",
+                "type": "vector<bytes>"
+            }],
+            "type": "catchain.block.inner.Data"
+        },
+        {
+            "predicate": "catchain.firstblock",
+            "id": 281609467,
+            "params": [{
+                    "name": "unique_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "nodes",
+                    "type": "vector<int256>"
+                }
+            ],
+            "type": "catchain.FirstBlock"
+        },
+        {
+            "predicate": "catchain.difference",
+            "id": 336974282,
+            "params": [{
+                "name": "sent_upto",
+                "type": "vector<int>"
+            }],
+            "type": "catchain.Difference"
+        },
+        {
+            "predicate": "catchain.differenceFork",
+            "id": 1227341935,
+            "params": [{
+                    "name": "left",
+                    "type": "catchain.block.dep"
+                },
+                {
+                    "name": "right",
+                    "type": "catchain.block.dep"
+                }
+            ],
+            "type": "catchain.Difference"
+        },
+        {
+            "predicate": "catchain.blockNotFound",
+            "id": -1240397692,
+            "params": [],
+            "type": "catchain.BlockResult"
+        },
+        {
+            "predicate": "catchain.blockResult",
+            "id": -1658179513,
+            "params": [{
+                "name": "block",
+                "type": "catchain.block"
+            }],
+            "type": "catchain.BlockResult"
+        },
+        {
+            "predicate": "catchain.sent",
+            "id": -84454993,
+            "params": [{
+                "name": "cnt",
+                "type": "int"
+            }],
+            "type": "catchain.Sent"
+        },
+        {
+            "predicate": "validatorSession.round.id",
+            "id": 2477989,
+            "params": [{
+                    "name": "session",
+                    "type": "int256"
+                },
+                {
+                    "name": "height",
+                    "type": "long"
+                },
+                {
+                    "name": "prev_block",
+                    "type": "int256"
+                },
+                {
+                    "name": "seqno",
+                    "type": "int"
+                }
+            ],
+            "type": "validatorSession.round.Id"
+        },
+        {
+            "predicate": "validatorSession.candidate.id",
+            "id": -1126743751,
+            "params": [{
+                    "name": "round",
+                    "type": "int256"
+                },
+                {
+                    "name": "block_hash",
+                    "type": "int256"
+                }
+            ],
+            "type": "validatorSession.tempBlock.Id"
+        },
+        {
+            "predicate": "validatorSession.message.startSession",
+            "id": -1767807279,
+            "params": [],
+            "type": "validatorSession.Message"
+        },
+        {
+            "predicate": "validatorSession.message.finishSession",
+            "id": -879025437,
+            "params": [],
+            "type": "validatorSession.Message"
+        },
+        {
+            "predicate": "validatorSession.message.submittedBlock",
+            "id": 309732534,
+            "params": [{
+                    "name": "round",
+                    "type": "int"
+                },
+                {
+                    "name": "root_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "file_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "collated_data_file_hash",
+                    "type": "int256"
+                }
+            ],
+            "type": "validatorSession.round.Message"
+        },
+        {
+            "predicate": "validatorSession.message.approvedBlock",
+            "id": 77968769,
+            "params": [{
+                    "name": "round",
+                    "type": "int"
+                },
+                {
+                    "name": "candidate",
+                    "type": "int256"
+                },
+                {
+                    "name": "signature",
+                    "type": "bytes"
+                }
+            ],
+            "type": "validatorSession.round.Message"
+        },
+        {
+            "predicate": "validatorSession.message.rejectedBlock",
+            "id": -1786229141,
+            "params": [{
+                    "name": "round",
+                    "type": "int"
+                },
+                {
+                    "name": "candidate",
+                    "type": "int256"
+                },
+                {
+                    "name": "reason",
+                    "type": "bytes"
+                }
+            ],
+            "type": "validatorSession.round.Message"
+        },
+        {
+            "predicate": "validatorSession.message.commit",
+            "id": -1408065803,
+            "params": [{
+                    "name": "round",
+                    "type": "int"
+                },
+                {
+                    "name": "candidate",
+                    "type": "int256"
+                },
+                {
+                    "name": "signature",
+                    "type": "bytes"
+                }
+            ],
+            "type": "validatorSession.round.Message"
+        },
+        {
+            "predicate": "validatorSession.message.vote",
+            "id": -1707978297,
+            "params": [{
+                    "name": "round",
+                    "type": "int"
+                },
+                {
+                    "name": "attempt",
+                    "type": "int"
+                },
+                {
+                    "name": "candidate",
+                    "type": "int256"
+                }
+            ],
+            "type": "validatorSession.round.Message"
+        },
+        {
+            "predicate": "validatorSession.message.voteFor",
+            "id": 1643183663,
+            "params": [{
+                    "name": "round",
+                    "type": "int"
+                },
+                {
+                    "name": "attempt",
+                    "type": "int"
+                },
+                {
+                    "name": "candidate",
+                    "type": "int256"
+                }
+            ],
+            "type": "validatorSession.round.Message"
+        },
+        {
+            "predicate": "validatorSession.message.precommit",
+            "id": -1470843566,
+            "params": [{
+                    "name": "round",
+                    "type": "int"
+                },
+                {
+                    "name": "attempt",
+                    "type": "int"
+                },
+                {
+                    "name": "candidate",
+                    "type": "int256"
+                }
+            ],
+            "type": "validatorSession.round.Message"
+        },
+        {
+            "predicate": "validatorSession.message.empty",
+            "id": 1243619241,
+            "params": [{
+                    "name": "round",
+                    "type": "int"
+                },
+                {
+                    "name": "attempt",
+                    "type": "int"
+                }
+            ],
+            "type": "validatorSession.round.Message"
+        },
+        {
+            "predicate": "validatorSession.pong",
+            "id": -590989459,
+            "params": [{
+                "name": "hash",
+                "type": "long"
+            }],
+            "type": "validatorSession.Pong"
+        },
+        {
+            "predicate": "validatorSession.candidateId",
+            "id": 436135276,
+            "params": [{
+                    "name": "src",
+                    "type": "int256"
+                },
+                {
+                    "name": "root_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "file_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "collated_data_file_hash",
+                    "type": "int256"
+                }
+            ],
+            "type": "validatorSession.CandidateId"
+        },
+        {
+            "predicate": "validatorSession.blockUpdate",
+            "id": -1836855753,
+            "params": [{
+                    "name": "ts",
+                    "type": "long"
+                },
+                {
+                    "name": "actions",
+                    "type": "vector<validatorSession.round.Message>"
+                },
+                {
+                    "name": "state",
+                    "type": "int"
+                }
+            ],
+            "type": "validatorSession.BlockUpdate"
+        },
+        {
+            "predicate": "validatorSession.candidate",
+            "id": 2100525125,
+            "params": [{
+                    "name": "src",
+                    "type": "int256"
+                },
+                {
+                    "name": "round",
+                    "type": "int"
+                },
+                {
+                    "name": "root_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "data",
+                    "type": "bytes"
+                },
+                {
+                    "name": "collated_data",
+                    "type": "bytes"
+                }
+            ],
+            "type": "validatorSession.Candidate"
+        },
+        {
+            "predicate": "validatorSession.config",
+            "id": -1235092029,
+            "params": [{
+                    "name": "catchain_idle_timeout",
+                    "type": "double"
+                },
+                {
+                    "name": "catchain_max_deps",
+                    "type": "int"
+                },
+                {
+                    "name": "round_candidates",
+                    "type": "int"
+                },
+                {
+                    "name": "next_candidate_delay",
+                    "type": "double"
+                },
+                {
+                    "name": "round_attempt_duration",
+                    "type": "int"
+                },
+                {
+                    "name": "max_round_attempts",
+                    "type": "int"
+                },
+                {
+                    "name": "max_block_size",
+                    "type": "int"
+                },
+                {
+                    "name": "max_collated_data_size",
+                    "type": "int"
+                }
+            ],
+            "type": "validatorSession.Config"
+        },
+        {
+            "predicate": "hashable.bool",
+            "id": -815709156,
+            "params": [{
+                "name": "value",
+                "type": "Bool"
+            }],
+            "type": "Hashable"
+        },
+        {
+            "predicate": "hashable.int32",
+            "id": -743074986,
+            "params": [{
+                "name": "value",
+                "type": "int"
+            }],
+            "type": "Hashable"
+        },
+        {
+            "predicate": "hashable.int64",
+            "id": -405107134,
+            "params": [{
+                "name": "value",
+                "type": "long"
+            }],
+            "type": "Hashable"
+        },
+        {
+            "predicate": "hashable.int256",
+            "id": 975377359,
+            "params": [{
+                "name": "value",
+                "type": "int256"
+            }],
+            "type": "Hashable"
+        },
+        {
+            "predicate": "hashable.bytes",
+            "id": 118742546,
+            "params": [{
+                "name": "value",
+                "type": "bytes"
+            }],
+            "type": "Hashable"
+        },
+        {
+            "predicate": "hashable.pair",
+            "id": -941266795,
+            "params": [{
+                    "name": "left",
+                    "type": "int"
+                },
+                {
+                    "name": "right",
+                    "type": "int"
+                }
+            ],
+            "type": "Hashable"
+        },
+        {
+            "predicate": "hashable.vector",
+            "id": -550190227,
+            "params": [{
+                "name": "value",
+                "type": "vector<int>"
+            }],
+            "type": "Hashable"
+        },
+        {
+            "predicate": "hashable.validatorSessionOldRound",
+            "id": 1200318377,
+            "params": [{
+                    "name": "seqno",
+                    "type": "int"
+                },
+                {
+                    "name": "block",
+                    "type": "int"
+                },
+                {
+                    "name": "signatures",
+                    "type": "int"
+                },
+                {
+                    "name": "approve_signatures",
+                    "type": "int"
+                }
+            ],
+            "type": "Hashable"
+        },
+        {
+            "predicate": "hashable.validatorSessionRoundAttempt",
+            "id": 1276247981,
+            "params": [{
+                    "name": "seqno",
+                    "type": "int"
+                },
+                {
+                    "name": "votes",
+                    "type": "int"
+                },
+                {
+                    "name": "precommitted",
+                    "type": "int"
+                },
+                {
+                    "name": "vote_for_inited",
+                    "type": "int"
+                },
+                {
+                    "name": "vote_for",
+                    "type": "int"
+                }
+            ],
+            "type": "Hashable"
+        },
+        {
+            "predicate": "hashable.validatorSessionRound",
+            "id": 897011683,
+            "params": [{
+                    "name": "locked_round",
+                    "type": "int"
+                },
+                {
+                    "name": "locked_block",
+                    "type": "int"
+                },
+                {
+                    "name": "seqno",
+                    "type": "int"
+                },
+                {
+                    "name": "precommitted",
+                    "type": "Bool"
+                },
+                {
+                    "name": "first_attempt",
+                    "type": "int"
+                },
+                {
+                    "name": "approved_blocks",
+                    "type": "int"
+                },
+                {
+                    "name": "signatures",
+                    "type": "int"
+                },
+                {
+                    "name": "attempts",
+                    "type": "int"
+                }
+            ],
+            "type": "Hashable"
+        },
+        {
+            "predicate": "hashable.blockSignature",
+            "id": 937530018,
+            "params": [{
+                "name": "signature",
+                "type": "int"
+            }],
+            "type": "Hashable"
+        },
+        {
+            "predicate": "hashable.sentBlock",
+            "id": -1111911125,
+            "params": [{
+                    "name": "src",
+                    "type": "int"
+                },
+                {
+                    "name": "root_hash",
+                    "type": "int"
+                },
+                {
+                    "name": "file_hash",
+                    "type": "int"
+                },
+                {
+                    "name": "collated_data_file_hash",
+                    "type": "int"
+                }
+            ],
+            "type": "Hashable"
+        },
+        {
+            "predicate": "hashable.sentBlockEmpty",
+            "id": -1628289361,
+            "params": [],
+            "type": "Hashable"
+        },
+        {
+            "predicate": "hashable.vote",
+            "id": -1363203131,
+            "params": [{
+                    "name": "block",
+                    "type": "int"
+                },
+                {
+                    "name": "node",
+                    "type": "int"
+                }
+            ],
+            "type": "Hashable"
+        },
+        {
+            "predicate": "hashable.blockCandidate",
+            "id": 195670285,
+            "params": [{
+                    "name": "block",
+                    "type": "int"
+                },
+                {
+                    "name": "approved",
+                    "type": "int"
+                }
+            ],
+            "type": "Hashable"
+        },
+        {
+            "predicate": "hashable.blockVoteCandidate",
+            "id": -821202971,
+            "params": [{
+                    "name": "block",
+                    "type": "int"
+                },
+                {
+                    "name": "approved",
+                    "type": "int"
+                }
+            ],
+            "type": "Hashable"
+        },
+        {
+            "predicate": "hashable.blockCandidateAttempt",
+            "id": 1063025931,
+            "params": [{
+                    "name": "block",
+                    "type": "int"
+                },
+                {
+                    "name": "votes",
+                    "type": "int"
+                }
+            ],
+            "type": "Hashable"
+        },
+        {
+            "predicate": "hashable.cntVector",
+            "id": 187199288,
+            "params": [{
+                "name": "data",
+                "type": "int"
+            }],
+            "type": "Hashable"
+        },
+        {
+            "predicate": "hashable.cntSortedVector",
+            "id": 2073445977,
+            "params": [{
+                "name": "data",
+                "type": "int"
+            }],
+            "type": "Hashable"
+        },
+        {
+            "predicate": "hashable.validatorSession",
+            "id": 1746035669,
+            "params": [{
+                    "name": "ts",
+                    "type": "int"
+                },
+                {
+                    "name": "old_rounds",
+                    "type": "int"
+                },
+                {
+                    "name": "cur_round",
+                    "type": "int"
+                }
+            ],
+            "type": "Hashable"
+        },
+        {
+            "predicate": "tonNode.sessionId",
+            "id": 2056402618,
+            "params": [{
+                    "name": "workchain",
+                    "type": "int"
+                },
+                {
+                    "name": "shard",
+                    "type": "long"
+                },
+                {
+                    "name": "cc_seqno",
+                    "type": "int"
+                },
+                {
+                    "name": "opts_hash",
+                    "type": "int256"
+                }
+            ],
+            "type": "tonNode.SessionId"
+        },
+        {
+            "predicate": "tonNode.blockSignature",
+            "id": 1357921331,
+            "params": [{
+                    "name": "who",
+                    "type": "int256"
+                },
+                {
+                    "name": "signature",
+                    "type": "bytes"
+                }
+            ],
+            "type": "tonNode.BlockSignature"
+        },
+        {
+            "predicate": "tonNode.blockId",
+            "id": -1211256473,
+            "params": [{
+                    "name": "workchain",
+                    "type": "int"
+                },
+                {
+                    "name": "shard",
+                    "type": "long"
+                },
+                {
+                    "name": "seqno",
+                    "type": "int"
+                }
+            ],
+            "type": "tonNode.BlockId"
+        },
+        {
+            "predicate": "tonNode.blockIdExt",
+            "id": 1733487480,
+            "params": [{
+                    "name": "workchain",
+                    "type": "int"
+                },
+                {
+                    "name": "shard",
+                    "type": "long"
+                },
+                {
+                    "name": "seqno",
+                    "type": "int"
+                },
+                {
+                    "name": "root_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "file_hash",
+                    "type": "int256"
+                }
+            ],
+            "type": "tonNode.BlockIdExt"
+        },
+        {
+            "predicate": "tonNode.zeroStateIdExt",
+            "id": 494024110,
+            "params": [{
+                    "name": "workchain",
+                    "type": "int"
+                },
+                {
+                    "name": "root_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "file_hash",
+                    "type": "int256"
+                }
+            ],
+            "type": "tonNode.ZeroStateIdExt"
+        },
+        {
+            "predicate": "tonNode.blockDescriptionEmpty",
+            "id": -2088456555,
+            "params": [],
+            "type": "tonNode.BlockDescription"
+        },
+        {
+            "predicate": "tonNode.blockDescription",
+            "id": 1185009800,
+            "params": [{
+                "name": "id",
+                "type": "tonNode.blockIdExt"
+            }],
+            "type": "tonNode.BlockDescription"
+        },
+        {
+            "predicate": "tonNode.blocksDescription",
+            "id": -701865684,
+            "params": [{
+                    "name": "ids",
+                    "type": "vector<tonNode.blockIdExt>"
+                },
+                {
+                    "name": "incomplete",
+                    "type": "Bool"
+                }
+            ],
+            "type": "tonNode.BlocksDescription"
+        },
+        {
+            "predicate": "tonNode.preparedProofEmpty",
+            "id": -949370502,
+            "params": [],
+            "type": "tonNode.PreparedProof"
+        },
+        {
+            "predicate": "tonNode.preparedProof",
+            "id": -1986028981,
+            "params": [],
+            "type": "tonNode.PreparedProof"
+        },
+        {
+            "predicate": "tonNode.preparedProofLink",
+            "id": 1040134797,
+            "params": [],
+            "type": "tonNode.PreparedProof"
+        },
+        {
+            "predicate": "tonNode.preparedState",
+            "id": 928762733,
+            "params": [],
+            "type": "tonNode.PreparedState"
+        },
+        {
+            "predicate": "tonNode.notFoundState",
+            "id": 842598993,
+            "params": [],
+            "type": "tonNode.PreparedState"
+        },
+        {
+            "predicate": "tonNode.prepared",
+            "id": -356205619,
+            "params": [],
+            "type": "tonNode.Prepared"
+        },
+        {
+            "predicate": "tonNode.notFound",
+            "id": -490521178,
+            "params": [],
+            "type": "tonNode.Prepared"
+        },
+        {
+            "predicate": "tonNode.data",
+            "id": 1443505284,
+            "params": [{
+                "name": "data",
+                "type": "bytes"
+            }],
+            "type": "tonNode.Data"
+        },
+        {
+            "predicate": "tonNode.ihrMessage",
+            "id": 1161085703,
+            "params": [{
+                "name": "data",
+                "type": "bytes"
+            }],
+            "type": "tonNode.IhrMessage"
+        },
+        {
+            "predicate": "tonNode.externalMessage",
+            "id": -596270583,
+            "params": [{
+                "name": "data",
+                "type": "bytes"
+            }],
+            "type": "tonNode.ExternalMessage"
+        },
+        {
+            "predicate": "tonNode.newShardBlock",
+            "id": -1533165015,
+            "params": [{
+                    "name": "block",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "cc_seqno",
+                    "type": "int"
+                },
+                {
+                    "name": "data",
+                    "type": "bytes"
+                }
+            ],
+            "type": "tonNode.NewShardBlock"
+        },
+        {
+            "predicate": "tonNode.blockBroadcast",
+            "id": -1372712699,
+            "params": [{
+                    "name": "id",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "catchain_seqno",
+                    "type": "int"
+                },
+                {
+                    "name": "validator_set_hash",
+                    "type": "int"
+                },
+                {
+                    "name": "signatures",
+                    "type": "vector<tonNode.blockSignature>"
+                },
+                {
+                    "name": "proof",
+                    "type": "bytes"
+                },
+                {
+                    "name": "data",
+                    "type": "bytes"
+                }
+            ],
+            "type": "tonNode.Broadcast"
+        },
+        {
+            "predicate": "tonNode.ihrMessageBroadcast",
+            "id": 1381868723,
+            "params": [{
+                "name": "message",
+                "type": "tonNode.ihrMessage"
+            }],
+            "type": "tonNode.Broadcast"
+        },
+        {
+            "predicate": "tonNode.externalMessageBroadcast",
+            "id": 1025185895,
+            "params": [{
+                "name": "message",
+                "type": "tonNode.externalMessage"
+            }],
+            "type": "tonNode.Broadcast"
+        },
+        {
+            "predicate": "tonNode.newShardBlockBroadcast",
+            "id": 183696060,
+            "params": [{
+                "name": "block",
+                "type": "tonNode.newShardBlock"
+            }],
+            "type": "tonNode.Broadcast"
+        },
+        {
+            "predicate": "tonNode.shardPublicOverlayId",
+            "id": 1302254377,
+            "params": [{
+                    "name": "workchain",
+                    "type": "int"
+                },
+                {
+                    "name": "shard",
+                    "type": "long"
+                },
+                {
+                    "name": "zero_state_file_hash",
+                    "type": "int256"
+                }
+            ],
+            "type": "tonNode.ShardPublicOverlayId"
+        },
+        {
+            "predicate": "tonNode.keyBlocks",
+            "id": 124144985,
+            "params": [{
+                    "name": "blocks",
+                    "type": "vector<tonNode.blockIdExt>"
+                },
+                {
+                    "name": "incomplete",
+                    "type": "Bool"
+                },
+                {
+                    "name": "error",
+                    "type": "Bool"
+                }
+            ],
+            "type": "tonNode.KeyBlocks"
+        },
+        {
+            "predicate": "ton.blockId",
+            "id": -989106576,
+            "params": [{
+                    "name": "root_cell_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "file_hash",
+                    "type": "int256"
+                }
+            ],
+            "type": "ton.BlockId"
+        },
+        {
+            "predicate": "ton.blockIdApprove",
+            "id": 768887369,
+            "params": [{
+                    "name": "root_cell_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "file_hash",
+                    "type": "int256"
+                }
+            ],
+            "type": "ton.BlockId"
+        },
+        {
+            "predicate": "tonNode.dataList",
+            "id": 351548179,
+            "params": [{
+                "name": "data",
+                "type": "vector<bytes>"
+            }],
+            "type": "tonNode.DataList"
+        },
+        {
+            "predicate": "tonNode.dataFull",
+            "id": -1101488237,
+            "params": [{
+                    "name": "id",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "proof",
+                    "type": "bytes"
+                },
+                {
+                    "name": "block",
+                    "type": "bytes"
+                },
+                {
+                    "name": "is_link",
+                    "type": "Bool"
+                }
+            ],
+            "type": "tonNode.DataFull"
+        },
+        {
+            "predicate": "tonNode.dataFullEmpty",
+            "id": 1466861002,
+            "params": [],
+            "type": "tonNode.DataFull"
+        },
+        {
+            "predicate": "tonNode.capabilities",
+            "id": -172007232,
+            "params": [{
+                    "name": "version",
+                    "type": "int"
+                },
+                {
+                    "name": "capabilities",
+                    "type": "long"
+                }
+            ],
+            "type": "tonNode.Capabilities"
+        },
+        {
+            "predicate": "tonNode.success",
+            "id": -1063902129,
+            "params": [],
+            "type": "tonNode.Success"
+        },
+        {
+            "predicate": "tonNode.archiveNotFound",
+            "id": -1725360509,
+            "params": [],
+            "type": "tonNode.ArchiveInfo"
+        },
+        {
+            "predicate": "tonNode.archiveInfo",
+            "id": 435158924,
+            "params": [{
+                "name": "id",
+                "type": "long"
+            }],
+            "type": "tonNode.ArchiveInfo"
+        },
+        {
+            "predicate": "db.root.dbDescription",
+            "id": -1273465869,
+            "params": [{
+                    "name": "version",
+                    "type": "int"
+                },
+                {
+                    "name": "first_masterchain_block_id",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "flags",
+                    "type": "int"
+                }
+            ],
+            "type": "db.root.DbDescription"
+        },
+        {
+            "predicate": "db.root.key.cellDb",
+            "id": 1928966974,
+            "params": [{
+                "name": "version",
+                "type": "int"
+            }],
+            "type": "db.root.Key"
+        },
+        {
+            "predicate": "db.root.key.blockDb",
+            "id": 806534976,
+            "params": [{
+                "name": "version",
+                "type": "int"
+            }],
+            "type": "db.root.Key"
+        },
+        {
+            "predicate": "db.root.config",
+            "id": -703495519,
+            "params": [{
+                    "name": "celldb_version",
+                    "type": "int"
+                },
+                {
+                    "name": "blockdb_version",
+                    "type": "int"
+                }
+            ],
+            "type": "db.root.Config"
+        },
+        {
+            "predicate": "db.root.key.config",
+            "id": 331559556,
+            "params": [],
+            "type": "db.root.Key"
+        },
+        {
+            "predicate": "db.celldb.value",
+            "id": -435153856,
+            "params": [{
+                    "name": "block_id",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "prev",
+                    "type": "int256"
+                },
+                {
+                    "name": "next",
+                    "type": "int256"
+                },
+                {
+                    "name": "root_hash",
+                    "type": "int256"
+                }
+            ],
+            "type": "db.celldb.Value"
+        },
+        {
+            "predicate": "db.celldb.key.value",
+            "id": 1538341155,
+            "params": [{
+                "name": "hash",
+                "type": "int256"
+            }],
+            "type": "db.celldb.key.Value"
+        },
+        {
+            "predicate": "db.block.info",
+            "id": 1254549287,
+            "params": [{
+                    "name": "id",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "flags",
+                    "type": "#"
+                },
+                {
+                    "name": "prev_left",
+                    "type": "flags.1?tonNode.blockIdExt"
+                },
+                {
+                    "name": "prev_right",
+                    "type": "flags.2?tonNode.blockIdExt"
+                },
+                {
+                    "name": "next_left",
+                    "type": "flags.3?tonNode.blockIdExt"
+                },
+                {
+                    "name": "next_right",
+                    "type": "flags.4?tonNode.blockIdExt"
+                },
+                {
+                    "name": "lt",
+                    "type": "flags.13?long"
+                },
+                {
+                    "name": "ts",
+                    "type": "flags.14?int"
+                },
+                {
+                    "name": "state",
+                    "type": "flags.17?int256"
+                },
+                {
+                    "name": "masterchain_ref_seqno",
+                    "type": "flags.23?int"
+                }
+            ],
+            "type": "db.block.Info"
+        },
+        {
+            "predicate": "db.block.packedInfo",
+            "id": 1186697618,
+            "params": [{
+                    "name": "id",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "unixtime",
+                    "type": "int"
+                },
+                {
+                    "name": "offset",
+                    "type": "long"
+                }
+            ],
+            "type": "db.block.Info"
+        },
+        {
+            "predicate": "db.block.archivedInfo",
+            "id": 543128145,
+            "params": [{
+                    "name": "id",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "flags",
+                    "type": "#"
+                },
+                {
+                    "name": "next",
+                    "type": "flags.0?tonNode.blockIdExt"
+                }
+            ],
+            "type": "db.block.Info"
+        },
+        {
+            "predicate": "db.blockdb.value",
+            "id": -1299266515,
+            "params": [{
+                    "name": "next",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "data",
+                    "type": "bytes"
+                }
+            ],
+            "type": "db.blockdb.Value"
+        },
+        {
+            "predicate": "db.blockdb.lru",
+            "id": -1055500877,
+            "params": [{
+                    "name": "id",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "prev",
+                    "type": "int256"
+                },
+                {
+                    "name": "next",
+                    "type": "int256"
+                }
+            ],
+            "type": "db.blockdb.Lru"
+        },
+        {
+            "predicate": "db.blockdb.key.lru",
+            "id": 1354536506,
+            "params": [{
+                "name": "id",
+                "type": "tonNode.blockIdExt"
+            }],
+            "type": "db.blockdb.Key"
+        },
+        {
+            "predicate": "db.blockdb.key.value",
+            "id": 2136461683,
+            "params": [{
+                "name": "id",
+                "type": "tonNode.blockIdExt"
+            }],
+            "type": "db.blockdb.Key"
+        },
+        {
+            "predicate": "db.candidate",
+            "id": 1708747482,
+            "params": [{
+                    "name": "source",
+                    "type": "PublicKey"
+                },
+                {
+                    "name": "id",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "data",
+                    "type": "bytes"
+                },
+                {
+                    "name": "collated_data",
+                    "type": "bytes"
+                }
+            ],
+            "type": "db.Candidate"
+        },
+        {
+            "predicate": "db.candidate.id",
+            "id": 935375495,
+            "params": [{
+                    "name": "source",
+                    "type": "PublicKey"
+                },
+                {
+                    "name": "id",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "collated_data_file_hash",
+                    "type": "int256"
+                }
+            ],
+            "type": "db.candidate.Id"
+        },
+        {
+            "predicate": "db.filedb.key.empty",
+            "id": 2080319307,
+            "params": [],
+            "type": "db.filedb.Key"
+        },
+        {
+            "predicate": "db.filedb.key.blockFile",
+            "id": -1326783375,
+            "params": [{
+                "name": "block_id",
+                "type": "tonNode.blockIdExt"
+            }],
+            "type": "db.filedb.Key"
+        },
+        {
+            "predicate": "db.filedb.key.zeroStateFile",
+            "id": 307398205,
+            "params": [{
+                "name": "block_id",
+                "type": "tonNode.blockIdExt"
+            }],
+            "type": "db.filedb.Key"
+        },
+        {
+            "predicate": "db.filedb.key.persistentStateFile",
+            "id": -1346996660,
+            "params": [{
+                    "name": "block_id",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "masterchain_block_id",
+                    "type": "tonNode.blockIdExt"
+                }
+            ],
+            "type": "db.filedb.Key"
+        },
+        {
+            "predicate": "db.filedb.key.proof",
+            "id": -627749396,
+            "params": [{
+                "name": "block_id",
+                "type": "tonNode.blockIdExt"
+            }],
+            "type": "db.filedb.Key"
+        },
+        {
+            "predicate": "db.filedb.key.proofLink",
+            "id": -1728330290,
+            "params": [{
+                "name": "block_id",
+                "type": "tonNode.blockIdExt"
+            }],
+            "type": "db.filedb.Key"
+        },
+        {
+            "predicate": "db.filedb.key.signatures",
+            "id": -685175541,
+            "params": [{
+                "name": "block_id",
+                "type": "tonNode.blockIdExt"
+            }],
+            "type": "db.filedb.Key"
+        },
+        {
+            "predicate": "db.filedb.key.candidate",
+            "id": -494269767,
+            "params": [{
+                "name": "id",
+                "type": "db.candidate.id"
+            }],
+            "type": "db.filedb.Key"
+        },
+        {
+            "predicate": "db.filedb.key.blockInfo",
+            "id": -996551428,
+            "params": [{
+                "name": "block_id",
+                "type": "tonNode.blockIdExt"
+            }],
+            "type": "db.filedb.Key"
+        },
+        {
+            "predicate": "db.filedb.value",
+            "id": -220390867,
+            "params": [{
+                    "name": "key",
+                    "type": "db.filedb.Key"
+                },
+                {
+                    "name": "prev",
+                    "type": "int256"
+                },
+                {
+                    "name": "next",
+                    "type": "int256"
+                },
+                {
+                    "name": "file_hash",
+                    "type": "int256"
+                }
+            ],
+            "type": "db.filedb.Value"
+        },
+        {
+            "predicate": "db.state.destroyedSessions",
+            "id": -1381443196,
+            "params": [{
+                "name": "sessions",
+                "type": "vector<int256>"
+            }],
+            "type": "db.state.DestroyedSessions"
+        },
+        {
+            "predicate": "db.state.initBlockId",
+            "id": 1932303605,
+            "params": [{
+                "name": "block",
+                "type": "tonNode.blockIdExt"
+            }],
+            "type": "db.state.InitBlockId"
+        },
+        {
+            "predicate": "db.state.gcBlockId",
+            "id": -550453937,
+            "params": [{
+                "name": "block",
+                "type": "tonNode.blockIdExt"
+            }],
+            "type": "db.state.GcBlockId"
+        },
+        {
+            "predicate": "db.state.shardClient",
+            "id": 186033821,
+            "params": [{
+                "name": "block",
+                "type": "tonNode.blockIdExt"
+            }],
+            "type": "db.state.ShardClient"
+        },
+        {
+            "predicate": "db.state.asyncSerializer",
+            "id": -751883871,
+            "params": [{
+                    "name": "block",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "last",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "last_ts",
+                    "type": "int"
+                }
+            ],
+            "type": "db.state.AsyncSerializer"
+        },
+        {
+            "predicate": "db.state.hardforks",
+            "id": -2047668988,
+            "params": [{
+                "name": "blocks",
+                "type": "vector<tonNode.blockIdExt>"
+            }],
+            "type": "db.state.Hardforks"
+        },
+        {
+            "predicate": "db.state.dbVersion",
+            "id": -650698505,
+            "params": [{
+                "name": "version",
+                "type": "int"
+            }],
+            "type": "db.state.DbVersion"
+        },
+        {
+            "predicate": "db.state.key.destroyedSessions",
+            "id": -386404007,
+            "params": [],
+            "type": "db.state.Key"
+        },
+        {
+            "predicate": "db.state.key.initBlockId",
+            "id": 1971484899,
+            "params": [],
+            "type": "db.state.Key"
+        },
+        {
+            "predicate": "db.state.key.gcBlockId",
+            "id": -1015417890,
+            "params": [],
+            "type": "db.state.Key"
+        },
+        {
+            "predicate": "db.state.key.shardClient",
+            "id": -912576121,
+            "params": [],
+            "type": "db.state.Key"
+        },
+        {
+            "predicate": "db.state.key.asyncSerializer",
+            "id": 699304479,
+            "params": [],
+            "type": "db.state.Key"
+        },
+        {
+            "predicate": "db.state.key.hardforks",
+            "id": -420206662,
+            "params": [],
+            "type": "db.state.Key"
+        },
+        {
+            "predicate": "db.state.key.dbVersion",
+            "id": 1917788500,
+            "params": [],
+            "type": "db.state.Key"
+        },
+        {
+            "predicate": "db.lt.el.key",
+            "id": -1523442974,
+            "params": [{
+                    "name": "workchain",
+                    "type": "int"
+                },
+                {
+                    "name": "shard",
+                    "type": "long"
+                },
+                {
+                    "name": "idx",
+                    "type": "int"
+                }
+            ],
+            "type": "db.lt.Key"
+        },
+        {
+            "predicate": "db.lt.desc.key",
+            "id": -236722287,
+            "params": [{
+                    "name": "workchain",
+                    "type": "int"
+                },
+                {
+                    "name": "shard",
+                    "type": "long"
+                }
+            ],
+            "type": "db.lt.Key"
+        },
+        {
+            "predicate": "db.lt.shard.key",
+            "id": 1353120015,
+            "params": [{
+                "name": "idx",
+                "type": "int"
+            }],
+            "type": "db.lt.Key"
+        },
+        {
+            "predicate": "db.lt.status.key",
+            "id": 2003591255,
+            "params": [],
+            "type": "db.lt.Key"
+        },
+        {
+            "predicate": "db.lt.el.value",
+            "id": -1780064412,
+            "params": [{
+                    "name": "id",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "lt",
+                    "type": "long"
+                },
+                {
+                    "name": "ts",
+                    "type": "int"
+                }
+            ],
+            "type": "db.lt.el.Value"
+        },
+        {
+            "predicate": "db.lt.desc.value",
+            "id": 1907315124,
+            "params": [{
+                    "name": "first_idx",
+                    "type": "int"
+                },
+                {
+                    "name": "last_idx",
+                    "type": "int"
+                },
+                {
+                    "name": "last_seqno",
+                    "type": "int"
+                },
+                {
+                    "name": "last_lt",
+                    "type": "long"
+                },
+                {
+                    "name": "last_ts",
+                    "type": "int"
+                }
+            ],
+            "type": "db.lt.desc.Value"
+        },
+        {
+            "predicate": "db.lt.shard.value",
+            "id": 1014209147,
+            "params": [{
+                    "name": "workchain",
+                    "type": "int"
+                },
+                {
+                    "name": "shard",
+                    "type": "long"
+                }
+            ],
+            "type": "db.lt.shard.Value"
+        },
+        {
+            "predicate": "db.lt.status.value",
+            "id": -88150727,
+            "params": [{
+                "name": "total_shards",
+                "type": "int"
+            }],
+            "type": "db.lt.status.Value"
+        },
+        {
+            "predicate": "db.files.index.key",
+            "id": 2109998338,
+            "params": [],
+            "type": "db.files.Key"
+        },
+        {
+            "predicate": "db.files.package.key",
+            "id": -1526463682,
+            "params": [{
+                    "name": "package_id",
+                    "type": "int"
+                },
+                {
+                    "name": "key",
+                    "type": "Bool"
+                },
+                {
+                    "name": "temp",
+                    "type": "Bool"
+                }
+            ],
+            "type": "db.files.Key"
+        },
+        {
+            "predicate": "db.files.index.value",
+            "id": -1565402372,
+            "params": [{
+                    "name": "packages",
+                    "type": "vector<int>"
+                },
+                {
+                    "name": "key_packages",
+                    "type": "vector<int>"
+                },
+                {
+                    "name": "temp_packages",
+                    "type": "vector<int>"
+                }
+            ],
+            "type": "db.files.index.Value"
+        },
+        {
+            "predicate": "db.files.package.firstBlock",
+            "id": 1880254951,
+            "params": [{
+                    "name": "workchain",
+                    "type": "int"
+                },
+                {
+                    "name": "shard",
+                    "type": "long"
+                },
+                {
+                    "name": "seqno",
+                    "type": "int"
+                },
+                {
+                    "name": "unixtime",
+                    "type": "int"
+                },
+                {
+                    "name": "lt",
+                    "type": "long"
+                }
+            ],
+            "type": "db.files.package.FirstBlock"
+        },
+        {
+            "predicate": "db.files.package.value",
+            "id": -464726741,
+            "params": [{
+                    "name": "package_id",
+                    "type": "int"
+                },
+                {
+                    "name": "key",
+                    "type": "Bool"
+                },
+                {
+                    "name": "temp",
+                    "type": "Bool"
+                },
+                {
+                    "name": "firstblocks",
+                    "type": "vector<db.files.package.firstBlock>"
+                },
+                {
+                    "name": "deleted",
+                    "type": "Bool"
+                }
+            ],
+            "type": "db.files.package.Value"
+        },
+        {
+            "predicate": "validator.groupMember",
+            "id": -1953208860,
+            "params": [{
+                    "name": "public_key_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "adnl",
+                    "type": "int256"
+                },
+                {
+                    "name": "weight",
+                    "type": "long"
+                }
+            ],
+            "type": "engine.validator.GroupMember"
+        },
+        {
+            "predicate": "validator.group",
+            "id": -120029535,
+            "params": [{
+                    "name": "workchain",
+                    "type": "int"
+                },
+                {
+                    "name": "shard",
+                    "type": "long"
+                },
+                {
+                    "name": "catchain_seqno",
+                    "type": "int"
+                },
+                {
+                    "name": "config_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "members",
+                    "type": "vector<validator.groupMember>"
+                }
+            ],
+            "type": "validator.Group"
+        },
+        {
+            "predicate": "validator.groupEx",
+            "id": 479350270,
+            "params": [{
+                    "name": "workchain",
+                    "type": "int"
+                },
+                {
+                    "name": "shard",
+                    "type": "long"
+                },
+                {
+                    "name": "vertical_seqno",
+                    "type": "int"
+                },
+                {
+                    "name": "catchain_seqno",
+                    "type": "int"
+                },
+                {
+                    "name": "config_hash",
+                    "type": "int256"
+                },
+                {
+                    "name": "members",
+                    "type": "vector<validator.groupMember>"
+                }
+            ],
+            "type": "validator.Group"
+        },
+        {
+            "predicate": "id.config.local",
+            "id": -1834367090,
+            "params": [{
+                "name": "id",
+                "type": "PrivateKey"
+            }],
+            "type": "id.config.Local"
+        },
+        {
+            "predicate": "dht.config.local",
+            "id": 1981827695,
+            "params": [{
+                "name": "id",
+                "type": "adnl.id.short"
+            }],
+            "type": "dht.config.Local"
+        },
+        {
+            "predicate": "dht.config.random.local",
+            "id": -1679088265,
+            "params": [{
+                "name": "cnt",
+                "type": "int"
+            }],
+            "type": "dht.config.Local"
+        },
+        {
+            "predicate": "liteserver.config.local",
+            "id": 1182002063,
+            "params": [{
+                    "name": "id",
+                    "type": "PrivateKey"
+                },
+                {
+                    "name": "port",
+                    "type": "int"
+                }
+            ],
+            "type": "liteserver.config.Local"
+        },
+        {
+            "predicate": "liteserver.config.random.local",
+            "id": 2093565243,
+            "params": [{
+                "name": "port",
+                "type": "int"
+            }],
+            "type": "liteserver.config.Local"
+        },
+        {
+            "predicate": "validator.config.local",
+            "id": 1716256616,
+            "params": [{
+                "name": "id",
+                "type": "adnl.id.short"
+            }],
+            "type": "validator.config.Local"
+        },
+        {
+            "predicate": "validator.config.random.local",
+            "id": 1501795426,
+            "params": [{
+                "name": "addr_list",
+                "type": "adnl.addressList"
+            }],
+            "type": "validator.config.Local"
+        },
+        {
+            "predicate": "control.config.local",
+            "id": 1964895469,
+            "params": [{
+                    "name": "priv",
+                    "type": "PrivateKey"
+                },
+                {
+                    "name": "pub",
+                    "type": "int256"
+                },
+                {
+                    "name": "port",
+                    "type": "int"
+                }
+            ],
+            "type": "control.config.Local"
+        },
+        {
+            "predicate": "config.local",
+            "id": 2023657820,
+            "params": [{
+                    "name": "local_ids",
+                    "type": "vector<id.config.local>"
+                },
+                {
+                    "name": "dht",
+                    "type": "vector<dht.config.Local>"
+                },
+                {
+                    "name": "validators",
+                    "type": "vector<validator.config.Local>"
+                },
+                {
+                    "name": "liteservers",
+                    "type": "vector<liteserver.config.Local>"
+                },
+                {
+                    "name": "control",
+                    "type": "vector<control.config.local>"
+                }
+            ],
+            "type": "config.Local"
+        },
+        {
+            "predicate": "dht.config.global",
+            "id": -2066822649,
+            "params": [{
+                    "name": "static_nodes",
+                    "type": "dht.nodes"
+                },
+                {
+                    "name": "k",
+                    "type": "int"
+                },
+                {
+                    "name": "a",
+                    "type": "int"
+                }
+            ],
+            "type": "dht.config.Global"
+        },
+        {
+            "predicate": "adnl.config.global",
+            "id": -1099988784,
+            "params": [{
+                "name": "static_nodes",
+                "type": "adnl.nodes"
+            }],
+            "type": "adnl.config.Global"
+        },
+        {
+            "predicate": "catchain.config.global",
+            "id": 1757918801,
+            "params": [{
+                    "name": "tag",
+                    "type": "int256"
+                },
+                {
+                    "name": "nodes",
+                    "type": "vector<PublicKey>"
+                }
+            ],
+            "type": "catchain.config.Global"
+        },
+        {
+            "predicate": "dummyworkchain0.config.global",
+            "id": -631148845,
+            "params": [{
+                "name": "zero_state_hash",
+                "type": "int256"
+            }],
+            "type": "dummyworkchain0.config.Global"
+        },
+        {
+            "predicate": "validator.config.global",
+            "id": -2038562966,
+            "params": [{
+                    "name": "zero_state",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "init_block",
+                    "type": "tonNode.blockIdExt"
+                },
+                {
+                    "name": "hardforks",
+                    "type": "vector<tonNode.blockIdExt>"
+                }
+            ],
+            "type": "validator.config.Global"
+        },
+        {
+            "predicate": "config.global",
+            "id": -198795310,
+            "params": [{
+                    "name": "adnl",
+                    "type": "adnl.config.global"
+                },
+                {
+                    "name": "dht",
+                    "type": "dht.config.global"
+                },
+                {
+                    "name": "validator",
+                    "type": "validator.config.global"
+                }
+            ],
+            "type": "config.Global"
+        },
+        {
+            "predicate": "liteserver.desc",
+            "id": -1001806732,
+            "params": [{
+                    "name": "id",
+                    "type": "PublicKey"
+                },
+                {
+                    "name": "ip",
+                    "type": "int"
+                },
+                {
+                    "name": "port",
+                    "type": "int"
+                }
+            ],
+            "type": "liteserver.Desc"
+        },
+        {
+            "predicate": "liteclient.config.global",
+            "id": 143507704,
+            "params": [{
+                    "name": "liteservers",
+                    "type": "vector<liteserver.desc>"
+                },
+                {
+                    "name": "validator",
+                    "type": "validator.config.global"
+                }
+            ],
+            "type": "liteclient.config.Global"
+        },
+        {
+            "predicate": "engine.adnl",
+            "id": 1658283344,
+            "params": [{
+                    "name": "id",
+                    "type": "int256"
+                },
+                {
+                    "name": "category",
+                    "type": "int"
+                }
+            ],
+            "type": "engine.Adnl"
+        },
+        {
+            "predicate": "engine.addr",
+            "id": -281993236,
+            "params": [{
+                    "name": "ip",
+                    "type": "int"
+                },
+                {
+                    "name": "port",
+                    "type": "int"
+                },
+                {
+                    "name": "categories",
+                    "type": "vector<int>"
+                },
+                {
+                    "name": "priority_categories",
+                    "type": "vector<int>"
+                }
+            ],
+            "type": "engine.Addr"
+        },
+        {
+            "predicate": "engine.addrProxy",
+            "id": -1965071031,
+            "params": [{
+                    "name": "in_ip",
+                    "type": "int"
+                },
+                {
+                    "name": "in_port",
+                    "type": "int"
+                },
+                {
+                    "name": "out_ip",
+                    "type": "int"
+                },
+                {
+                    "name": "out_port",
+                    "type": "int"
+                },
+                {
+                    "name": "proxy_type",
+                    "type": "adnl.Proxy"
+                },
+                {
+                    "name": "categories",
+                    "type": "vector<int>"
+                },
+                {
+                    "name": "priority_categories",
+                    "type": "vector<int>"
+                }
+            ],
+            "type": "engine.Addr"
+        },
+        {
+            "predicate": "engine.dht",
+            "id": 1575613178,
+            "params": [{
+                "name": "id",
+                "type": "int256"
+            }],
+            "type": "engine.Dht"
+        },
+        {
+            "predicate": "engine.validatorTempKey",
+            "id": 1581962974,
+            "params": [{
+                    "name": "key",
+                    "type": "int256"
+                },
+                {
+                    "name": "expire_at",
+                    "type": "int"
+                }
+            ],
+            "type": "engine.ValidatorTempKey"
+        },
+        {
+            "predicate": "engine.validatorAdnlAddress",
+            "id": -750434882,
+            "params": [{
+                    "name": "id",
+                    "type": "int256"
+                },
+                {
+                    "name": "expire_at",
+                    "type": "int"
+                }
+            ],
+            "type": "engine.ValidatorAdnlAddress"
+        },
+        {
+            "predicate": "engine.validator",
+            "id": -2006980055,
+            "params": [{
+                    "name": "id",
+                    "type": "int256"
+                },
+                {
+                    "name": "temp_keys",
+                    "type": "vector<engine.validatorTempKey>"
+                },
+                {
+                    "name": "adnl_addrs",
+                    "type": "vector<engine.validatorAdnlAddress>"
+                },
+                {
+                    "name": "election_date",
+                    "type": "int"
+                },
+                {
+                    "name": "expire_at",
+                    "type": "int"
+                }
+            ],
+            "type": "engine.Validator"
+        },
+        {
+            "predicate": "engine.liteServer",
+            "id": -1150251266,
+            "params": [{
+                    "name": "id",
+                    "type": "int256"
+                },
+                {
+                    "name": "port",
+                    "type": "int"
+                }
+            ],
+            "type": "engine.LiteServer"
+        },
+        {
+            "predicate": "engine.controlProcess",
+            "id": 1790986263,
+            "params": [{
+                    "name": "id",
+                    "type": "int256"
+                },
+                {
+                    "name": "permissions",
+                    "type": "int"
+                }
+            ],
+            "type": "engine.ControlProcess"
+        },
+        {
+            "predicate": "engine.controlInterface",
+            "id": 830566315,
+            "params": [{
+                    "name": "id",
+                    "type": "int256"
+                },
+                {
+                    "name": "port",
+                    "type": "int"
+                },
+                {
+                    "name": "allowed",
+                    "type": "vector<engine.controlProcess>"
+                }
+            ],
+            "type": "engine.ControlInterface"
+        },
+        {
+            "predicate": "engine.gc",
+            "id": -1078093701,
+            "params": [{
+                "name": "ids",
+                "type": "vector<int256>"
+            }],
+            "type": "engine.Gc"
+        },
+        {
+            "predicate": "engine.dht.config",
+            "id": -197295930,
+            "params": [{
+                    "name": "dht",
+                    "type": "vector<engine.dht>"
+                },
+                {
+                    "name": "gc",
+                    "type": "engine.gc"
+                }
+            ],
+            "type": "engine.dht.Config"
+        },
+        {
+            "predicate": "engine.validator.fullNodeMaster",
+            "id": -2071595416,
+            "params": [{
+                    "name": "port",
+                    "type": "int"
+                },
+                {
+                    "name": "adnl",
+                    "type": "int256"
+                }
+            ],
+            "type": "engine.validator.FullNodeMaster"
+        },
+        {
+            "predicate": "engine.validator.fullNodeSlave",
+            "id": -2010813575,
+            "params": [{
+                    "name": "ip",
+                    "type": "int"
+                },
+                {
+                    "name": "port",
+                    "type": "int"
+                },
+                {
+                    "name": "adnl",
+                    "type": "PublicKey"
+                }
+            ],
+            "type": "engine.validator.FullNodeSlave"
+        },
+        {
+            "predicate": "engine.validator.config",
+            "id": -826140252,
+            "params": [{
+                    "name": "out_port",
+                    "type": "int"
+                },
+                {
+                    "name": "addrs",
+                    "type": "vector<engine.Addr>"
+                },
+                {
+                    "name": "adnl",
+                    "type": "vector<engine.adnl>"
+                },
+                {
+                    "name": "dht",
+                    "type": "vector<engine.dht>"
+                },
+                {
+                    "name": "validators",
+                    "type": "vector<engine.validator>"
+                },
+                {
+                    "name": "fullnode",
+                    "type": "int256"
+                },
+                {
+                    "name": "fullnodeslaves",
+                    "type": "vector<engine.validator.fullNodeSlave>"
+                },
+                {
+                    "name": "fullnodemasters",
+                    "type": "vector<engine.validator.fullNodeMaster>"
+                },
+                {
+                    "name": "liteservers",
+                    "type": "vector<engine.liteServer>"
+                },
+                {
+                    "name": "control",
+                    "type": "vector<engine.controlInterface>"
+                },
+                {
+                    "name": "gc",
+                    "type": "engine.gc"
+                }
+            ],
+            "type": "engine.validator.Config"
+        },
+        {
+            "predicate": "engine.adnlProxy.port",
+            "id": -117344950,
+            "params": [{
+                    "name": "in_port",
+                    "type": "int"
+                },
+                {
+                    "name": "out_port",
+                    "type": "int"
+                },
+                {
+                    "name": "dst_ip",
+                    "type": "int"
+                },
+                {
+                    "name": "dst_port",
+                    "type": "int"
+                },
+                {
+                    "name": "proxy_type",
+                    "type": "adnl.Proxy"
+                }
+            ],
+            "type": "engine.adnlProxy.Port"
+        },
+        {
+            "predicate": "engine.adnlProxy.config",
+            "id": 1848000769,
+            "params": [{
+                "name": "ports",
+                "type": "vector<engine.adnlProxy.port>"
+            }],
+            "type": "engine.adnlProxy.Config"
+        },
+        {
+            "predicate": "adnl.pong",
+            "id": 544504846,
+            "params": [{
+                "name": "value",
+                "type": "long"
+            }],
+            "type": "adnl.Pong"
+        },
+        {
+            "predicate": "engine.validator.keyHash",
+            "id": -1027168946,
+            "params": [{
+                "name": "key_hash",
+                "type": "int256"
+            }],
+            "type": "engine.validator.KeyHash"
+        },
+        {
+            "predicate": "engine.validator.signature",
+            "id": -76791000,
+            "params": [{
+                "name": "signature",
+                "type": "bytes"
+            }],
+            "type": "engine.validator.Signature"
+        },
+        {
+            "predicate": "engine.validator.oneStat",
+            "id": -1533527315,
+            "params": [{
+                    "name": "key",
+                    "type": "string"
+                },
+                {
+                    "name": "value",
+                    "type": "string"
+                }
+            ],
+            "type": "engine.validator.OneStat"
+        },
+        {
+            "predicate": "engine.validator.stats",
+            "id": 1565119343,
+            "params": [{
+                "name": "stats",
+                "type": "vector<engine.validator.oneStat>"
+            }],
+            "type": "engine.validator.Stats"
+        },
+        {
+            "predicate": "engine.validator.controlQueryError",
+            "id": 1999018527,
+            "params": [{
+                    "name": "code",
+                    "type": "int"
+                },
+                {
+                    "name": "message",
+                    "type": "string"
+                }
+            ],
+            "type": "engine.validator.ControlQueryError"
+        },
+        {
+            "predicate": "engine.validator.time",
+            "id": -547380738,
+            "params": [{
+                "name": "time",
+                "type": "int"
+            }],
+            "type": "engine.validator.Time"
+        },
+        {
+            "predicate": "engine.validator.success",
+            "id": -1276860789,
+            "params": [],
+            "type": "engine.validator.Success"
+        },
+        {
+            "predicate": "engine.validator.jsonConfig",
+            "id": 321753611,
+            "params": [{
+                "name": "data",
+                "type": "string"
+            }],
+            "type": "engine.validator.JsonConfig"
+        },
+        {
+            "predicate": "engine.validator.electionBid",
+            "id": 598899261,
+            "params": [{
+                    "name": "election_date",
+                    "type": "int"
+                },
+                {
+                    "name": "perm_key",
+                    "type": "int256"
+                },
+                {
+                    "name": "adnl_addr",
+                    "type": "int256"
+                },
+                {
+                    "name": "to_send_payload",
+                    "type": "bytes"
+                }
+            ],
+            "type": "engine.validator.ElectionBid"
+        },
+        {
+            "predicate": "engine.validator.dhtServerStatus",
+            "id": -1323440290,
+            "params": [{
+                    "name": "id",
+                    "type": "int256"
+                },
+                {
+                    "name": "status",
+                    "type": "int"
+                }
+            ],
+            "type": "engine.validator.DhtServerStatus"
+        },
+        {
+            "predicate": "engine.validator.dhtServersStatus",
+            "id": 725155112,
+            "params": [{
+                "name": "servers",
+                "type": "vector<engine.validator.dhtServerStatus>"
+            }],
+            "type": "engine.validator.DhtServersStatus"
+        },
+        {
+            "predicate": "http.header",
+            "id": -1902385903,
+            "params": [{
+                    "name": "name",
+                    "type": "string"
+                },
+                {
+                    "name": "value",
+                    "type": "string"
+                }
+            ],
+            "type": "http.Header"
+        },
+        {
+            "predicate": "http.payloadPart",
+            "id": 693819236,
+            "params": [{
+                    "name": "data",
+                    "type": "bytes"
+                },
+                {
+                    "name": "trailer",
+                    "type": "vector<http.header>"
+                },
+                {
+                    "name": "last",
+                    "type": "Bool"
+                }
+            ],
+            "type": "http.PayloadPart"
+        },
+        {
+            "predicate": "http.response",
+            "id": -273307789,
+            "params": [{
+                    "name": "http_version",
+                    "type": "string"
+                },
+                {
+                    "name": "status_code",
+                    "type": "int"
+                },
+                {
+                    "name": "reason",
+                    "type": "string"
+                },
+                {
+                    "name": "headers",
+                    "type": "vector<http.header>"
+                }
+            ],
+            "type": "http.Response"
+        },
+        {
+            "predicate": "http.server.dnsEntry",
+            "id": -663592810,
+            "params": [{
+                    "name": "domain",
+                    "type": "string"
+                },
+                {
+                    "name": "addr",
+                    "type": "adnl.id.short"
+                }
+            ],
+            "type": "http.server.DnsEntry"
+        },
+        {
+            "predicate": "http.server.host",
+            "id": -981605721,
+            "params": [{
+                    "name": "domains",
+                    "type": "vector<string>"
+                },
+                {
+                    "name": "ip",
+                    "type": "int"
+                },
+                {
+                    "name": "port",
+                    "type": "int"
+                },
+                {
+                    "name": "adnl_id",
+                    "type": "adnl.id.short"
+                }
+            ],
+            "type": "http.server.Host"
+        },
+        {
+            "predicate": "http.server.config",
+            "id": 974419964,
+            "params": [{
+                    "name": "dhs",
+                    "type": "vector<http.server.dnsEntry>"
+                },
+                {
+                    "name": "local_hosts",
+                    "type": "vector<http.server.host>"
+                }
+            ],
+            "type": "http.server.Config"
+        }
+    ]
+}

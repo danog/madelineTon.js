@@ -1,0 +1,12 @@
+te
+JSDesign
+node_modules
+package-lock.json
+.DS_Store
+/*.log
+/coverage/
+/lib/
+.publish
+dist
+newdist
+

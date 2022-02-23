@@ -1,0 +1,36 @@
+{
+  "name": "madeline-ton",
+  "keywords": [
+    "TON",
+    "Javascript",
+    "API",
+    "Client",
+    "MadelineProto",
+    "madeline.js"
+  ],
+  "scripts": {
+    "build": "babel src --copy-files --out-dir dist",
+    "prepare": "yarn run build"
+  },
+  "main": "./dist/index.js",
+  "version": "1.0.10",
+  "description": "Pure JS client-side implementation of the Telegram TON blockchain protocol",
+  "author": "Daniil Gentili <daniil@daniil.it>",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/cli": "^7.7.7",
+    "@babel/core": "^7.7.7",
+    "@babel/node": "^7.8.4",
+    "@babel/plugin-proposal-class-properties": "^7.7.4",
+    "@babel/plugin-transform-runtime": "^7.7.6",
+    "@babel/preset-env": "^7.7.7",
+    "typescript": "^3.6.4"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.7.7",
+    "deep-equal": "^2.0.1",
+    "leemon": "^6.2.0",
+    "rusha": "^0.8.13",
+    "zlibjs": "^0.3.1"
+  }
+}
